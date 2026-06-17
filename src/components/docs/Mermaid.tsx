@@ -57,6 +57,7 @@ let counter = 0;
 export default function Mermaid({ code }: { code: string }) {
   const [svg, setSvg] = useState("");
   const [failed, setFailed] = useState(false);
+  const [zoom, setZoom] = useState(false);
   const idRef = useRef(`mmd-${counter++}`);
 
   useEffect(() => {
@@ -74,6 +75,19 @@ export default function Mermaid({ code }: { code: string }) {
     };
   }, [code]);
 
+  // Close the zoom overlay on Escape, lock body scroll while open.
+  useEffect(() => {
+    if (!zoom) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoom(false);
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [zoom]);
+
   if (failed) {
     return (
       <pre className="diagram-block ascii-diagram" style={{ padding: "1rem" }}>
@@ -83,10 +97,29 @@ export default function Mermaid({ code }: { code: string }) {
   }
 
   return (
-    <div
-      className="mermaid-diagram"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <>
+      <div
+        className="mermaid-diagram"
+        role="button"
+        tabIndex={0}
+        title="Click to enlarge"
+        onClick={() => svg && setZoom(true)}
+        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && svg && setZoom(true)}
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+      {zoom && (
+        <div className="mermaid-modal" onClick={() => setZoom(false)}>
+          <span className="mermaid-modal-close">[ ✕ close · esc ]</span>
+          <div
+            className="mermaid-modal-inner"
+            // clicking the diagram itself shouldn't close immediately
+            onClick={(e) => e.stopPropagation()}
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
+        </div>
+      )}
+    </>
   );
 }

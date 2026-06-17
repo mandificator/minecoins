@@ -355,10 +355,46 @@ body {
   display: flex;
   justify-content: center;
   overflow-x: auto;
+  cursor: zoom-in;
 }
 .mermaid-diagram svg {
   max-width: 100%;
   height: auto;
+}
+
+/* Click-to-enlarge lightbox: shows the diagram at natural scale so its text
+   matches the site's font size; scrolls if larger than the viewport. */
+.mermaid-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vmin;
+  background: rgba(8, 28, 140, 0.94);
+  cursor: zoom-out;
+}
+.mermaid-modal-close {
+  position: fixed;
+  top: 1rem;
+  right: 1.2rem;
+  color: var(--title);
+  letter-spacing: 0.05em;
+}
+.mermaid-modal-inner {
+  max-width: 92vw;
+  max-height: 86vh;
+  overflow: auto;
+  background: var(--bg-alt);
+  border: 1px dashed var(--line);
+  padding: 2.4vmin;
+  cursor: default;
+}
+.mermaid-modal-inner svg {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
 }
 /* keep node labels white + mono regardless of mermaid inline styles */
 .mermaid-diagram .nodeLabel,

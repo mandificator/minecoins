@@ -1,19 +1,12 @@
 import ScrollReveal from "@/components/effects/ScrollReveal";
 import TypedPrompt from "@/components/ui/TypedPrompt";
 import TerminalCard from "@/components/ui/TerminalCard";
-import AsciiDiagram from "@/components/ui/AsciiDiagram";
 import Mermaid from "@/components/docs/Mermaid";
 import { NeonLink } from "@/components/ui/NeonButton";
 
-// Periodic-table tile for the element (Pm, Z=61, mass ~[145]).
-const ELEMENT = `┌─────────────────┐
-│ 61              │
-│                 │
-│       Pm        │
-│                 │
-│   Promethium    │
-│     [145]       │
-└─────────────────┘`;
+// Periodic-table tile for the element (Pm, Z=61, mass ~[145]) as a Mermaid node.
+const ELEMENT = `graph TB
+  PM["61<br/><br/>Pm<br/><br/>Promethium<br/>[145]"]`;
 
 const LOOP_DIAGRAM = `graph LR
   DEEP -->|mine| SURFACE
@@ -67,7 +60,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
         <div className="flex flex-col items-center text-center">
           <div className="w-full max-w-xs">
-            <AsciiDiagram text={ELEMENT} center />
+            <Mermaid code={ELEMENT} />
           </div>
           <h1 className="mt-8 tracking-[0.2em] text-title">PROMETHIUM</h1>
           <p className="mt-4 max-w-2xl text-title">
