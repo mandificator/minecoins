@@ -1,0 +1,79 @@
+/**
+ * Abstraction layer for the $PROM staking program on Solana.
+ *
+ * The real program is not deployed yet. This module is the SINGLE place to wire
+ * it up: replace the placeholder difficulty curve and implement `stake`/
+ * `unstake`/`getStakeAccount` against the real program ID once it exists.
+ */
+
+import type { Connection, PublicKey } from "@solana/web3.js";
+import { MAX_DISCOUNT, isStakingLive } from "./config";
+
+export type StakeStatus = {
+  stakedAmount: number; // $PROM currently staked
+  discount: number; // current difficulty multiplier, 1..MAX_DISCOUNT
+};
+
+/**
+ * Difficulty discount as a function of staked $PROM.
+ *
+ * TODO: replace with the published curve. Placeholder: a saturating curve that
+ * approaches the MAX_DISCOUNT (3x) ceiling. `half` is the stake at which you
+ * reach the midpoint of the extra discount range.
+ */
+export function estimateDiscount(stakedMine: number): number {
+  const amount = Math.max(0, stakedMine);
+  const half = 2000; // placeholder reference stake
+  const extra = (MAX_DISCOUNT - 1) * (amount / (amount + half));
+  const discount = 1 + extra;
+  return Math.min(MAX_DISCOUNT, Math.round(discount * 100) / 100);
+}
+
+/** Token balance read — only meaningful once the mint is configured. */
+export async function getTokenBalance(
+  _connection: Connection,
+  _owner: PublicKey,
+  _mint: string
+): Promise<number | null> {
+  // TODO: read the associated token account balance for the $PROM mint.
+  // Returns null until the mint/program is live so the UI shows "—".
+  return null;
+}
+
+export async function getStakeStatus(
+  _connection: Connection,
+  _owner: PublicKey
+): Promise<StakeStatus | null> {
+  // TODO: read the staking account from the staking program.
+  return null;
+}
+
+/** The two separate staking pools. */
+export type Pool = "difficulty" | "battery";
+
+/**
+ * Estimated Battery-Pool yield share for a given stake.
+ *
+ * TODO: replace with the real on-chain computation (your stake / total pool
+ * stake × Battery balance). Returns null until the program is live so the UI
+ * shows "—" rather than a fake number.
+ */
+export async function getBatteryShare(_stakedProm: number): Promise<number | null> {
+  return null;
+}
+
+export type ActionResult = { ok: false; reason: "not-live" } | { ok: true; signature: string };
+
+export async function stake(_pool: Pool, _amount: number): Promise<ActionResult> {
+  if (!isStakingLive()) return { ok: false, reason: "not-live" };
+  // TODO: build + send the stake instruction for the given pool
+  // (and settle the 1 USDC x402 fee).
+  throw new Error("Staking program wiring not implemented yet.");
+}
+
+export async function unstake(_pool: Pool, _amount: number): Promise<ActionResult> {
+  if (!isStakingLive()) return { ok: false, reason: "not-live" };
+  // TODO: build + send the unstake instruction for the given pool
+  // (and settle the 1 USDC x402 fee).
+  throw new Error("Staking program wiring not implemented yet.");
+}

@@ -1,0 +1,18 @@
+{
+  "pages": [
+    { "slug": "introduction", "title": "Introduction" },
+    { "slug": "the-loop", "title": "The Loop" },
+    { "slug": "promethium-decay", "title": "Promethium & Decay" },
+    { "slug": "the-battery", "title": "The Battery" },
+    { "slug": "mining", "title": "Mining" },
+    { "slug": "staking", "title": "Staking (Two Pools)" },
+    { "slug": "bridge", "title": "The Bridge" },
+    { "slug": "tokenomics", "title": "Tokenomics" },
+    { "slug": "fees-x402", "title": "Fees & x402" },
+    { "slug": "agentic-cli", "title": "Agentic Mining" },
+    { "slug": "architecture", "title": "Architecture" },
+    { "slug": "get-started", "title": "Get Started" },
+    { "slug": "faq", "title": "FAQ" },
+    { "slug": "glossary", "title": "Glossary" }
+  ]
+}
