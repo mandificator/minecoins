@@ -13,9 +13,10 @@ When promethium decays at the surface, it **doesn't disappear** — it drains in
 
 Every miner who lets their surfaced promethium decay is, without meaning to, **charging the Battery**. Their loss becomes the Battery's gain.
 
-```
-   slow miners' decay ──> [ THE BATTERY ] ──> paid out as PROMETHIUM
-                                              to everyone in the Battery Pool
+```mermaid
+graph LR
+  SLOW["slow miners' decay"] --> BATTERY["THE BATTERY"]
+  BATTERY -->|paid out as PROMETHIUM| POOL["the Battery Pool"]
 ```
 
 ## Where the charge goes

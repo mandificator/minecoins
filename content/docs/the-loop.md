@@ -7,14 +7,12 @@ description: Mine deep, surface, race the decay, stabilize on Solana — and fee
 
 Everything in Promethium is one loop. Here it is, end to end:
 
-```
-   DEEP ──mine──> SURFACE ──┬─ bridge in time ─> $PROM (stable, Solana)
-                            │
-                            └─ too slow? decays ─> THE BATTERY ─> paid out as
-                                                                  PROMETHIUM to
-                                                                  battery-stakers
-                                                                  (surfaces… and the
-                                                                   clock starts again)
+```mermaid
+graph LR
+  DEEP -->|mine| SURFACE
+  SURFACE -->|bridge in time| PROM["$PROM (stable, Solana)"]
+  SURFACE -->|too slow, decays| BATTERY["THE BATTERY"]
+  BATTERY -->|paid out| STAKERS["battery stakers"]
 ```
 
 ## Step by step

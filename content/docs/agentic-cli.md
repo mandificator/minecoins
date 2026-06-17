@@ -33,11 +33,10 @@ Each `bridge` / `stake` / `unstake` settles **1 USDC via x402**. Bridging also t
 
 ## One instruction, whole loop
 
-```
-   "mine status, bridge what surfaced, split the rest into both pools"
-                          │
-                          v
-         AGENT (Claude + skill.md) runs it all, races the decay, reports back
+```mermaid
+graph LR
+  INTENT["your intent"] --> AGENT["AGENT (Claude + skill.md)"]
+  AGENT --> RUN["runs the loop, races the decay, reports back"]
 ```
 
 State intent. The agent does the laps.

@@ -20,8 +20,12 @@ Depth protects. Think of these 100 blocks as the calm before the clock.
 
 The instant promethium surfaces, it's exposed — and decay begins. **Half-life: 17.7 hours.**
 
-```
-   surfaced ─17.7h─> ½ ─17.7h─> ¼ ─17.7h─> ⅛ ─> … ─> gone
+```mermaid
+graph LR
+  S[surfaced] -->|17.7h| A["½ left"]
+  A -->|17.7h| B["¼ left"]
+  B -->|17.7h| C["⅛ left"]
+  C --> G["… gone"]
 ```
 
 It's not a cliff — it's a slope. You don't lose everything at hour 17.7; you lose *half*. Then half of the rest. Every hour you wait costs you. The decay is gentle but it never sleeps.

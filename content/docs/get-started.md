@@ -40,8 +40,14 @@ Load the `skill.md` into Claude and just say what you want — *"bridge what sur
 
 ## The whole thing
 
-```
- Mine ──> Haul (safe) ──> Surface (clock!) ──> Bridge -> $PROM ──> Stake ──> mine easier + earn
+```mermaid
+graph LR
+  Mine --> Haul["Haul (safe)"]
+  Haul --> Surface["Surface (clock!)"]
+  Surface --> Bridge
+  Bridge --> PROM["$PROM"]
+  PROM --> Stake
+  Stake --> Win["mine easier + earn"]
 ```
 
 Next: **FAQ**.

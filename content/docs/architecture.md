@@ -30,12 +30,12 @@ A reservoir on-chain that captures decayed promethium and pays it out to the Bat
 
 ## How it fits
 
-```
-   MINER ──mines──> PROMETHIUM CHAIN ──decay──> THE BATTERY ──> Battery Pool
-                    │                                          payouts
-                    └──bridge──> $PROM on Solana   (decay stops)
-
-   ORACLE reads your Solana stakes ──> difficulty discount (3x) + Battery share
+```mermaid
+graph LR
+  MINER -->|mines| CHAIN["PROMETHIUM CHAIN + Battery"]
+  ORACLE -->|reads stake| CHAIN
+  CHAIN -->|bridge| PROM["$PROM on Solana"]
+  POOLS["staking pools (Difficulty + Battery)"] --> ORACLE
 ```
 
 Next: **Get Started**.

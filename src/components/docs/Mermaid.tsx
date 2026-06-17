@@ -1,0 +1,92 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+/**
+ * Renders a Mermaid diagram themed to the Promethium palette (electric-blue
+ * background, white text, light-blue nodes/edges, sharp corners, mono font).
+ * Mermaid is loaded dynamically (client-only) so it stays out of the initial
+ * bundle until a diagram is actually shown.
+ */
+let mermaidReady: Promise<typeof import("mermaid").default> | null = null;
+
+function loadMermaid() {
+  if (!mermaidReady) {
+    mermaidReady = import("mermaid").then(({ default: mermaid }) => {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "loose",
+        theme: "base",
+        fontFamily: "var(--font-mono), ui-monospace, monospace",
+        themeVariables: {
+          background: "transparent",
+          primaryColor: "#0a27bd",
+          primaryBorderColor: "#bcd4ff",
+          primaryTextColor: "#ffffff",
+          secondaryColor: "#0a27bd",
+          tertiaryColor: "#0a27bd",
+          lineColor: "#bcd4ff",
+          textColor: "#ffffff",
+          edgeLabelBackground: "#0a2bd6",
+          clusterBkg: "transparent",
+          fontSize: "15px",
+        },
+        flowchart: {
+          curve: "linear",
+          htmlLabels: true,
+          padding: 12,
+          nodeSpacing: 42,
+          rankSpacing: 48,
+          useMaxWidth: true,
+        },
+        themeCSS: `
+          .node rect, .node polygon, .node circle, .node path { rx: 0px; ry: 0px; stroke-width: 1.4px; }
+          .cluster rect { rx: 0px; ry: 0px; }
+          .edgeLabel, .edgeLabel rect, .edgeLabel p { background: #0a2bd6 !important; color: #ffffff !important; fill: #0a2bd6 !important; }
+          .edgePath path { stroke-width: 1.4px; }
+        `,
+      });
+      return mermaid;
+    });
+  }
+  return mermaidReady;
+}
+
+let counter = 0;
+
+export default function Mermaid({ code }: { code: string }) {
+  const [svg, setSvg] = useState("");
+  const [failed, setFailed] = useState(false);
+  const idRef = useRef(`mmd-${counter++}`);
+
+  useEffect(() => {
+    let active = true;
+    loadMermaid()
+      .then((m) => m.render(idRef.current, code))
+      .then(({ svg }) => {
+        if (active) setSvg(svg);
+      })
+      .catch(() => {
+        if (active) setFailed(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [code]);
+
+  if (failed) {
+    return (
+      <pre className="diagram-block ascii-diagram" style={{ padding: "1rem" }}>
+        {code}
+      </pre>
+    );
+  }
+
+  return (
+    <div
+      className="mermaid-diagram"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}

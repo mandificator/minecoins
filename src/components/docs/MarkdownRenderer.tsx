@@ -3,25 +3,33 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import AsciiDiagram from "@/components/ui/AsciiDiagram";
+import Mermaid from "@/components/docs/Mermaid";
 
 /** A fenced block looks like a diagram when it has box-drawing characters. */
 function isDiagram(text: string): boolean {
   return /[─│┌┐└┘├┤┬┴┼]/.test(text);
 }
 
-function getCodeText(children: unknown): string {
-  // react-markdown gives <pre><code>…</code></pre>; dig the raw text out of the
-  // <code> child element.
+function getCodeChild(children: unknown): { className: string; text: string } {
+  // react-markdown gives <pre><code class="language-x">…</code></pre>.
   const code = Array.isArray(children) ? children[0] : children;
-  const text = (code as { props?: { children?: unknown } })?.props?.children;
-  return Array.isArray(text) ? text.join("") : String(text ?? "");
+  const props = (code as { props?: { className?: string; children?: unknown } })
+    ?.props;
+  const text = props?.children;
+  return {
+    className: props?.className ?? "",
+    text: Array.isArray(text) ? text.join("") : String(text ?? ""),
+  };
 }
 
 const components: Components = {
-  // Route language-less diagram fences to the auto-fitting renderer; everything
-  // else (e.g. ```bash) stays a normally styled code block.
+  // ```mermaid → themed Mermaid diagram; language-less box-drawing → auto-fit
+  // ASCII; everything else (e.g. ```bash) → a normally styled code block.
   pre(props) {
-    const text = getCodeText(props.children);
+    const { className, text } = getCodeChild(props.children);
+    if (className.includes("language-mermaid")) {
+      return <Mermaid code={text.replace(/\n$/, "")} />;
+    }
     if (isDiagram(text)) {
       return (
         <div className="diagram-block">

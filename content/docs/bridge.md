@@ -15,12 +15,11 @@ It's **one-way** (PROMETHIUM → $PROM) and automatic.
 2. Attach an `OP_RETURN` with your **Solana address**.
 3. The Bridge reads it and sends you **$PROM** on Solana, automatically.
 
-```
-   PROMETHIUM ──> bridge address ──> coins retired on chain
-   (OP_RETURN = your Solana address)
-                          │
-                          v
-            $PROM lands on Solana (1:1), decay stops
+```mermaid
+graph LR
+  P[PROMETHIUM] -->|transfer + OP_RETURN| BR["bridge address"]
+  BR --> RET["coins retired on chain"]
+  BR -->|"1:1, decay stops"| PROM["$PROM on Solana"]
 ```
 
 ## What's happening underneath

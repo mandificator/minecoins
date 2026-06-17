@@ -2,6 +2,7 @@ import ScrollReveal from "@/components/effects/ScrollReveal";
 import TypedPrompt from "@/components/ui/TypedPrompt";
 import TerminalCard from "@/components/ui/TerminalCard";
 import AsciiDiagram from "@/components/ui/AsciiDiagram";
+import Mermaid from "@/components/docs/Mermaid";
 import { NeonLink } from "@/components/ui/NeonButton";
 
 // Periodic-table tile for the element (Pm, Z=61, mass ~[145]).
@@ -14,11 +15,17 @@ const ELEMENT = `┌─────────────────┐
 │     [145]       │
 └─────────────────┘`;
 
-const LOOP_DIAGRAM = `   DEEP ──mine──> SURFACE ──┬─ bridge in time ─> $PROM (stable, Solana)
-                            │
-                            └─ too slow? decays ─> THE BATTERY ─> paid to stakers`;
+const LOOP_DIAGRAM = `graph LR
+  DEEP -->|mine| SURFACE
+  SURFACE -->|bridge in time| PROM["$PROM (stable, Solana)"]
+  SURFACE -->|too slow, decays| BATTERY["THE BATTERY"]
+  BATTERY -->|paid out| STAKERS["battery stakers"]`;
 
-const DECAY_DIAGRAM = `surfaced ─17.7h─> ½ ─17.7h─> ¼ ─17.7h─> ⅛ ─> … ─> gone`;
+const DECAY_DIAGRAM = `graph LR
+  S[surfaced] -->|17.7h| A["½ left"]
+  A -->|17.7h| B["¼ left"]
+  B -->|17.7h| C["⅛ left"]
+  C --> G["… gone"]`;
 
 const NAMES = [
   ["PROMETHIUM", "the coin you mine on Promethium Chain"],
@@ -128,8 +135,8 @@ export default function HomePage() {
           // the loop
         </h2>
         <ScrollReveal>
-          <div className="mb-6 border border-border bg-bg-alt/70 p-4 md:p-6">
-            <AsciiDiagram text={LOOP_DIAGRAM} />
+          <div className="mb-6">
+            <Mermaid code={LOOP_DIAGRAM} />
           </div>
         </ScrollReveal>
         <ol className="space-y-3">
@@ -161,8 +168,8 @@ export default function HomePage() {
             <span className="text-title">17.7 hours</span>. It&apos;s a slope,
             not a cliff — every hour you wait costs you half again.
           </p>
-          <div className="mt-4 border border-border bg-bg-alt/40 p-4">
-            <AsciiDiagram text={DECAY_DIAGRAM} />
+          <div className="mt-4">
+            <Mermaid code={DECAY_DIAGRAM} />
           </div>
         </TerminalCard>
       </section>

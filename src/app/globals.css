@@ -346,6 +346,29 @@ body {
   padding: 1rem;
 }
 
+/* Mermaid diagrams — framed panel, responsive, centred. */
+.mermaid-diagram {
+  margin: 1.6rem 0;
+  border: 1px dashed var(--line);
+  background: var(--bg-alt);
+  padding: 1.2rem 1rem;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+/* keep node labels white + mono regardless of mermaid inline styles */
+.mermaid-diagram .nodeLabel,
+.mermaid-diagram .edgeLabel,
+.mermaid-diagram span,
+.mermaid-diagram p {
+  color: #ffffff !important;
+  font-family: var(--font-mono), ui-monospace, monospace !important;
+}
+
 /* ============================================================
    CRT / digital-glitch overlay
    Full-screen, pointer-events:none. The page stays clean between
