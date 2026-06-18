@@ -1,30 +1,35 @@
 ---
 title: The Bridge
-description: Move surfaced PROMETHIUM to Solana and freeze it as $PROM. One-way, automatic.
+description: Always the next step after surfacing. What survived the wait becomes $PROM; what decayed feeds the Battery.
 ---
 
 # The Bridge
 
-The Bridge is how you **survive the decay**. Send surfaced PROMETHIUM across, and it lands on Solana as **$PROM** — stable, permanent, done decaying.
+The Bridge is how surfaced promethium leaves Promethium Chain and lands on Solana as **$PROM**. It's **one-way** (PROMETHIUM -> $PROM) and automatic — and it's *always* your next step after promethium surfaces.
 
-It's **one-way** (PROMETHIUM → $PROM) and automatic.
+## The split
+
+When you bridge, the Bridge checks how long your promethium sat at the surface and splits the result:
+
+- **What you saved** -> sent to you as **$PROM** on Solana, stable forever.
+- **What decayed** while you waited -> captured and drained into **the Battery**.
+
+Bridge instantly and you keep nearly everything. Bridge late and a bigger slice goes to the Battery instead of to you. You never lose it all — you lose a slice that grows with time.
 
 ## How to bridge
 
 1. Send a normal PROMETHIUM transfer to the **bridge address**.
 2. Attach an `OP_RETURN` with your **Solana address**.
-3. The Bridge reads it and sends you **$PROM** on Solana, automatically.
+3. The Bridge reads it, applies the split, and sends your surviving **$PROM** to Solana, automatically.
 
-```mermaid
-graph LR
-  P[PROMETHIUM] -->|transfer + OP_RETURN| BR["bridge address"]
-  BR --> RET["coins retired on chain"]
-  BR -->|"1:1, decay stops"| PROM["$PROM on Solana"]
 ```
-
-## What's happening underneath
-
-Your PROMETHIUM is retired on Promethium Chain, and a matching amount of **$PROM** is released from the locked Solana reserve. One in, one out — never double-counted. And once it's $PROM, the clock is gone for good.
+   PROMETHIUM --> bridge address --> split by time
+   (OP_RETURN = your Solana address)
+          |                                |
+          | what you saved                 | what decayed
+          v                                v
+     $PROM to your wallet (1:1)       the Battery -> stakers
+```
 
 ## Fees
 
@@ -35,6 +40,6 @@ Your PROMETHIUM is retired on Promethium Chain, and a matching amount of **$PROM
 
 - **Triple-check your Solana address.** There's no reverse bridge. Tokens go exactly where you point them.
 - **Use the official address** published on **minecoins.work**.
-- **Bridge promptly.** Every hour you wait at the surface, decay nibbles your stack.
+- **Bridge promptly.** Every hour you wait, decay hands a bigger slice to the Battery.
 
 Next: **Tokenomics**.

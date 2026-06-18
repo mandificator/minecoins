@@ -1,6 +1,6 @@
 ---
 title: Tokenomics
-description: 21M cap, fair launch, no pre-mine. Supply is conserved — never burned, just moved.
+description: 21M cap, fair launch, no pre-mine. Supply is conserved — never burned, just redistributed.
 ---
 
 # Tokenomics
@@ -26,16 +26,16 @@ Simple, fixed, and impossible to mess with after launch.
 - All 21M **$PROM** minted once into a **locked reserve**.
 - **Mint authority revoked** — no more can ever exist.
 - **No freeze / no blacklist** — nobody can touch your $PROM.
-- $PROM is released 1:1 only as PROMETHIUM is mined and bridged.
+- $PROM is released from the reserve as promethium is mined and bridged.
 
 ## Supply is conserved, not burned
 
-Decayed promethium isn't destroyed — it flows into **the Battery** and gets redistributed to stakers as PROMETHIUM. So the 21M cap holds, but coins are constantly **changing hands** from the slow to the diligent. (See **The Battery**.)
+Promethium that decays before bridging isn't destroyed — it's captured into **the Battery** and redistributed to Battery Pool stakers as **$PROM**. So the 21M cap holds, but coins constantly **change hands** from the slow to the diligent. Decay is a redistribution mechanic, not a burn. (See **The Battery**.)
 
 ## Fees
 
-- **2%** per bridge, in $PROM → project fee address on Solana.
-- **1 USDC** via x402 per bridge / stake / unstake → same address.
+- **2%** per bridge, in $PROM -> project fee address on Solana.
+- **1 USDC** via x402 per bridge / stake / unstake -> same address.
 
 ## Why trust it
 
