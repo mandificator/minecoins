@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Renders a Mermaid diagram themed to the Promethium palette (electric-blue
@@ -88,6 +88,25 @@ export default function Mermaid({ code }: { code: string }) {
     };
   }, [zoom]);
 
+  // Build a self-contained copy for the zoom view: give it unique ids (so its
+  // markers/styles don't clash with the inline copy) and an explicit natural
+  // pixel width from the viewBox (so it renders at full size — text ≈ site font
+  // — instead of collapsing).
+  const zoomSvg = useMemo(() => {
+    if (!svg) return "";
+    let out = svg.split(idRef.current).join(`${idRef.current}-z`);
+    const w = svg.match(/viewBox="0 0 ([\d.]+)/)?.[1];
+    if (w) {
+      out = out
+        .replace(
+          /style="[^"]*max-width:[^"]*"/,
+          `style="width:${w}px;max-width:none;height:auto"`
+        )
+        .replace(/width="100%"/, `width="${w}"`);
+    }
+    return out;
+  }, [svg]);
+
   if (failed) {
     return (
       <pre className="diagram-block ascii-diagram" style={{ padding: "1rem" }}>
@@ -116,7 +135,7 @@ export default function Mermaid({ code }: { code: string }) {
             // clicking the diagram itself shouldn't close immediately
             onClick={(e) => e.stopPropagation()}
             // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: svg }}
+            dangerouslySetInnerHTML={{ __html: zoomSvg }}
           />
         </div>
       )}
