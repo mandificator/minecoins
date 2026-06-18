@@ -6,6 +6,7 @@ import CRTEffect from "@/components/effects/CRTEffect";
 import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
 import SolanaProvider from "@/components/web3/WalletProvider";
+import { Analytics } from "@vercel/analytics/next";
 import { listDocs } from "@/lib/docs";
 
 const mono = JetBrains_Mono({
@@ -85,6 +86,7 @@ export default function RootLayout({
           </div>
         </SolanaProvider>
         <CRTEffect />
+        <Analytics />
       </body>
     </html>
   );
