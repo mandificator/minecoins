@@ -29,14 +29,6 @@ export default function Footer() {
             >
               ▸ Agentic Mining
             </Link>
-            <a
-              href="https://github.com/minecoins"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glitch-hover hover:text-neon-cyan"
-            >
-              ▸ GitHub ↗
-            </a>
           </nav>
         </div>
         <div className="mt-6 text-xs text-neon-green">
