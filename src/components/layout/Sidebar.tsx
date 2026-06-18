@@ -147,7 +147,7 @@ export default function Sidebar({ docs }: { docs: MetaPage[] }) {
       )}
 
       {/* Desktop fixed left sidebar — light-blue bg, blue text */}
-      <aside className="fixed left-0 top-0 z-30 hidden h-screen w-[20rem] overflow-y-auto bg-title px-7 py-7 text-bg lg:block">
+      <aside className="fixed left-0 top-0 z-30 hidden h-screen w-[22rem] overflow-y-auto bg-title px-7 py-7 text-bg lg:block">
         {nav}
       </aside>
     </>

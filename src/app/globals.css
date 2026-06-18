@@ -378,7 +378,7 @@ body {
 /* Leave the left sidebar uncovered on desktop (connect button is elevated). */
 @media (min-width: 1024px) {
   .mermaid-modal {
-    left: 20rem;
+    left: 22rem;
     padding: 4vmin;
   }
 }

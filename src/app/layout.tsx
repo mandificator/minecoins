@@ -80,7 +80,7 @@ export default function RootLayout({
         <GridBackground />
         <SolanaProvider>
           <Sidebar docs={docs} />
-          <div id="page-content" className="flex min-h-screen flex-col lg:ml-[20rem]">
+          <div id="page-content" className="flex min-h-screen flex-col lg:ml-[22rem]">
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
