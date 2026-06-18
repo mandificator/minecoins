@@ -371,8 +371,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5vmin;
-  background: rgba(8, 28, 140, 0.94);
+  padding: 6vmin;
+  background: var(--bg); /* full electric-blue screen */
   cursor: zoom-out;
 }
 .mermaid-modal-close {
@@ -383,13 +383,11 @@ body {
   letter-spacing: 0.05em;
 }
 .mermaid-modal-inner {
-  max-width: 92vw;
-  max-height: 86vh;
+  max-width: 96vw;
+  max-height: 90vh;
   overflow: auto;
-  background: var(--bg-alt);
-  border: 1px dashed var(--line);
-  padding: 2.4vmin;
-  cursor: default;
+  background: transparent;
+  cursor: zoom-out;
 }
 .mermaid-modal-inner svg {
   display: block;

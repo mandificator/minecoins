@@ -132,8 +132,6 @@ export default function Mermaid({ code }: { code: string }) {
           <span className="mermaid-modal-close">[ ✕ close · esc ]</span>
           <div
             className="mermaid-modal-inner"
-            // clicking the diagram itself shouldn't close immediately
-            onClick={(e) => e.stopPropagation()}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: zoomSvg }}
           />
