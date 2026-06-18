@@ -1,6 +1,6 @@
 ---
 title: Get Started
-description: Mine, haul, bridge, stake — the whole loop in five minutes.
+description: Mine, haul, stabilize, stake — the whole loop in five minutes.
 ---
 
 # Get Started
@@ -9,39 +9,35 @@ Five steps. (Downloads and addresses go live on **minecoins.work**.)
 
 ## 1 - Mine
 
-Grab the node + miner. Make an address. Point your CPU / GPU / ASIC at Promethium Chain (or a pool) and start hashing. It's SHA-256, so Bitcoin gear works as-is.
+Grab the node + miner, make an address, and point your CPU / GPU / ASIC at Promethium Chain (or a pool). It's SHA-256, so Bitcoin gear works as-is. No hardware? Use the **Hiring Hall** instead.
 
 ## 2 - Haul (just wait)
 
-Mined promethium takes **100 blocks** to surface. It's safe the whole time — nothing decays. Grab a coffee.
+Mined promethium takes **100 blocks** to surface. Safe the whole time — nothing decays. Grab a coffee.
 
-## 3 - Bridge fast (the split)
+## 3 - Stabilize fast (the split)
 
-The moment it surfaces, the **17.7h** clock starts. Bridging is always your next step:
+The moment it surfaces, the **17.7h** clock starts. Run it through the **Stabilization Plant**:
 
-1. Send a PROMETHIUM transfer to the bridge address.
-2. Attach an `OP_RETURN` with your Solana address.
-3. The Bridge splits by time: **what you saved** comes back as **$PROM**, **what decayed** goes to the **Battery**. (Minus 2% + 1 USDC x402.)
+- **On time** -> the whole batch becomes **$PROM**.
+- **Late** -> you keep what survived; the decayed slice goes to the **Relief Fund**.
 
-> The faster you bridge, the more $PROM you keep. Wait too long and a bigger slice feeds the Battery Pool instead of you.
+Fees: 2% (in $PROM) + 1 USDC x402. Best done by an agent the instant it surfaces.
 
-## 4 - Stake (two pools)
+## 4 - Put $PROM to work
 
-With $PROM on Solana:
-
-- **Difficulty Pool** -> mine up to **3x easier**.
-- **Battery Pool** -> earn $PROM yield from everyone else's decay.
-
-Each stake/unstake is 1 USDC via x402.
+- **R&D Institute** -> stake for better tools, mine up to **3x easier**.
+- **Recruitment Office** -> recruit miners for more labour, up to **2x easier** (stacks).
+- **Relief Fund** -> deposit for **$PROM interest** from everyone else's decay.
 
 ## 5 - Go agentic
 
-Load the `skill.md` into Claude and just say what you want — *"bridge what surfaced, stake half in each pool."* The agent runs the loop and beats the clock for you.
+Load the `skill.md` into Claude and just say what you want — *"stabilize what surfaced, stake half in R&D, deposit the rest."* The agent runs the company and beats the clock for you. See **Agentic Mining**.
 
 ## The whole thing
 
 ```
- Mine -> Haul (safe) -> Surface (clock!) -> Bridge (split) -> $PROM -> Stake -> mine easier + earn
+ Mine -> Haul (safe) -> Surface (clock!) -> Stabilize -> $PROM -> Stake / Recruit / Deposit
 ```
 
 Next: **FAQ**.

@@ -1,22 +1,26 @@
 ---
 title: Fees & x402
-description: Pay-per-call, 1 USDC per action via x402 on Solana. Built for agents.
+description: Pay-per-call, 1 USDC per action via x402 on Solana. The agent pays exactly this — nothing extra.
 ---
 
 # Fees & x402
 
-Promethium is agentic. Bridging and staking are made to be called by people *and* by bots — so they're paid per action with **x402**, the pay-per-call standard, in USDC on Solana.
+The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Syndicate action — stabilizing, staking, withdrawing — settles a flat payment in USDC on Solana. Built so an agent can pay and act without accounts or checkout.
 
 ## The fees
 
 | Action | Fee | Paid in | Where |
 | --- | --- | --- | --- |
-| Bridge PROMETHIUM → $PROM | **2%** of the amount | $PROM | on the bridge transfer |
-| Bridge (service call) | **1 USDC** | USDC | x402 on Solana |
-| Stake $PROM | **1 USDC** | USDC | x402 on Solana |
-| Unstake $PROM | **1 USDC** | USDC | x402 on Solana |
+| Stabilize PROMETHIUM -> $PROM | **2%** of the amount | $PROM | on the transfer |
+| Stabilize (service call) | **1 USDC** | USDC | x402 on Solana |
+| Stake / unstake (R&D Institute) | **1 USDC** | USDC | x402 on Solana |
+| Deposit / withdraw (Relief Fund) | **1 USDC** | USDC | x402 on Solana |
 
-Bridging has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Staking and unstaking are 1 USDC each.
+Stabilizing has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Everything else is 1 USDC per action.
+
+## The agent pays exactly these
+
+When an agent runs an action for you, **it pays the same x402 fees listed above — nothing on top.** There is no separate "agent fee." The cost of doing it agentically is identical to doing it by hand; you just don't have to be awake for it.
 
 ## Why x402
 
@@ -24,6 +28,4 @@ Bridging has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Staking and un
 - **Fair** — pay only for what you use.
 - **Instant** — settled in USDC on Solana.
 
-This is the rail that makes "agentic mining" actually work: a bot can pay 1 USDC and bridge your promethium before it decays, while you sleep.
-
-Next: **Agentic Mining**.
+Next: **Architecture**.

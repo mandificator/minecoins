@@ -1,21 +1,21 @@
 ---
 title: Introduction
-description: Mine an element that refuses to exist. Race the clock. Bridge fast to keep it as $PROM.
+description: The Agentic Mining Company. Real Proof-of-Work tokens on Solana — mined, stabilized, and run by agents.
 ---
 
 # Promethium
 
-**An element that doesn't want to exist — so you have to take it by force.**
+**The Agentic Mining Company — real Proof-of-Work tokens on Solana.**
 
-In the real world, promethium is the rarest of the rare earths. Every atom of it is radioactive. There are no promethium mines, no lucky countries sitting on a deposit. The only promethium that exists is the promethium *someone made*.
+Promethium doesn't occur in nature. In the real world it's the rarest of the rare earths: every atom radioactive, no deposits, no lucky country sitting on a vein. The only promethium that exists is the promethium *someone made*.
 
-We built a coin on exactly that.
+We built a coin on exactly that — and a whole company around mining it.
 
-You mine **PROMETHIUM** the honest way — real Proof-of-Work, CPU/GPU/ASIC, on **Promethium Chain**. But it comes out of the ground deep, unstable, and impatient. The moment it hits the surface, it starts to decay. Your job: bridge it fast, because the slower you are, the more of it slips away.
+You mine **PROMETHIUM** the honest way: real Proof-of-Work, CPU/GPU/ASIC, on **Promethium Chain**. It comes out of the deep raw and unstable. The instant it surfaces, it starts to decay — so you run it through the **Stabilization Plant** to lock it onto Solana as **$PROM** before too much fades away.
 
-Bridge quickly and you keep nearly all of it as **$PROM** on Solana — stable, liquid, yours. Bridge late and the decayed slice drains into **the Battery**… where it becomes someone else's reward.
+Behind it all stands the **Promethium Mining Syndicate** — the company. Stake to fund its research and earn interest, recruit miners under you, or just hire one of ours to dig on your behalf.
 
-> **Agentic mining.** Mine, bridge, stake — all from the command line through Claude, via one `skill.md`. State your intent; the agent races the clock for you.
+> **Agentic mining.** You don't click through dashboards. You tell an agent like Claude what you want — *"mine, stabilize what surfaced, stake half"* — and it runs the whole company for you over the command line, via one `skill.md`. See **Agentic Mining**.
 
 ## The three names you need
 
@@ -23,6 +23,6 @@ Bridge quickly and you keep nearly all of it as **$PROM** on Solana — stable, 
 | --- | --- |
 | **PROMETHIUM** | the coin you mine on Promethium Chain |
 | **$PROM** | the same value, stabilized as a token on Solana |
-| **The Battery** | where decayed promethium goes — and gets paid out to stakers in $PROM |
+| **Promethium Mining Syndicate** | the company — its departments run staking, bridging, referrals, and hire |
 
 Next: **The Loop**.

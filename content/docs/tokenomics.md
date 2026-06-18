@@ -14,7 +14,7 @@ Simple, fixed, and impossible to mess with after launch.
 | Max supply | **21,000,000** (PROMETHIUM and $PROM share one cap) |
 | Pre-mine / insiders | **None** — fair launch from block 1 |
 | Coin issuance | mined block by block, Bitcoin-style halvings |
-| Token issuance | 21M $PROM minted once on Solana, **locked**, released only by mining + bridging |
+| Token issuance | 21M $PROM minted once on Solana, **locked**, released only by mining + stabilizing |
 
 ## The coin side — Promethium Chain
 
@@ -26,16 +26,16 @@ Simple, fixed, and impossible to mess with after launch.
 - All 21M **$PROM** minted once into a **locked reserve**.
 - **Mint authority revoked** — no more can ever exist.
 - **No freeze / no blacklist** — nobody can touch your $PROM.
-- $PROM is released from the reserve as promethium is mined and bridged.
+- $PROM is released from the reserve as promethium is mined and stabilized.
 
 ## Supply is conserved, not burned
 
-Promethium that decays before bridging isn't destroyed — it's captured into **the Battery** and redistributed to Battery Pool stakers as **$PROM**. So the 21M cap holds, but coins constantly **change hands** from the slow to the diligent. Decay is a redistribution mechanic, not a burn. (See **The Battery**.)
+Promethium that decays before stabilizing isn't destroyed — it settles into the **Relief Fund** and is paid out to depositors as $PROM interest. The 21M cap holds; coins simply **change hands** from the slow to the diligent. Decay is redistribution, not a burn.
 
 ## Fees
 
-- **2%** per bridge, in $PROM -> project fee address on Solana.
-- **1 USDC** via x402 per bridge / stake / unstake -> same address.
+- **2%** per stabilization, in $PROM -> Syndicate fee address on Solana.
+- **1 USDC** via x402 per stabilization / stake / unstake -> same address.
 
 ## Why trust it
 

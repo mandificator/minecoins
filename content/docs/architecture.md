@@ -1,43 +1,47 @@
 ---
 title: Architecture
-description: The node, the miner, the oracle, and the Battery — how the pieces fit.
+description: The node, the miner, the oracle, and the Syndicate departments — how it all fits.
 ---
 
 # Architecture
 
-Four moving parts, one loop.
+The chain, three programs, and the Syndicate that runs on top.
 
 ## The Node — Promethium Chain
 
-A Bitcoin-codebase fork. It validates blocks and transactions, enforces Proof-of-Work and the 21M cap, runs the **decay** on surfaced promethium, captures the decayed slice into the **Battery** at bridge time, and applies each miner's difficulty discount.
+A Bitcoin-codebase fork. It validates blocks and transactions, enforces Proof-of-Work and the 21M cap, runs the **decay** on surfaced promethium, routes decayed slices into the **Relief Fund** at stabilization time, and applies each miner's difficulty discount.
 
 ## The Miner
 
-Standard SHA-256 mining — CPU, GPU, ASIC, solo or pool. Produces the hashes that find blocks and earn PROMETHIUM.
+Standard SHA-256 mining — CPU, GPU, ASIC, solo or pool. Finds blocks, earns PROMETHIUM.
 
 ## The Oracle
 
-Reads the **staking program on Solana** and reports it to the chain:
+Reads Solana and reports to the chain:
 
-- how much $PROM you've staked in the **Difficulty Pool** -> sets your discount (up to 3x)
-- how much in the **Battery Pool** -> sets your share of payouts
+- **R&D Institute** stake -> your tools discount (up to 3x)
+- **Recruitment Office** crew -> your labour discount (up to 2x)
+- **Relief Fund** deposit -> your share of interest
 
-No oracle reading = no discount, no yield. Mining still works at full difficulty.
+## The Syndicate departments
 
-## The Battery
-
-A reservoir on-chain that captures promethium lost to decay and pays it out to the Battery Pool in $PROM.
+- **Stabilization Plant** — decants surfaced PROMETHIUM into $PROM; sends decay to the Relief Fund.
+- **R&D Institute** / **Recruitment Office** — the two difficulty levers (tools, labour).
+- **Relief Fund** — pays $PROM interest from captured decay.
+- **Hiring Hall** — pay a PMS miner to dig for you.
 
 ## How it fits
 
 ```
  +--------+ mines  +-----------------+  reads stake  +--------+
  | MINER  |------->| PROMETHIUM CHAIN |<-------------| ORACLE |
- +--------+        |   + the Battery  |              +---+----+
+ +--------+        |  + Relief Fund   |              +---+----+
                    +--------+---------+                  | reads
-                            | bridge (split)             v
-                            v                staking pools (Solana)
+                            | stabilize (split)          v
+                            v               Syndicate departments (Solana)
                       $PROM on Solana <----------------+
 ```
+
+The agent sits on top of all of it: it reads status, stabilizes, stakes, and recruits through one `skill.md`.
 
 Next: **Get Started**.
