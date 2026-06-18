@@ -6,10 +6,16 @@ const nextConfig = {
     // Tell Next's file tracing to bundle that folder into the serverless
     // functions, otherwise the files are missing in production (e.g. Vercel).
     outputFileTracingIncludes: {
-      "/docs/[slug]": ["./content/docs/**/*"],
+      // /docs/[slug] is force-dynamic, so it resolves metadata (incl. the
+      // openGraph image, which reads the bundled TTFs) at request time — the
+      // fonts must be traced into its serverless function too.
+      "/docs/[slug]": ["./content/docs/**/*", "./src/assets/fonts/**/*"],
       "/docs": ["./content/docs/**/*"],
       "/api/docs": ["./content/docs/**/*"],
       "/api/docs/[slug]": ["./content/docs/**/*"],
+      // OG/Twitter image routes render the cards from these fonts.
+      "/opengraph-image": ["./src/assets/fonts/**/*"],
+      "/twitter-image": ["./src/assets/fonts/**/*"],
     },
   },
   webpack: (config) => {
