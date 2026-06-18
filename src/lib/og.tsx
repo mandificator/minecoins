@@ -1,8 +1,17 @@
 import { ImageResponse } from "next/og";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 export const ogAlt = "Promethium — Agentic Mining Company";
+
+// JetBrains Mono — the same typeface the site uses (next/font ships woff2, which
+// satori can't read, so we bundle the TTFs and load them here). Read once at
+// module scope; the OG routes are statically prerendered at build time.
+const FONT_DIR = join(process.cwd(), "src/assets/fonts");
+const jetBrainsRegular = readFileSync(join(FONT_DIR, "JetBrainsMono-Regular.ttf"));
+const jetBrainsBold = readFileSync(join(FONT_DIR, "JetBrainsMono-Bold.ttf"));
 
 // Shared social-card renderer used by both the Open Graph and Twitter image
 // routes. Electric-blue cyberpunk theme, matching the site.
@@ -18,7 +27,7 @@ export function renderOgImage() {
           justifyContent: "space-between",
           background: "#0a2bd6",
           color: "#ffffff",
-          fontFamily: "monospace",
+          fontFamily: "JetBrains Mono",
           padding: 64,
           border: "8px solid #6f8ce6",
         }}
@@ -49,6 +58,12 @@ export function renderOgImage() {
         </div>
       </div>
     ),
-    { ...ogSize }
+    {
+      ...ogSize,
+      fonts: [
+        { name: "JetBrains Mono", data: jetBrainsRegular, weight: 400, style: "normal" },
+        { name: "JetBrains Mono", data: jetBrainsBold, weight: 700, style: "normal" },
+      ],
+    }
   );
 }
