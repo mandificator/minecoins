@@ -56,7 +56,7 @@ export default function HomePage() {
           </p>
           <p className="mt-4 max-w-2xl text-fg-dim">
             Mine an element that refuses to exist. Stabilize it before it fades.
-            Let agents run the whole company for you.
+            Let an agent run your mining for you.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -106,9 +106,13 @@ export default function HomePage() {
           <p className="mt-2 leading-relaxed text-fg-dim">
             Tell an agent like Claude{" "}
             <em>&quot;stabilize what surfaced, stake half in R&amp;D&quot;</em> —
-            it runs the whole company over the command line via one{" "}
+            it runs your whole mining operation over the command line via one{" "}
             <code>skill.md</code>, and beats the 17.7h clock while you sleep. Same
             x402 fees as doing it by hand. No extra cost.
+          </p>
+          <p className="mt-3 leading-relaxed text-fg-dim">
+            The Company is us — the creators of the chain. Your agent looks after
+            one miner: you.
           </p>
           <div className="mt-5">
             <NeonLink href="/agentic-mining">SEE AGENTIC MINING →</NeonLink>

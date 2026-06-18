@@ -36,11 +36,17 @@ export default function AgenticMiningPage() {
       </section>
 
       <section className="pb-8">
-        <TerminalCard title="WHY IT MATTERS">
+        <TerminalCard title="YOU SET THE RULES">
           <p className="leading-relaxed">
-            Promethium decays on a 17.7h half-life the moment it surfaces. An agent
-            stabilizes the instant it surfaces — while you sleep — so you keep
-            ~100% instead of losing the slice that fades before you get to it.
+            You decide how the agent behaves: how often it checks the chain (every
+            few minutes, hourly, daily), what it does with the $PROM it stabilizes
+            (hold, stake in R&amp;D, deposit into the Relief Fund), and when it
+            acts at all.
+          </p>
+          <p className="mt-3 leading-relaxed text-fg-dim">
+            It can run on a recurring schedule or only when you tell it to. Promethium
+            decays on a 17.7h half-life from the moment it surfaces — set it to watch
+            closely and it stabilizes while you sleep, so you keep more.
           </p>
         </TerminalCard>
       </section>
@@ -69,8 +75,15 @@ export default function AgenticMiningPage() {
       <section className="pb-12">
         <TerminalCard title="FEES">
           <p className="leading-relaxed">
-            The agent pays the same x402 fees as you would by hand — 1 USDC per
-            action, nothing extra. See{" "}
+            The agent pays the same <span className="text-title">1 USDC</span> x402
+            fees on stabilizing, staking and unstaking as you would doing it by
+            hand — nothing extra.
+          </p>
+          <p className="mt-3 leading-relaxed text-fg-dim">
+            The one difference: it pays <span className="text-title">10¢</span> each
+            time it checks the chain on your behalf to see whether you&apos;ve mined
+            promethium that needs stabilizing. You fund the agent&apos;s wallet — we
+            recommend keeping at least 10 USDC in it. See{" "}
             <NeonLink href="/docs/fees-x402">Fees &amp; x402</NeonLink>.
           </p>
         </TerminalCard>

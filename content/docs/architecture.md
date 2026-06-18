@@ -32,14 +32,15 @@ Reads Solana and reports to the chain:
 
 ## How it fits
 
-```
- +--------+ mines  +-----------------+  reads stake  +--------+
- | MINER  |------->| PROMETHIUM CHAIN |<-------------| ORACLE |
- +--------+        |  + Relief Fund   |              +---+----+
-                   +--------+---------+                  | reads
-                            | stabilize (split)          v
-                            v               Syndicate departments (Solana)
-                      $PROM on Solana <----------------+
+```mermaid
+flowchart LR
+    MINER[Miner] -->|mines| CHAIN[Promethium Chain<br/>+ Relief Fund]
+    ORACLE[Oracle] -->|reads stake| CHAIN
+    SYND[Syndicate departments<br/>on Solana] -->|reads| ORACLE
+    CHAIN -->|stabilize / split| PROM[$PROM on Solana]
+    PROM --> SYND
+    AGENT([Agent · skill.md]) -.->|status · stabilize · stake · recruit| CHAIN
+    AGENT -.-> SYND
 ```
 
 The agent sits on top of all of it: it reads status, stabilizes, stakes, and recruits through one `skill.md`.

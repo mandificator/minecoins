@@ -14,7 +14,7 @@ Simple, fixed, and impossible to mess with after launch.
 | Max supply | **21,000,000** (PROMETHIUM and $PROM share one cap) |
 | Pre-mine / insiders | **None** — fair launch from block 1 |
 | Coin issuance | mined block by block, Bitcoin-style halvings |
-| Token issuance | 21M $PROM minted once on Solana, **locked**, released only by mining + stabilizing |
+| Token issuance | 21M $PROM minted once on Solana, **locked**, released only by mining + stabilizing — released only through the **Stabilization Plant** |
 
 ## The coin side — Promethium Chain
 
@@ -26,7 +26,7 @@ Simple, fixed, and impossible to mess with after launch.
 - All 21M **$PROM** minted once into a **locked reserve**.
 - **Mint authority revoked** — no more can ever exist.
 - **No freeze / no blacklist** — nobody can touch your $PROM.
-- $PROM is released from the reserve as promethium is mined and stabilized.
+- $PROM is released from the reserve **only through the Stabilization Plant**, as promethium is mined and stabilized.
 
 ## Supply is conserved, not burned
 

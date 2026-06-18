@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { NeonLink } from "@/components/ui/NeonButton";
 import BlinkCursor from "@/components/effects/BlinkCursor";
 import ConstructionWidget from "@/components/ui/ConstructionWidget";
-import AsciiDiagram from "@/components/ui/AsciiDiagram";
 
 export const metadata: Metadata = {
   title: "Hiring Hall — Coming Soon",
@@ -10,19 +9,9 @@ export const metadata: Metadata = {
     "Pay a Syndicate miner's wage. They dig for you, you keep the promethium. Coming soon.",
 };
 
-const ART = `   ┌─────────────────────────────┐
-   │  ▄▄▄  UNDER CONSTRUCTION ▄▄▄ │
-   │   ▟█▙   ▟█▙   ▟█▙   ▟█▙      │
-   │  ▟███▙ ▟███▙ ▟███▙ ▟███▙     │
-   └─────────────────────────────┘`;
-
 export default function RentAMinerPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-      <div className="mx-auto mb-6 max-w-sm">
-        <AsciiDiagram text={ART} center />
-      </div>
-
       <h1 className="mb-2 text-2xl font-bold text-amber">
         HIRING HALL [ coming soon <BlinkCursor className="text-amber" /> ]
       </h1>

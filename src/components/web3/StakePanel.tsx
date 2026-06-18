@@ -15,10 +15,9 @@ import { estimateDiscount, getTokenBalance, type Pool } from "@/lib/solana/staki
 
 const COMING = "Coming at mainnet — staking program not deployed yet.";
 
-export default function StakePanel() {
+export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const { connection } = useConnection();
   const { publicKey, connected } = useWallet();
-  const [pool, setPool] = useState<Pool>("difficulty");
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
@@ -47,26 +46,10 @@ export default function StakePanel() {
     <div className="border border-border bg-bg-alt/60">
       <div className="flex items-center gap-2 border-b border-border px-3 py-2 font-mono">
         <span className="text-fg-dim">┌─[</span>
-        <span className="uppercase tracking-widest text-neon-magenta">INVESTMENT</span>
+        <span className="uppercase tracking-widest text-neon-magenta">
+          {isDiff ? "R&D Institute" : "Relief Fund"}
+        </span>
         <span className="text-fg-dim">]──┐</span>
-      </div>
-
-      {/* pool tabs */}
-      <div className="grid grid-cols-2 border-b border-border">
-        {(["difficulty", "battery"] as Pool[]).map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => setPool(p)}
-            className={`px-3 py-2 uppercase tracking-wider transition-colors ${
-              pool === p
-                ? "bg-bg-alt text-neon-magenta"
-                : "text-fg-dim hover:text-fg"
-            }`}
-          >
-            {p === "difficulty" ? "R&D Institute" : "Relief Fund"}
-          </button>
-        ))}
       </div>
 
       <div className="space-y-5 p-5">
@@ -127,9 +110,8 @@ export default function StakePanel() {
               <span className="neon-green font-mono">—</span>
             </div>
             <p className="mt-1 text-fg-dim">
-              Deposit $PROM; the Syndicate puts it to work and you earn interest
-              in $PROM — paid on Solana, stable, no decay. Funded by the decay
-              captured from late stabilizations.
+              Earn interest in $PROM — paid on Solana, stable, no decay. Funded by
+              the decay captured from late stabilizations.
             </p>
           </div>
         )}
@@ -159,7 +141,7 @@ export default function StakePanel() {
         )}
 
         <p className="text-fg-dim">
-          {isDiff ? "R&D Institute" : "Relief Fund"} · each action costs{" "}
+          Each action costs{" "}
           <span className="text-amber">{X402_FEE_USDC} USDC</span> via x402 on
           Solana — the agent pays the same, no extra.
         </p>

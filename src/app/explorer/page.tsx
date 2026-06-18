@@ -15,9 +15,9 @@ export default function ExplorerPage() {
     <div className="mx-auto max-w-6xl px-4 py-10">
       <h1 className="mb-2 text-2xl font-bold text-neon-green">Block Explorer</h1>
       <p className="mb-6 max-w-2xl text-sm text-fg-dim">
-        Promethium Chain uses an open-source, Bitcoin-codebase block explorer hosted
-        separately from this site. We don&apos;t rebuild it here — we link
-        straight to it.
+        Unlike other tokens that <em>claim</em> to be Proof-of-Work, here you can
+        check it yourself — verify every block, every transaction, and every
+        address on the chain.
       </p>
 
       <div className="border border-border">

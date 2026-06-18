@@ -16,7 +16,7 @@ export default function BridgePage() {
         Decant surfaced PROMETHIUM into stable $PROM.
       </p>
 
-      <blockquote className="mb-8 max-w-3xl border-l-2 border-neon-cyan pl-4 text-sm leading-relaxed text-fg-dim">
+      <blockquote className="mb-8 border-l-2 border-neon-cyan pl-4 text-sm leading-relaxed text-fg-dim">
         You send <span className="text-fg">X PROMETHIUM</span> and receive{" "}
         <span className="text-fg">Y $PROM</span>, where{" "}
         <span className="text-fg">X = Y + decayed</span>. The decayed amount is the
@@ -25,14 +25,15 @@ export default function BridgePage() {
         paid to depositors. Stabilize fast, keep more.
       </blockquote>
 
-      {/* Agentic-first */}
-      <div className="mb-8 max-w-3xl border border-border bg-bg-alt/60 p-4 text-sm">
+      {/* Agentic-first — the emphasis of this page, full width */}
+      <div className="mb-8 w-full border border-neon-magenta/60 bg-bg-alt/60 p-5 text-sm">
         <h2 className="mb-2 uppercase tracking-widest text-neon-magenta">
-          Agentic bridge
+          Agentic bridge — the way to do it
         </h2>
         <p className="mb-3 text-fg-dim">
           This is agentic by design. The agent watches for surfacing and
-          stabilizes instantly — beating the clock while you sleep. One endpoint:
+          stabilizes instantly — beating the 17.7h clock while you sleep. One
+          endpoint:
         </p>
         <pre className="overflow-x-auto border border-border bg-bg p-3 font-mono text-xs text-neon-green">
 {`POST /v1/stabilize
