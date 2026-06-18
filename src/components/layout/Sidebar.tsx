@@ -110,13 +110,14 @@ export default function Sidebar({ docs }: { docs: MetaPage[] }) {
 
   return (
     <>
-      {/* Connect — fixed top-right (desktop), same colours as the sidebar */}
-      <div className="fixed right-5 top-4 z-40 hidden lg:block">
+      {/* Connect — fixed top-right (desktop), same colours as the sidebar.
+          z above the zoom overlay (9999) so it stays visible/clickable. */}
+      <div className="fixed right-5 top-4 z-[10000] hidden lg:block">
         <WalletButton />
       </div>
 
-      {/* Mobile top bar */}
-      <div className="sticky top-0 z-40 flex items-center justify-between border-b border-bg/30 bg-title px-4 py-3 text-bg lg:hidden">
+      {/* Mobile top bar (also above the zoom overlay) */}
+      <div className="sticky top-0 z-[10000] flex items-center justify-between border-b border-bg/30 bg-title px-4 py-3 text-bg lg:hidden">
         <Link href="/" className="font-bold tracking-[0.15em]">
           PROMETHIUM
         </Link>

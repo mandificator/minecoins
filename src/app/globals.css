@@ -375,6 +375,13 @@ body {
   background: var(--bg); /* full electric-blue screen */
   cursor: zoom-out;
 }
+/* Leave the left sidebar uncovered on desktop (connect button is elevated). */
+@media (min-width: 1024px) {
+  .mermaid-modal {
+    left: 20rem;
+    padding: 4vmin;
+  }
+}
 .mermaid-modal-close {
   position: fixed;
   top: 1rem;
