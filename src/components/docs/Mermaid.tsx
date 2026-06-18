@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Renders a Mermaid diagram themed to the Promethium palette (electric-blue
@@ -127,16 +128,19 @@ export default function Mermaid({ code }: { code: string }) {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: svg }}
       />
-      {zoom && (
-        <div className="mermaid-modal" onClick={() => setZoom(false)}>
-          <span className="mermaid-modal-close">[ ✕ close · esc ]</span>
-          <div
-            className="mermaid-modal-inner"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: zoomSvg }}
-          />
-        </div>
-      )}
+      {zoom &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="mermaid-modal" onClick={() => setZoom(false)}>
+            <span className="mermaid-modal-close">[ ✕ close · esc ]</span>
+            <div
+              className="mermaid-modal-inner"
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{ __html: zoomSvg }}
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 }
