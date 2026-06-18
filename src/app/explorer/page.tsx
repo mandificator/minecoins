@@ -4,7 +4,7 @@ import { NeonLink } from "@/components/ui/NeonButton";
 import { solanaConfig } from "@/lib/solana/config";
 
 export const metadata: Metadata = {
-  title: "Block Explorer — Promethium",
+  title: "Block Explorer",
   description: "Browse the Promethium Chain block explorer.",
 };
 

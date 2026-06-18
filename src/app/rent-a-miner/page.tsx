@@ -4,7 +4,7 @@ import BlinkCursor from "@/components/effects/BlinkCursor";
 import ConstructionWidget from "@/components/ui/ConstructionWidget";
 
 export const metadata: Metadata = {
-  title: "Hiring Hall — Coming Soon",
+  title: "Hiring Hall",
   description:
     "Pay a Syndicate miner's wage. They dig for you, you keep the promethium. Coming soon.",
 };

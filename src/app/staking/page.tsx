@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import StakePanel from "@/components/web3/StakePanel";
 
 export const metadata: Metadata = {
-  title: "Investment — Promethium",
+  title: "Investment",
   description:
     "Put your $PROM to work in the Promethium Mining Syndicate: R&D Institute (mine up to 3× easier) and Relief Fund (earn $PROM interest).",
 };

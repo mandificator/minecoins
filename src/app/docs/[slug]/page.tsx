@@ -14,9 +14,9 @@ export function generateMetadata({
   params: { slug: string };
 }): Metadata {
   const doc = getDoc(params.slug);
-  if (!doc) return { title: "Not found — Promethium docs" };
+  if (!doc) return { title: "Not found" };
   return {
-    title: `${doc.frontmatter.title} — Promethium docs`,
+    title: doc.frontmatter.title,
     description: doc.frontmatter.description,
   };
 }

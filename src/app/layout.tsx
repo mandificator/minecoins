@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import GridBackground from "@/components/effects/GridBackground";
@@ -14,18 +14,54 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+const SITE_URL = "https://promethium.work";
+const DESCRIPTION =
+  "A real Proof-of-Work coin on Promethium Chain that decays at the surface (17.7h half-life). Mine it, stabilize it to Solana as $PROM before it fades, and let an agent run your mining for you.";
+
 export const metadata: Metadata = {
-  title: "Promethium — the element that doesn't want to exist",
-  description:
-    "A real Proof-of-Work coin on Promethium Chain that decays at the surface (17.7h half-life). Mine it, haul it, and bridge it to Solana as $PROM before it fades.",
-  metadataBase: new URL("https://minecoins.work"),
-  openGraph: {
-    title: "Promethium — mine it, race it, stabilize it",
-    description:
-      "Mine Promethium with Proof-of-Work, beat the 17.7h decay, and bridge to Solana as $PROM. Stake $PROM to mine easier.",
-    url: "https://minecoins.work",
-    siteName: "Promethium",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Promethium — Agentic Mining Company",
+    template: "%s · Promethium",
   },
+  description: DESCRIPTION,
+  applicationName: "Promethium",
+  keywords: [
+    "Promethium",
+    "$PROM",
+    "Proof of Work",
+    "Solana",
+    "agentic mining",
+    "crypto mining",
+    "x402",
+    "Promethium Chain",
+  ],
+  authors: [{ name: "Promethium" }],
+  category: "technology",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Promethium",
+    title: "Promethium — Agentic Mining Company",
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Promethium — Agentic Mining Company",
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a2bd6",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

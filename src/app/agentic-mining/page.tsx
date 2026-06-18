@@ -3,7 +3,7 @@ import TerminalCard from "@/components/ui/TerminalCard";
 import { NeonLink } from "@/components/ui/NeonButton";
 
 export const metadata: Metadata = {
-  title: "Agentic Mining — Promethium",
+  title: "Agentic Mining",
   description: "The Agentic Mining Company runs on intent, not dashboards.",
 };
 

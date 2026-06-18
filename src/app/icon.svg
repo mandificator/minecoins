@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0a2bd6"/>
+  <rect x="1.5" y="1.5" width="29" height="29" rx="5" fill="none" stroke="#6f8ce6" stroke-width="1"/>
+  <text x="16" y="21.5" font-family="ui-monospace, Menlo, monospace" font-size="15" font-weight="700" fill="#bcd4ff" text-anchor="middle">Pm</text>
+</svg>

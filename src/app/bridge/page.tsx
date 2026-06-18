@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BridgePanel from "@/components/web3/BridgePanel";
 
 export const metadata: Metadata = {
-  title: "The Stabilization Plant — Promethium",
+  title: "The Stabilization Plant",
   description: "Decant surfaced PROMETHIUM into stable $PROM on Solana. Agentic by design.",
 };
 
