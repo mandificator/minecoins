@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { NeonButton } from "@/components/ui/NeonButton";
 import {
-  isBridgeLive,
   solanaConfig,
   X402_FEE_USDC,
   BRIDGE_FEE_PCT,
@@ -36,7 +35,6 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 
 export default function BridgePanel() {
   const bridgeAddress = solanaConfig.bridgeAddress;
-  const live = isBridgeLive();
 
   const [solAddr, setSolAddr] = useState("");
   const [amount, setAmount] = useState("");
@@ -81,11 +79,6 @@ export default function BridgePanel() {
               BRIDGE COIN → TOKEN{" "}
             </span>
             <span className="text-fg-dim">]─┐</span>
-            {!live && (
-              <span className="ml-2 border border-amber px-2 py-0.5 text-[10px] uppercase text-amber">
-                Read-only — coming at mainnet
-              </span>
-            )}
           </div>
           <div className="space-y-4 p-4 text-sm">
             <ol className="space-y-2 pl-5">

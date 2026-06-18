@@ -23,6 +23,12 @@ export default function Footer() {
             <Link href="/explorer" className="glitch-hover hover:text-neon-cyan">
               ▸ Explorer
             </Link>
+            <Link
+              href="/agentic-mining"
+              className="glitch-hover hover:text-neon-cyan"
+            >
+              ▸ Agentic Mining
+            </Link>
             <a
               href="https://github.com/minecoins"
               target="_blank"

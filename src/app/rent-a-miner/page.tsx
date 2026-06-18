@@ -5,8 +5,9 @@ import ConstructionWidget from "@/components/ui/ConstructionWidget";
 import AsciiDiagram from "@/components/ui/AsciiDiagram";
 
 export const metadata: Metadata = {
-  title: "Rent a Miner — Coming Soon",
-  description: "Mine Promethium without owning hardware. Coming soon.",
+  title: "Hiring Hall — Coming Soon",
+  description:
+    "Pay a Syndicate miner's wage. They dig for you, you keep the promethium. Coming soon.",
 };
 
 const ART = `   ┌─────────────────────────────┐
@@ -23,10 +24,12 @@ export default function RentAMinerPage() {
       </div>
 
       <h1 className="mb-2 text-2xl font-bold text-amber">
-        [ UNDER CONSTRUCTION <BlinkCursor className="text-amber" /> ]
+        HIRING HALL [ coming soon <BlinkCursor className="text-amber" /> ]
       </h1>
       <p className="mx-auto mb-8 max-w-md text-sm text-fg-dim">
-        Rent a Miner is coming soon. Mine Promethium without owning hardware.
+        Mine promethium without owning hardware by renting mining power from the
+        Promethium Mining Syndicate. You pay a miner&apos;s wage; they dig for
+        you; the promethium is yours.
       </p>
 
       <ConstructionWidget />

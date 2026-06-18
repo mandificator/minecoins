@@ -8,11 +8,15 @@ import type { MetaPage } from "@/lib/docs";
 
 type Item = { href: string; label: string };
 
-const TOP: Item[] = [{ href: "/", label: "ABOUT" }, { href: "/explorer", label: "EXPLORER" }];
+const TOP: Item[] = [
+  { href: "/", label: "ABOUT" },
+  { href: "/agentic-mining", label: "AGENTIC MINING" },
+  { href: "/explorer", label: "EXPLORER" },
+];
 const BOTTOM: Item[] = [
-  { href: "/staking", label: "STAKING" },
-  { href: "/bridge", label: "BRIDGE" },
-  { href: "/rent-a-miner", label: "RENT-A-MINER" },
+  { href: "/staking", label: "INVESTMENT" },
+  { href: "/bridge", label: "STABILIZATION PLANT" },
+  { href: "/rent-a-miner", label: "HIRING HALL" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

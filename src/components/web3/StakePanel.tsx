@@ -47,13 +47,8 @@ export default function StakePanel() {
     <div className="border border-border bg-bg-alt/60">
       <div className="flex items-center gap-2 border-b border-border px-3 py-2 font-mono">
         <span className="text-fg-dim">┌─[</span>
-        <span className="uppercase tracking-widest text-neon-magenta">STAKING</span>
+        <span className="uppercase tracking-widest text-neon-magenta">INVESTMENT</span>
         <span className="text-fg-dim">]──┐</span>
-        {!live && (
-          <span className="ml-auto border border-amber px-2 py-0.5 uppercase text-amber">
-            Coming at mainnet
-          </span>
-        )}
       </div>
 
       {/* pool tabs */}
@@ -69,7 +64,7 @@ export default function StakePanel() {
                 : "text-fg-dim hover:text-fg"
             }`}
           >
-            {p === "difficulty" ? "Difficulty Pool" : "Battery Pool"}
+            {p === "difficulty" ? "R&D Institute" : "Relief Fund"}
           </button>
         ))}
       </div>
@@ -87,7 +82,7 @@ export default function StakePanel() {
         {/* amount */}
         <label className="block">
           <span className="mb-1 block uppercase tracking-widest text-fg-dim">
-            Amount to stake ($PROM)
+            {isDiff ? "Amount to stake ($PROM)" : "Amount to deposit ($PROM)"}
           </span>
           <input
             type="number"
@@ -127,14 +122,14 @@ export default function StakePanel() {
           <div className="border border-border bg-bg p-3">
             <div className="flex items-center justify-between">
               <span className="uppercase tracking-widest text-fg-dim">
-                Estimated Battery yield share
+                Estimated interest
               </span>
               <span className="neon-green font-mono">—</span>
             </div>
             <p className="mt-1 text-fg-dim">
-              Earn fresh PROMETHIUM from promethium others let decay, in
-              proportion to your stake. Yield surfaces and decays — bridge it to
-              keep it.
+              Deposit $PROM; the Syndicate puts it to work and you earn interest
+              in $PROM — paid on Solana, stable, no decay. Funded by the decay
+              captured from late stabilizations.
             </p>
           </div>
         )}
@@ -150,7 +145,7 @@ export default function StakePanel() {
               disabled={!live || amt <= 0}
               title={!live ? COMING : undefined}
             >
-              STAKE
+              {isDiff ? "STAKE" : "DEPOSIT"}
             </NeonButton>
             <NeonButton
               color="cyan"
@@ -158,15 +153,15 @@ export default function StakePanel() {
               disabled={!live || amt <= 0}
               title={!live ? COMING : undefined}
             >
-              UNSTAKE
+              {isDiff ? "UNSTAKE" : "WITHDRAW"}
             </NeonButton>
           </div>
         )}
 
         <p className="text-fg-dim">
-          {isDiff ? "Difficulty Pool" : "Battery Pool"} · each stake / unstake
-          costs <span className="text-amber">{X402_FEE_USDC} USDC</span> via
-          x402 on Solana.
+          {isDiff ? "R&D Institute" : "Relief Fund"} · each action costs{" "}
+          <span className="text-amber">{X402_FEE_USDC} USDC</span> via x402 on
+          Solana — the agent pays the same, no extra.
         </p>
       </div>
     </div>
