@@ -13,7 +13,7 @@ export default function Footer() {
             <div className="neon-green font-bold tracking-[0.2em]">PROMETHIUM</div>
             <p className="mt-2 max-w-md text-xs text-fg-dim">
               Promethium is experimental software. Fair launch, no pre-mine. Verify all
-              addresses on minecoins.work.
+              addresses on promethium.work.
             </p>
           </div>
           <nav className="flex flex-col gap-2 text-xs">
@@ -36,14 +36,6 @@ export default function Footer() {
               className="glitch-hover hover:text-neon-cyan"
             >
               ▸ GitHub ↗
-            </a>
-            <a
-              href="https://minecoins.work"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glitch-hover hover:text-neon-cyan"
-            >
-              ▸ minecoins.work ↗
             </a>
           </nav>
         </div>

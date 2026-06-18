@@ -5,7 +5,7 @@ description: Mine, haul, stabilize, stake — the whole loop in five minutes.
 
 # Get Started
 
-Five steps. (Downloads and addresses go live on **minecoins.work**.)
+Five steps. (Downloads and addresses go live on **promethium.work**.)
 
 ## 1 - Mine
 

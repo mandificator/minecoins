@@ -49,14 +49,10 @@ export default function ExplorerPage() {
               <p className="mb-4 text-sm text-fg">
                 Explorer endpoint not configured yet. The block explorer URL is
                 published on{" "}
-                <span className="neon-cyan">minecoins.work</span> and wired in
+                <span className="neon-cyan">promethium.work</span> and wired in
                 via <code className="text-neon-green">NEXT_PUBLIC_EXPLORER_URL</code>.
               </p>
-              <NeonLink
-                href="https://minecoins.work"
-                color="cyan"
-                external
-              >
+              <NeonLink href="https://promethium.work" color="cyan" external>
                 OPEN EXPLORER ↗
               </NeonLink>
             </TerminalCard>
