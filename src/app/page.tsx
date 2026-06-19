@@ -41,14 +41,14 @@ export default function HomePage() {
       {/* ---------------- HERO ---------------- */}
       <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
         <div className="flex flex-col items-center text-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-[10rem]">
             <Image
               src="/img/promethium-logo.png"
               alt="Promethium — Pm, element 61, [145]"
               width={500}
               height={500}
               priority
-              className="h-auto w-full border-4 border-white"
+              className="h-auto w-full border border-border"
             />
           </div>
           <h1 className="mt-8 tracking-[0.2em] text-title">
