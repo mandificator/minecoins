@@ -1,11 +1,7 @@
+import Image from "next/image";
 import TypedPrompt from "@/components/ui/TypedPrompt";
 import TerminalCard from "@/components/ui/TerminalCard";
-import Mermaid from "@/components/docs/Mermaid";
 import { NeonLink } from "@/components/ui/NeonButton";
-
-// Periodic-table tile for the element (Pm, Z=61, mass ~[145]) as a Mermaid node.
-const ELEMENT = `graph TB
-  PM["61<br/><br/>Pm<br/><br/>Promethium<br/>[145]"]`;
 
 const LIFECYCLE = [
   [
@@ -46,7 +42,14 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
         <div className="flex flex-col items-center text-center">
           <div className="w-full max-w-xs">
-            <Mermaid code={ELEMENT} />
+            <Image
+              src="/img/promethium-logo.png"
+              alt="Promethium — Pm, element 61, [145]"
+              width={500}
+              height={500}
+              priority
+              className="h-auto w-full border-4 border-white"
+            />
           </div>
           <h1 className="mt-8 tracking-[0.2em] text-title">
             AGENTIC MINING COMPANY
