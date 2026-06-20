@@ -43,7 +43,7 @@ export default function HomePage() {
               className="h-auto w-full border border-border"
             />
           </div>
-          <div className="mt-8 w-full max-w-3xl">
+          <div className="mt-8 w-full">
             <Image
               src="/img/syndicate.gif"
               alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Deepchain"
@@ -51,7 +51,7 @@ export default function HomePage() {
               height={744}
               unoptimized
               priority
-              className="h-auto w-full border border-border"
+              className="h-auto w-full"
             />
           </div>
           <h1 className="mt-8 tracking-[0.2em] text-title">
