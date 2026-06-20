@@ -1,5 +1,4 @@
 import Image from "next/image";
-import TypedPrompt from "@/components/ui/TypedPrompt";
 import TerminalCard from "@/components/ui/TerminalCard";
 import { NeonLink } from "@/components/ui/NeonButton";
 
@@ -43,17 +42,6 @@ export default function HomePage() {
               className="h-auto w-full border border-border"
             />
           </div>
-          <div className="mt-8 w-full">
-            <Image
-              src="/img/syndicate.gif"
-              alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Deepchain"
-              width={1306}
-              height={744}
-              unoptimized
-              priority
-              className="h-auto w-full"
-            />
-          </div>
           <h1 className="mt-8 tracking-[0.2em] text-title">
             AGENTIC MINING COMPANY
           </h1>
@@ -64,14 +52,16 @@ export default function HomePage() {
             Mine an element that refuses to exist. Stabilize it before it fades.
             Let an agent run your mining for you.
           </p>
-
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <NeonLink href="/docs/get-started">START MINING</NeonLink>
-            <NeonLink href="/agentic-mining">AGENTIC MINING →</NeonLink>
-          </div>
-
-          <div className="mt-8 w-full max-w-xl border border-border bg-bg-alt/70 px-4 py-3 text-left">
-            <TypedPrompt text="prom mine --algo sha256 | prom stabilize --on-surface" />
+          <div className="mt-8 w-full">
+            <Image
+              src="/img/syndicate.gif"
+              alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Deepchain"
+              width={1306}
+              height={744}
+              unoptimized
+              priority
+              className="h-auto w-full"
+            />
           </div>
         </div>
       </section>
