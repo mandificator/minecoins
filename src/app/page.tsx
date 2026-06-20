@@ -18,14 +18,6 @@ const LIFECYCLE = [
   ],
 ];
 
-const SYNDICATE = [
-  ["Stabilization Plant", "Decant surfaced PROMETHIUM into stable $PROM."],
-  ["R&D Institute", "Stake $PROM → better tools → mine up to 3× easier."],
-  ["Recruitment Office", "Recruit miners → more labour → up to 2× easier (stacks)."],
-  ["Relief Fund", "Deposit $PROM → earn $PROM interest from captured decay."],
-  ["Hiring Hall", "Pay a miner's wage; they dig for you. (coming soon)"],
-];
-
 const PARAMS = [
   "SHA-256",
   "~10 min block",
@@ -47,6 +39,17 @@ export default function HomePage() {
               alt="Promethium — Pm, element 61, [145]"
               width={500}
               height={500}
+              priority
+              className="h-auto w-full border border-border"
+            />
+          </div>
+          <div className="mt-8 w-full max-w-3xl">
+            <Image
+              src="/img/syndicate.gif"
+              alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Deepchain"
+              width={1306}
+              height={744}
+              unoptimized
               priority
               className="h-auto w-full border border-border"
             />
@@ -121,27 +124,6 @@ export default function HomePage() {
             <NeonLink href="/agentic-mining">SEE AGENTIC MINING →</NeonLink>
           </div>
         </TerminalCard>
-      </section>
-
-      {/* ---------------- THE SYNDICATE ---------------- */}
-      <section className="py-6">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
-          // the syndicate — promethium mining syndicate
-        </h2>
-        <div className="overflow-x-auto border border-border">
-          <table className="w-full">
-            <tbody>
-              {SYNDICATE.map(([dept, desc]) => (
-                <tr key={dept} className="border-b border-border/60 last:border-0">
-                  <td className="whitespace-nowrap px-4 py-3 text-title">
-                    {dept}
-                  </td>
-                  <td className="px-4 py-3 text-fg-dim">{desc}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </section>
 
       {/* ---------------- KEY PARAMETERS ---------------- */}
