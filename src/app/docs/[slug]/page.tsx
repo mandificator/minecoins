@@ -43,13 +43,13 @@ export default function DocPage({ params }: { params: { slug: string } }) {
       <div className="mb-8 text-fg-dim">~/docs/{params.slug}</div>
 
       {headerImage && (
-        <div className="mb-8 flex justify-center">
+        <div className="mb-8 w-full">
           <Image
             src={headerImage}
             alt=""
-            width={100}
-            height={100}
-            className="border-0"
+            width={314}
+            height={280}
+            className="h-auto w-full border-0"
           />
         </div>
       )}
