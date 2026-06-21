@@ -1,8 +1,18 @@
+import fs from "node:fs";
+import path from "node:path";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getDoc, getAdjacent } from "@/lib/docs";
 import MarkdownRenderer from "@/components/docs/MarkdownRenderer";
+
+const DOC_HEADER_IMAGES_DIR = path.join(process.cwd(), "public", "img", "docs");
+
+function docHeaderImage(slug: string): string | null {
+  const fp = path.join(DOC_HEADER_IMAGES_DIR, `${slug}.png`);
+  return fs.existsSync(fp) ? `/img/docs/${slug}.png` : null;
+}
 
 // Render docs from disk on each request so CRM edits appear immediately
 // (on local / VPS) without a rebuild.
@@ -26,10 +36,23 @@ export default function DocPage({ params }: { params: { slug: string } }) {
   if (!doc) notFound();
 
   const { prev, next } = getAdjacent(params.slug);
+  const headerImage = docHeaderImage(params.slug);
 
   return (
     <article className="min-w-0">
       <div className="mb-8 text-fg-dim">~/docs/{params.slug}</div>
+
+      {headerImage && (
+        <div className="mb-8 flex justify-center">
+          <Image
+            src={headerImage}
+            alt=""
+            width={100}
+            height={100}
+            className="border-0"
+          />
+        </div>
+      )}
 
       <MarkdownRenderer source={doc.content} />
 
