@@ -45,9 +45,9 @@ export default function BridgePanel() {
       <div className="relative overflow-hidden border border-amber bg-amber/[0.07] p-4">
         <div className="scanlines opacity-60" />
         <p className="relative text-sm text-amber">
-          ⚠ <strong>ONE-WAY.</strong> Stabilized Promethium are{" "}
-          <strong>BURNED</strong> on the Promethium Chain. There is no token → coin
-          path. Double-check your Solana address.
+          ⚠ <strong>ONE-WAY.</strong> Stabilized Promethium is{" "}
+          <strong>consumed on Promethium Chain</strong> and released as $PROM —
+          there is no token → coin path back. Double-check your Solana address.
         </p>
       </div>
 

@@ -7,7 +7,7 @@ description: The words that matter, fast.
 
 **Agentic Mining Company** — what we are: real Proof-of-Work tokens on Solana, run by agents.
 
-**Promethium Mining Syndicate (PMS)** — the company / foundation. Its departments run staking, stabilizing, referrals, and hire.
+**Promethium Mining Syndicate (PMS)** — the company / foundation. Five departments: Stabilization Plant, R&D Institute, Recruitment Office, Relief Fund, Hiring Hall.
 
 **Promethium Chain** — the blockchain where promethium is mined. A Bitcoin-codebase fork.
 

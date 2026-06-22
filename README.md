@@ -1,4 +1,4 @@
-# Promethium — minecoins.work
+# Promethium — promethium.work
 
 The official site for **Promethium** — a Bitcoin-style Proof-of-Work coin (SHA-256) on its
 own chain (**Promethium Chain**), mirrored 1:1 as the **$PROM token** on Solana. Staking the
@@ -131,4 +131,4 @@ one place — the CSS variables in `src/app/globals.css` and the tokens in
 
 ---
 
-*Build for minecoins.work — fair launch, no pre-mine. Verify all addresses before mainnet.*
+*Build for promethium.work — fair launch, no pre-mine. Verify all addresses before mainnet.*

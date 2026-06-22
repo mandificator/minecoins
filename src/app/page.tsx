@@ -55,7 +55,7 @@ export default function HomePage() {
           <div className="mt-8 w-full">
             <Image
               src="/img/syndicate.gif"
-              alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Deepchain"
+              alt="The Promethium Mining Syndicate — Stabilization Plant, Relief Fund, R&D Institute, Recruitment Office, Hiring Hall above the Promethium Chain"
               width={1306}
               height={744}
               unoptimized

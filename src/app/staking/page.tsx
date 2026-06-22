@@ -18,7 +18,7 @@ export default function StakingPage() {
       {/* Two boxes side by side */}
       <div className="grid gap-6 md:grid-cols-2">
         <StakePanel pool="difficulty" />
-        <StakePanel pool="battery" />
+        <StakePanel pool="relief" />
       </div>
 
       {/* Explanations under the boxes */}

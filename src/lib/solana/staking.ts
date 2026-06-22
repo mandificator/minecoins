@@ -49,16 +49,16 @@ export async function getStakeStatus(
 }
 
 /** The two separate staking pools. */
-export type Pool = "difficulty" | "battery";
+export type Pool = "difficulty" | "relief";
 
 /**
- * Estimated Battery-Pool yield share for a given stake.
+ * Estimated Relief Fund yield share for a given stake.
  *
  * TODO: replace with the real on-chain computation (your stake / total pool
- * stake × Battery balance). Returns null until the program is live so the UI
- * shows "—" rather than a fake number.
+ * stake × Relief Fund balance). Returns null until the program is live so the
+ * UI shows "—" rather than a fake number.
  */
-export async function getBatteryShare(_stakedProm: number): Promise<number | null> {
+export async function getReliefShare(_stakedProm: number): Promise<number | null> {
   return null;
 }
 
