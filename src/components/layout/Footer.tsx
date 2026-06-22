@@ -39,14 +39,14 @@ export default function Footer() {
               className="glitch-hover flex items-center gap-2 hover:text-neon-cyan"
               aria-label="Promethium on X"
             >
-              <SiX size={14} />X
+              <SiX size={14} />
             </a>
             <span
               className="flex items-center gap-2 text-fg-dim"
               title="Telegram channel coming soon"
               aria-label="Telegram — coming soon"
             >
-              <SiTelegram size={14} />TG
+              <SiTelegram size={14} />
             </span>
           </div>
         </div>
