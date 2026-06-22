@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BlinkCursor from "@/components/effects/BlinkCursor";
+import { IconTelegram, IconX } from "@/components/icons/PixelSocialIcons";
 
 export default function Footer() {
   return (
@@ -30,6 +31,24 @@ export default function Footer() {
               ▸ Agentic Mining
             </Link>
           </nav>
+          <div className="flex gap-4 text-xs">
+            <a
+              href="https://x.com/promethium_work"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glitch-hover flex items-center gap-2 hover:text-neon-cyan"
+              aria-label="Promethium on X"
+            >
+              <IconX size={2} />X
+            </a>
+            <span
+              className="flex items-center gap-2 text-fg-dim"
+              title="Telegram channel coming soon"
+              aria-label="Telegram — coming soon"
+            >
+              <IconTelegram size={2} />TG
+            </span>
+          </div>
         </div>
         <div className="mt-6 text-xs text-neon-green">
           &gt; connection secure <BlinkCursor />
