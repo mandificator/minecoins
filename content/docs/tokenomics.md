@@ -37,6 +37,15 @@ Promethium that decays before stabilizing isn't destroyed — it settles into th
 - **2%** per stabilization, in $PROM -> Syndicate fee address on Solana.
 - **1 USDC** via x402 per stabilization / stake / unstake -> same address.
 
+## Where the fees go
+
+Fees aren't pocketed — half of every fee builds the market, half runs the Company.
+
+- **Agent fees (USDC):** 50% to the Company; 50% **buys $PROM on the open market** and goes into the pool.
+- **Stabilization fee ($PROM):** 50% to the Company; 50% goes **straight into the pool**.
+
+The $PROM bought and deposited isn't burned — it becomes **liquidity the Company owns** (single-sided on Meteora DLMM). It can't be pulled out from under you, its swap fees flow back to the protocol, and the open-market buying is standing **buy pressure** that scales with usage. Same conservation rule as decay: nothing destroyed, value put to work.
+
 ## Why trust it
 
 - Hard cap, immutable on both sides.
