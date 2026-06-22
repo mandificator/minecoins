@@ -19,6 +19,15 @@ The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Sy
 
 Stabilizing has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Everything else is 1 USDC per action — except the chain check, which is just **10¢**.
 
+## Where the fees go
+
+Fees aren't pocketed — half of every fee builds the market, half runs the Company.
+
+- **Agent fees (USDC):** 50% to the Company; 50% **buys $PROM on the open market** and goes into the pool.
+- **Stabilization fee ($PROM):** 50% to the Company; 50% goes **straight into the pool**.
+
+The $PROM bought and deposited isn't burned — it becomes **liquidity the Company owns** (single-sided on Meteora DLMM). It can't be pulled out from under you, its swap fees flow back to the protocol, and the open-market buying is standing **buy pressure** that scales with usage. Same conservation rule as decay: nothing destroyed, value put to work.
+
 ## The agent does your work — from as low as 10¢ a check
 
 When an agent runs an action for you, **it pays the same x402 fees listed above — nothing on top.** There is no separate "agent fee." The cost of doing it agentically is identical to doing it by hand; you just don't have to be awake for it.
