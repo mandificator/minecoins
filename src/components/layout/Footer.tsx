@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { SiTelegram, SiX } from "react-icons/si";
 import BlinkCursor from "@/components/effects/BlinkCursor";
-import { IconTelegram, IconX } from "@/components/icons/PixelSocialIcons";
 
 export default function Footer() {
   return (
@@ -39,14 +39,14 @@ export default function Footer() {
               className="glitch-hover flex items-center gap-2 hover:text-neon-cyan"
               aria-label="Promethium on X"
             >
-              <IconX size={2} />X
+              <SiX size={14} />X
             </a>
             <span
               className="flex items-center gap-2 text-fg-dim"
               title="Telegram channel coming soon"
               aria-label="Telegram — coming soon"
             >
-              <IconTelegram size={2} />TG
+              <SiTelegram size={14} />TG
             </span>
           </div>
         </div>
