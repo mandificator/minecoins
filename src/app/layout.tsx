@@ -21,7 +21,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Promethium — Agentic Mining Company",
+    default: "Promethium chain",
     template: "%s · Promethium",
   },
   description: DESCRIPTION,
@@ -44,12 +44,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "Promethium",
-    title: "Promethium — Agentic Mining Company",
+    title: "Promethium chain",
     description: DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Promethium — Agentic Mining Company",
+    title: "Promethium chain",
     description: DESCRIPTION,
   },
   robots: {

@@ -12,7 +12,7 @@ export default function HomePage() {
       <HeroGlitch targetId="og-hero" />
       <Image
         src={ogImage}
-        alt="Promethium — Agentic Mining Company"
+        alt="A real PoW token, entangled 1:1 with Solana"
         priority
         className="h-auto w-1/3"
       />
