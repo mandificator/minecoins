@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getDoc, getAdjacent } from "@/lib/docs";
 import MarkdownRenderer from "@/components/docs/MarkdownRenderer";
+import FaqAccordion from "@/components/docs/FaqAccordion";
 
 const DOC_HEADER_IMAGES_DIR = path.join(process.cwd(), "public", "img", "docs");
 
@@ -54,7 +55,11 @@ export default function DocPage({ params }: { params: { slug: string } }) {
         </div>
       )}
 
-      <MarkdownRenderer source={doc.content} />
+      {params.slug === "faq" ? (
+        <FaqAccordion />
+      ) : (
+        <MarkdownRenderer source={doc.content} />
+      )}
 
       {/* prev / next */}
       <div className="mt-14 flex items-center justify-between border-t border-border pt-6">
