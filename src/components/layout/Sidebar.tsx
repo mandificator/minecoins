@@ -14,9 +14,13 @@ const TOP: Item[] = [
   { href: "/explorer", label: "EXPLORER" },
 ];
 const BOTTOM: Item[] = [
-  { href: "/staking", label: "INVESTMENT" },
   { href: "/bridge", label: "STABILIZATION PLANT" },
   { href: "/rent-a-miner", label: "HIRING HALL" },
+];
+
+const INVESTMENT_CHILDREN: Item[] = [
+  { href: "/staking/rd-institute", label: "R&D Institute" },
+  { href: "/staking/relief-fund", label: "Relief Fund" },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -105,6 +109,38 @@ export default function Sidebar({ docs }: { docs: MetaPage[] }) {
               })}
             </ul>
           )}
+        </div>
+
+        {/* INVESTMENT — parent + always-visible R&D Institute / Relief Fund children */}
+        <div>
+          <Link
+            href="/staking"
+            className={`block whitespace-nowrap py-1.5 hover:underline ${
+              pathname === "/staking" ? "font-bold underline" : ""
+            }`}
+          >
+            <span className="text-bg/50">
+              {pathname.startsWith("/staking") ? "› " : "  "}
+            </span>
+            INVESTMENT
+          </Link>
+          <ul className="mb-1 ml-3 border-l border-bg/25 pl-3">
+            {INVESTMENT_CHILDREN.map((it) => {
+              const active = pathname === it.href;
+              return (
+                <li key={it.href}>
+                  <Link
+                    href={it.href}
+                    className={`block whitespace-nowrap py-1 hover:underline ${
+                      active ? "font-bold underline" : "text-bg/80"
+                    }`}
+                  >
+                    {it.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         {BOTTOM.map(link)}

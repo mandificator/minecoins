@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import StakePanel from "@/components/web3/StakePanel";
+import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Investment",
@@ -7,41 +8,58 @@ export const metadata: Metadata = {
     "Put your $PROM to work in the Promethium Mining Syndicate: R&D Institute (mine up to 3× easier) and Relief Fund (earn $PROM interest).",
 };
 
+const SECTIONS = [
+  {
+    href: "/staking/rd-institute",
+    title: "R&D Institute",
+    image: "/img/docs/rd-institute.png",
+    accent: "text-neon-magenta",
+    blurb:
+      "Stake $PROM to fund research and get issued better tools. Lowers your mining difficulty up to 3×.",
+  },
+  {
+    href: "/staking/relief-fund",
+    title: "Relief Fund",
+    image: "/img/docs/relief-fund.png",
+    accent: "text-neon-cyan",
+    blurb:
+      "Deposit $PROM, the Syndicate puts it to work, you earn interest in $PROM — stable, no decay.",
+  },
+] as const;
+
 export default function StakingPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="mb-2 text-2xl font-bold text-neon-magenta">Investment</h1>
-      <p className="mb-8 max-w-2xl text-sm text-fg-dim">
-        Put your $PROM to work in the Promethium Mining Syndicate.
+    <div className="mx-auto max-w-5xl px-4 py-16">
+      <h1 className="mb-3 text-2xl font-bold text-title">Investment</h1>
+      <p className="mb-16 max-w-2xl text-sm leading-relaxed text-fg-dim">
+        Put your $PROM to work in the Promethium Mining Syndicate — two
+        independent pools, join one or both.
       </p>
 
-      {/* Two boxes side by side */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <StakePanel pool="difficulty" />
-        <StakePanel pool="relief" />
+      <div className="grid gap-10 md:grid-cols-2">
+        {SECTIONS.map((s) => (
+          <Link
+            key={s.href}
+            href={s.href}
+            className="group block border border-border bg-bg-alt/60 p-10 text-center transition-colors hover:border-title"
+          >
+            <Image
+              src={s.image}
+              alt={s.title}
+              width={314}
+              height={280}
+              className="mx-auto mb-8 h-auto w-2/3"
+            />
+            <h2 className={`uppercase tracking-widest ${s.accent}`}>{s.title}</h2>
+            <p className="mt-4 text-sm leading-relaxed text-fg-dim">{s.blurb}</p>
+            <span className="mt-8 inline-block text-xs uppercase tracking-widest text-fg-dim group-hover:text-title">
+              Open →
+            </span>
+          </Link>
+        ))}
       </div>
 
-      {/* Explanations under the boxes */}
-      <div className="mt-8 grid gap-8 text-sm leading-relaxed md:grid-cols-2">
-        <div>
-          <h2 className="text-lg text-neon-cyan">🪨 R&amp;D Institute — difficulty</h2>
-          <p className="text-fg-dim">
-            Stake $PROM to fund research and get issued better tools. Lowers your
-            mining difficulty up to <span className="neon-magenta">3×</span>. Your
-            discount is personal and doesn&apos;t change anyone else&apos;s mining.
-          </p>
-        </div>
-        <div>
-          <h2 className="text-lg text-neon-cyan">🛟 Relief Fund — yield</h2>
-          <p className="text-fg-dim">
-            Deposit $PROM; the Syndicate puts it to work; you earn{" "}
-            <span className="text-fg">interest in $PROM</span> — paid on Solana,
-            stable, no decay.
-          </p>
-        </div>
-      </div>
-
-      <p className="mt-8 max-w-3xl text-xs text-fg-dim">
+      <p className="mt-16 max-w-3xl text-xs text-fg-dim">
         Staking, unstaking, depositing and withdrawing can be done manually or
         agentically. Each action costs 1 USDC via x402 on Solana — the agent pays
         the same, no extra. See Fees &amp; x402.
