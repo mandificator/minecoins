@@ -126,22 +126,30 @@ const FAQ_ITEMS: Item[] = [
 ];
 
 /**
- * FAQ accordion — one panel open at a time (fan-style), each item header
- * styled like TerminalCard's ASCII title bar, caret reused from the
- * Sidebar's DOCS expand/collapse pattern.
+ * FAQ panels — all open by default, each item header styled like
+ * TerminalCard's ASCII title bar, caret reused from the Sidebar's DOCS
+ * expand/collapse pattern. Still individually collapsible.
  */
 export default function FaqAccordion() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [closed, setClosed] = useState<Set<number>>(new Set());
+
+  const toggle = (i: number) =>
+    setClosed((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
 
   return (
     <div className="space-y-3">
       {FAQ_ITEMS.map((item, i) => {
-        const isOpen = open === i;
+        const isOpen = !closed.has(i);
         return (
           <div key={item.q} className="border border-border bg-bg-alt/60">
             <button
               type="button"
-              onClick={() => setOpen(isOpen ? null : i)}
+              onClick={() => toggle(i)}
               aria-expanded={isOpen}
               className="flex w-full items-center gap-2 px-3 py-2 text-left font-mono text-xs"
             >
