@@ -21,7 +21,7 @@ export default function ReliefFundPage() {
         <span className="text-fg">Relief Fund</span>
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="flex justify-center">
         <Image
           src="/img/docs/relief-fund.png"
           alt="Relief Fund"
@@ -30,15 +30,14 @@ export default function ReliefFundPage() {
           priority
           className="mb-10 h-auto w-1/3"
         />
-        <TerminalCard title="WHAT IT IS" accent="cyan" className="w-full max-w-xl">
-          <p className="leading-relaxed">
-            Deposit <span className="text-fg">$PROM</span> and earn{" "}
-            <span className="text-fg">interest, paid in $PROM</span> — stable,
-            on Solana, no decay. Your yield is powered by everyone else&apos;s
-            delay.
-          </p>
-        </TerminalCard>
       </div>
+      <TerminalCard title="WHAT IT IS" accent="cyan">
+        <p className="leading-relaxed">
+          Deposit <span className="text-fg">$PROM</span> and earn{" "}
+          <span className="text-fg">interest, paid in $PROM</span> — stable, on
+          Solana, no decay. Your yield is powered by everyone else&apos;s delay.
+        </p>
+      </TerminalCard>
 
       <div className="mt-16 grid gap-12 md:grid-cols-2 md:items-start">
         <StakePanel pool="relief" />
