@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StakePanel from "@/components/web3/StakePanel";
 import { NeonLink } from "@/components/ui/NeonButton";
+import TerminalCard from "@/components/ui/TerminalCard";
 
 export const metadata: Metadata = {
   title: "R&D Institute",
@@ -21,22 +22,23 @@ export default function RdInstitutePage() {
         <span className="text-fg">R&amp;D Institute</span>
       </div>
 
-      <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center">
         <Image
           src="/img/docs/rd-institute.png"
           alt="R&D Institute"
           width={314}
           height={280}
           priority
-          className="mb-8 h-auto w-1/3"
+          className="mb-10 h-auto w-1/3"
         />
-        <h1 className="text-2xl font-bold text-neon-magenta">R&amp;D Institute</h1>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-fg-dim">
-          Stake <span className="text-fg">$PROM</span> to fund the Syndicate&apos;s
-          research. In return, you&apos;re issued better tools — lowering your
-          personal mining difficulty by up to{" "}
-          <span className="text-title">3×</span>.
-        </p>
+        <TerminalCard title="WHAT IT IS" accent="magenta" className="w-full max-w-xl">
+          <p className="leading-relaxed">
+            Stake <span className="text-fg">$PROM</span> to fund the
+            Syndicate&apos;s research. In return, you&apos;re issued better
+            tools — lowering your personal mining difficulty by up to{" "}
+            <span className="text-title">3×</span>.
+          </p>
+        </TerminalCard>
       </div>
 
       <div className="mt-16 grid gap-12 md:grid-cols-2 md:items-start">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StakePanel from "@/components/web3/StakePanel";
 import { NeonLink } from "@/components/ui/NeonButton";
+import TerminalCard from "@/components/ui/TerminalCard";
 
 export const metadata: Metadata = {
   title: "Relief Fund",
@@ -20,21 +21,23 @@ export default function ReliefFundPage() {
         <span className="text-fg">Relief Fund</span>
       </div>
 
-      <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center">
         <Image
           src="/img/docs/relief-fund.png"
           alt="Relief Fund"
           width={314}
           height={280}
           priority
-          className="mb-8 h-auto w-1/3"
+          className="mb-10 h-auto w-1/3"
         />
-        <h1 className="text-2xl font-bold text-neon-cyan">Relief Fund</h1>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-fg-dim">
-          Deposit <span className="text-fg">$PROM</span> and earn{" "}
-          <span className="text-fg">interest, paid in $PROM</span> — stable, on
-          Solana, no decay. Your yield is powered by everyone else&apos;s delay.
-        </p>
+        <TerminalCard title="WHAT IT IS" accent="cyan" className="w-full max-w-xl">
+          <p className="leading-relaxed">
+            Deposit <span className="text-fg">$PROM</span> and earn{" "}
+            <span className="text-fg">interest, paid in $PROM</span> — stable,
+            on Solana, no decay. Your yield is powered by everyone else&apos;s
+            delay.
+          </p>
+        </TerminalCard>
       </div>
 
       <div className="mt-16 grid gap-12 md:grid-cols-2 md:items-start">
