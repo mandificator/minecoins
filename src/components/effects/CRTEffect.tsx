@@ -43,8 +43,8 @@ export default function CRTEffect() {
 
     const burst = () => {
       const major = Math.random() < 0.3;
-      // 2x slower playback: doubled burst duration + doubled step interval below
-      const dur = major ? rnd(760, 1440) : rnd(260, 560);
+      // slow playback: long burst duration + long step interval below
+      const dur = major ? rnd(1500, 2800) : rnd(520, 1100);
       if (major) setBars(true);
       content.style.filter = "url(#glitch)";
       content.style.willChange = "filter, transform";
@@ -57,8 +57,8 @@ export default function CRTEffect() {
           setBars(false);
           return;
         }
-        // step every ~44–110ms for a chunky, stuttering feel (2x slower)
-        if (now - last > rnd(44, 110)) {
+        // step every ~95–210ms for a chunky, stuttering feel (much slower)
+        if (now - last > rnd(95, 210)) {
           last = now;
           if (Math.random() < 0.18) {
             // a clean frame — makes the glitch stutter instead of buzz
