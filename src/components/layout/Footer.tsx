@@ -41,13 +41,16 @@ export default function Footer() {
             >
               <SiX size={14} />
             </a>
-            <span
-              className="flex items-center gap-2 text-fg-dim"
-              title="Telegram channel coming soon"
-              aria-label="Telegram — coming soon"
+            <a
+              href="https://t.me/+eCkRAGS5pNwwNzlk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glitch-hover flex flex-col items-center gap-1 hover:text-neon-cyan"
+              aria-label="Promethium on Telegram"
             >
               <SiTelegram size={14} />
-            </span>
+              <span className="text-[10px] tracking-wider">Telegram</span>
+            </a>
           </div>
         </div>
         <div className="mt-6 text-xs text-neon-green">
