@@ -34,8 +34,8 @@ export default function WalletButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-2 border border-bg/30 bg-title px-3 py-1.5 font-mono uppercase tracking-wider text-bg transition-colors duration-150 hover:bg-[#a9c6ff] ${className}`}
-      title={connected ? "Click to disconnect" : "Connect Phantom / Solflare"}
+      className={`group inline-flex items-center gap-2 border border-bg/30 bg-title px-3 py-1.5 font-mono uppercase tracking-wider text-bg transition-colors duration-150 hover:bg-[#a9c6ff] ${className}`}
+      title={connected ? "Click to disconnect" : "Coming soon"}
     >
       <span className="text-bg/50">[</span>
       <span
@@ -43,7 +43,14 @@ export default function WalletButton({
           connected ? "bg-bg" : "bg-bg/40"
         }`}
       />
-      {label}
+      {connected ? (
+        label
+      ) : (
+        <>
+          <span className="group-hover:hidden">{label}</span>
+          <span className="hidden group-hover:inline">COMING SOON</span>
+        </>
+      )}
       <span className="text-bg/50">]</span>
     </button>
   );
