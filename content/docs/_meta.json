@@ -45,6 +45,10 @@
       "title": "Fees & x402"
     },
     {
+      "slug": "explorer",
+      "title": "Explorer"
+    },
+    {
       "slug": "architecture",
       "title": "Architecture"
     },
