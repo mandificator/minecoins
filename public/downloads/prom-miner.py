@@ -44,19 +44,38 @@ def stratum_to_be(stratum_hex):
 
 
 # ---------- address (reuse prom-keygen.py shipped alongside) ----------
+def _read_address(path):
+    try:
+        for line in open(path):
+            if line.startswith("address:"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return None
+
+
 def ensure_mining_address():
     global MINING_ADDRESS
     if MINING_ADDRESS:
         return
     net = os.environ.get("PROM_NET", "mainnet")
-    keyfile = os.environ.get("PROM_KEYFILE", os.path.expanduser("~/.prom-mining-key.txt"))
-    if os.path.isfile(keyfile):
-        for line in open(keyfile):
-            if line.startswith("address:"):
-                MINING_ADDRESS = line.split(":", 1)[1].strip()
-        if MINING_ADDRESS:
-            print(f"Using saved mining address: {MINING_ADDRESS}")
-            return
+    # Look for an existing key file in order: explicit PROM_KEYFILE, the current
+    # folder, then the home default. (A user who generated a key in the folder
+    # they run from should NOT get a new address.)
+    candidates = []
+    if os.environ.get("PROM_KEYFILE"):
+        candidates.append(os.environ["PROM_KEYFILE"])
+    candidates.append(os.path.join(os.getcwd(), "prom-mining-key.txt"))
+    candidates.append(os.path.expanduser("~/.prom-mining-key.txt"))
+    for kf in candidates:
+        if os.path.isfile(kf):
+            addr = _read_address(kf)
+            if addr:
+                MINING_ADDRESS = addr
+                print(f"Using saved mining address from {kf}: {MINING_ADDRESS}")
+                return
+    # none found -> generate, saving in the current folder (or PROM_KEYFILE)
+    keyfile = os.environ.get("PROM_KEYFILE") or os.path.join(os.getcwd(), "prom-mining-key.txt")
     import importlib.util
     kg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prom-keygen.py")
     spec = importlib.util.spec_from_file_location("prom_keygen", kg_path)

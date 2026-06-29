@@ -23,10 +23,13 @@ Put both in the same folder. The miner uses the generator to make your address.
 ## 1 — Make your address
 
 ```bash
-python3 prom-keygen.py --out mykey.txt
+python3 prom-keygen.py --out prom-mining-key.txt
 ```
 
-This prints (and saves) a `prom1q…` address and its private key.
+This prints (and saves) a `prom1q…` address and its private key. The miner
+automatically picks up `prom-mining-key.txt` from the folder you run it in (or
+set `PROM_KEYFILE` to point anywhere), so it reuses this address instead of
+making a new one.
 
 > ⚠️ Back up the key file. It is the **only** way to move or bridge the coins
 > you mine. Never share it. Promethium will never ask you for it.
