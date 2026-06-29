@@ -23,9 +23,12 @@ export default function ExplorerClient() {
   const [kind, setKind] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [rich, setRich] = useState<Json | null>(null);
+  const [showRich, setShowRich] = useState(false);
 
   useEffect(() => {
     getJson("/chain").then(setChain).catch(() => setChain({ online: false }));
+    getJson("/richlist").then(setRich).catch(() => {});
   }, []);
 
   async function search(raw?: string) {
@@ -138,6 +141,36 @@ export default function ExplorerClient() {
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {rich && rich.online && rich.top?.length > 0 && !result && (
+        <div className="mt-8">
+          <button
+            onClick={() => setShowRich((v) => !v)}
+            className="mb-2 text-sm font-bold text-amber hover:underline"
+          >
+            RICH LIST — TOP HOLDERS {showRich ? "▾" : "▸"}
+          </button>
+          {showRich && (
+            <div className="font-mono text-xs">
+              <div className="mb-1 text-fg-dim">
+                {rich.holders} holders · {fmt(rich.totalMined)} PROM mined
+              </div>
+              {rich.top.slice(0, 25).map((h: Json) => (
+                <button
+                  key={h.address}
+                  onClick={() => search(h.address)}
+                  className="flex w-full justify-between gap-3 border-b border-fg-dim/15 py-1 text-left hover:text-amber"
+                >
+                  <span className="text-fg-dim">#{h.rank}</span>
+                  <span className="flex-1 truncate">{h.address}</span>
+                  <span className="text-amber">{fmt(h.balance)}</span>
+                  <span className="text-fg-dim">{h.pct}%</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
