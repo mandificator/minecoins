@@ -1,63 +1,32 @@
 import type { Metadata } from "next";
-import TerminalCard from "@/components/ui/TerminalCard";
 import { NeonLink } from "@/components/ui/NeonButton";
-import { solanaConfig } from "@/lib/solana/config";
+import BlinkCursor from "@/components/effects/BlinkCursor";
+import ConstructionWidget from "@/components/ui/ConstructionWidget";
 
 export const metadata: Metadata = {
   title: "Block Explorer",
-  description: "Browse the Promethium Chain block explorer.",
+  description:
+    "Verify every block, transaction, and address on the Promethium Chain yourself. Coming soon.",
 };
 
 export default function ExplorerPage() {
-  const url = solanaConfig.explorerUrl;
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="mb-2 text-2xl font-bold text-neon-green">Block Explorer</h1>
-      <p className="mb-6 max-w-2xl text-sm text-fg-dim">
-        Unlike other tokens that <em>claim</em> to be Proof-of-Work, here you can
-        check it yourself — verify every block, every transaction, and every
-        address on the chain.
+    <div className="mx-auto max-w-3xl px-4 py-20 text-center">
+      <h1 className="mb-2 text-2xl font-bold text-amber">
+        EXPLORER [ coming soon <BlinkCursor className="text-amber" /> ]
+      </h1>
+      <p className="mx-auto mb-8 max-w-md text-sm text-fg-dim">
+        Unlike other tokens that <em>claim</em> to be Proof-of-Work, here you
+        will be able to check it yourself — verify every block, every
+        transaction, and every address on the Promethium Chain.
       </p>
 
-      <div className="border border-border">
-        <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 font-mono text-xs">
-          <span>
-            <span className="text-fg-dim">┌─[</span>
-            <span className="uppercase tracking-widest text-neon-cyan">
-              {" "}
-              EXPLORER{" "}
-            </span>
-            <span className="text-fg-dim">]─┐</span>
-          </span>
-          {url && (
-            <NeonLink href={url} color="cyan" external className="!px-3 !py-1">
-              OPEN EXPLORER ↗
-            </NeonLink>
-          )}
-        </div>
+      <ConstructionWidget />
 
-        {url ? (
-          <iframe
-            src={url}
-            title="Promethium Chain block explorer"
-            className="h-[70vh] w-full bg-bg-alt"
-          />
-        ) : (
-          <div className="p-10">
-            <TerminalCard title="NOT CONFIGURED" accent="amber">
-              <p className="mb-4 text-sm text-fg">
-                Explorer endpoint not configured yet. The block explorer URL is
-                published on{" "}
-                <span className="neon-cyan">promethium.work</span> and wired in
-                via <code className="text-neon-green">NEXT_PUBLIC_EXPLORER_URL</code>.
-              </p>
-              <NeonLink href="https://promethium.work" color="cyan" external>
-                OPEN EXPLORER ↗
-              </NeonLink>
-            </TerminalCard>
-          </div>
-        )}
+      <div className="mt-10">
+        <NeonLink href="/" color="green">
+          ◂ BACK TO HOME
+        </NeonLink>
       </div>
     </div>
   );

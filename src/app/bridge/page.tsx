@@ -1,48 +1,33 @@
 import type { Metadata } from "next";
-import BridgePanel from "@/components/web3/BridgePanel";
+import { NeonLink } from "@/components/ui/NeonButton";
+import BlinkCursor from "@/components/effects/BlinkCursor";
+import ConstructionWidget from "@/components/ui/ConstructionWidget";
 
 export const metadata: Metadata = {
   title: "The Stabilization Plant",
-  description: "Decant surfaced PROMETHIUM into stable $PROM on Solana. Agentic by design.",
+  description:
+    "Decant surfaced PROMETHIUM into stable $PROM on Solana. Agentic by design. Coming soon.",
 };
 
 export default function BridgePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="mb-2 text-2xl font-bold text-neon-cyan">
-        The Stabilization Plant
+    <div className="mx-auto max-w-3xl px-4 py-20 text-center">
+      <h1 className="mb-2 text-2xl font-bold text-amber">
+        STABILIZATION PLANT [ coming soon <BlinkCursor className="text-amber" /> ]
       </h1>
-      <p className="mb-6 max-w-2xl text-sm text-fg-dim">
-        Decant surfaced PROMETHIUM into stable $PROM.
+      <p className="mx-auto mb-8 max-w-md text-sm text-fg-dim">
+        Decant surfaced PROMETHIUM into stable $PROM on Solana before the 17.7h
+        half-life eats it. Agentic by design — an agent stabilizes the instant it
+        surfaces, while you sleep.
       </p>
 
-      <blockquote className="mb-8 border-l-2 border-neon-cyan pl-4 text-sm leading-relaxed text-fg-dim">
-        You send <span className="text-fg">X PROMETHIUM</span> and receive{" "}
-        <span className="text-fg">Y $PROM</span>, where{" "}
-        <span className="text-fg">X = Y + decayed</span>. The decayed amount is the
-        slice lost to the 17.7h half-life while it sat at the surface — it&apos;s
-        routed to the <span className="text-fg">Relief Fund</span> as $PROM and
-        paid to depositors. Stabilize fast, keep more.
-      </blockquote>
+      <ConstructionWidget />
 
-      {/* Agentic-first — the emphasis of this page, full width */}
-      <div className="mb-8 w-full border border-neon-magenta/60 bg-bg-alt/60 p-5 text-sm">
-        <h2 className="mb-2 uppercase tracking-widest text-neon-magenta">
-          Agentic bridge — the way to do it
-        </h2>
-        <p className="mb-3 text-fg-dim">
-          This is agentic by design. The agent watches for surfacing and
-          stabilizes instantly — beating the 17.7h clock while you sleep. One
-          endpoint:
-        </p>
-        <pre className="overflow-x-auto border border-border bg-bg p-3 font-mono text-xs text-neon-green">
-{`POST /v1/stabilize
-{ "promethium_txid": "<surfaced tx>", "solana_address": "<dest>" }
--> settles 1 USDC via x402; returns $PROM transfer + decayed slice -> Relief Fund`}
-        </pre>
+      <div className="mt-10">
+        <NeonLink href="/" color="green">
+          ◂ BACK TO HOME
+        </NeonLink>
       </div>
-
-      <BridgePanel />
     </div>
   );
 }
