@@ -3,7 +3,8 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import GridBackground from "@/components/effects/GridBackground";
 import CRTEffect from "@/components/effects/CRTEffect";
-import SiteChrome from "@/components/layout/SiteChrome";
+import Sidebar from "@/components/layout/Sidebar";
+import Footer from "@/components/layout/Footer";
 import SolanaProvider from "@/components/web3/WalletProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { listDocs } from "@/lib/docs";
@@ -78,7 +79,11 @@ export default function RootLayout({
       <body>
         <GridBackground />
         <SolanaProvider>
-          <SiteChrome docs={docs}>{children}</SiteChrome>
+          <Sidebar docs={docs} />
+          <div id="page-content" className="flex min-h-screen flex-col lg:ml-[22rem]">
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
         </SolanaProvider>
         <CRTEffect />
         <Analytics />
