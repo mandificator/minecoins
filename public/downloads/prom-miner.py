@@ -1,33 +1,35 @@
 #!/usr/bin/env python3
 """
-Promethium Miner — CPU stratum miner that connects to the Promethium node by
-default and mines to an address you control.
+Promethium Miner — multi-core CPU stratum miner. Connects to the Promethium node
+by default and mines to an address you control, using ALL your CPU cores.
 
 Out of the box it:
-  * connects to the official Promethium stratum endpoint (override with STRATUM_URL),
-  * generates a local Promethium address for you if you don't supply one
-    (non-custodial; private key saved to PROM_KEYFILE — BACK IT UP),
-  * if you provide a Solana keypair, proves it to claim your difficulty discount
-    (stake + referrals) by signing each block — fully non-custodial,
-  * mines continuously and reconnects automatically.
+  * connects to the official Promethium stratum endpoint (override STRATUM_URL),
+  * generates a local Promethium address if you don't supply one (non-custodial;
+    key saved to PROM_KEYFILE — BACK IT UP),
+  * if you give it a Solana keypair, claims your difficulty discount by signing
+    each block locally (the key never leaves your machine),
+  * spreads the hashing across all CPU cores, and reconnects automatically.
 
 Env:
-  STRATUM_URL     host:port of the stratum endpoint
-                  (default stratum.promethium.work:3335)
+  STRATUM_URL     host:port of the endpoint (default stratum.promethium.work:3335)
   MINING_ADDRESS  your prom address; auto-generated if unset
   PROM_NET        mainnet | regtest | testnet (for auto-generation; default mainnet)
   PROM_KEYFILE    where the auto-generated key is saved (default ~/.prom-mining-key.txt)
   SOLANA_KEYPAIR  optional: solana-keygen JSON or 64-byte hex, to claim the discount
   WORKER_NAME     optional label (default 'cpu')
+  PROM_THREADS    number of mining processes (default: all CPU cores)
 
 Requirements: pip install pynacl   (only if using SOLANA_KEYPAIR for the discount)
 """
 import os, sys, socket, json, hashlib, struct, time
+from multiprocessing import Process, Queue, Manager, cpu_count
 
 STRATUM_URL = os.environ.get("STRATUM_URL", "stratum.promethium.work:3335")
 MINING_ADDRESS = os.environ.get("MINING_ADDRESS")
 SOLANA_KEYPAIR = os.environ.get("SOLANA_KEYPAIR")
 WORKER_NAME = os.environ.get("WORKER_NAME", "cpu")
+NPROC = int(os.environ.get("PROM_THREADS") or max(1, cpu_count()))
 DIFF1 = 0x00000000ffff0000000000000000000000000000000000000000000000000000
 
 
@@ -35,7 +37,13 @@ def sha256d(b):
     return hashlib.sha256(hashlib.sha256(b).digest()).digest()
 
 
-# ---- address: reuse prom-keygen.py shipped alongside this miner ----
+def stratum_to_be(stratum_hex):
+    b = bytes.fromhex(stratum_hex)
+    le = b"".join(b[i:i + 4][::-1] for i in range(0, 32, 4))
+    return le[::-1].hex()
+
+
+# ---------- address (reuse prom-keygen.py shipped alongside) ----------
 def ensure_mining_address():
     global MINING_ADDRESS
     if MINING_ADDRESS:
@@ -52,7 +60,8 @@ def ensure_mining_address():
     import importlib.util
     kg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prom-keygen.py")
     spec = importlib.util.spec_from_file_location("prom_keygen", kg_path)
-    kg = importlib.util.module_from_spec(spec); spec.loader.exec_module(kg)
+    kg = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(kg)
     k = kg.generate(net)
     with open(keyfile, "w") as f:
         f.write(f"network: {net}\naddress: {k['address']}\nwif: {k['wif']}\n")
@@ -65,7 +74,7 @@ def ensure_mining_address():
     print("=" * 64)
 
 
-# ---- optional Solana signer for the discount ----
+# ---------- optional Solana signer for the discount ----------
 SIGNER = None
 SOL_ADDR = None
 def load_solana():
@@ -82,12 +91,43 @@ def load_solana():
     SIGNER = SigningKey(kp[:32]); SOL_ADDR = b58e(bytes(SIGNER.verify_key))
 
 
-def stratum_to_be(stratum_hex):
-    b = bytes.fromhex(stratum_hex)
-    le = b"".join(b[i:i+4][::-1] for i in range(0, 32, 4))
-    return le[::-1].hex()
+# ---------- mining worker (one per core) ----------
+def worker(idx, shared, solutions):
+    seen_gen = -1
+    job = None
+    while True:
+        gen = shared.get("gen", -1)
+        if gen != seen_gen:
+            seen_gen = gen
+            job = shared.get("job")
+        if not job:
+            time.sleep(0.2)
+            continue
+        en1 = bytes.fromhex(job["en1"])
+        coinb1 = bytes.fromhex(job["coinb1"])
+        coinb2 = bytes.fromhex(job["coinb2"])
+        prev_le = bytes.fromhex(job["prev_le"])
+        branch = [bytes.fromhex(x) for x in job["branch"]]
+        vint, bint, tint = job["ver"], job["bits"], job["ntime"]
+        target = job["share_target"]
+        en2_size = job["en2_size"]
+        jid = job["job_id"]
+        # fresh random extranonce2 per attempt -> workers don't overlap
+        en2 = os.urandom(en2_size)
+        root = sha256d(coinb1 + en1 + en2 + coinb2)
+        for sib in branch:
+            root = sha256d(root + sib)
+        pre = struct.pack("<I", vint) + prev_le + root + struct.pack("<I", tint) + struct.pack("<I", bint)
+        for nonce in range(0, 1 << 32):
+            if (nonce & 0x1ffff) == 0 and shared.get("gen", -1) != seen_gen:
+                break  # tip changed — abandon, pick up new job
+            if int.from_bytes(sha256d(pre + struct.pack("<I", nonce)), "little") < target:
+                solutions.put((jid, en2.hex(), f"{tint:08x}", f"{nonce:08x}"))
+                break  # found a share — loop picks a new extranonce2
+        # any exit path returns to top (re-check gen, new extranonce2)
 
 
+# ---------- stratum connection ----------
 class Conn:
     def __init__(self, host, port):
         self.sock = socket.create_connection((host, port), timeout=30)
@@ -97,7 +137,6 @@ class Conn:
         if mid is None:
             self._id += 1; mid = self._id
         self.sock.sendall((json.dumps({"id": mid, "method": method, "params": params}) + "\n").encode())
-        return mid
     def recv(self, timeout=None):
         self.sock.settimeout(timeout)
         while b"\n" not in self.buf:
@@ -112,70 +151,58 @@ class Conn:
         except Exception: pass
 
 
-def mine_once(host, port):
+def mine_once(host, port, shared, solutions):
     c = Conn(host, port)
     c.send("mining.subscribe", [f"prom-miner/{WORKER_NAME}"])
     en1 = None; en2_size = 4
     while en1 is None:
         m = c.recv(30)
-        if m and m.get("id") and m.get("result") and isinstance(m["result"], list):
+        if m and m.get("id") and isinstance(m.get("result"), list):
             en1 = m["result"][1]; en2_size = m["result"][2]
     c.send("mining.authorize", [MINING_ADDRESS, WORKER_NAME])
     if SOL_ADDR:
         c.send("prom.signer", [SOL_ADDR])
         print(f"Claiming discount for Solana {SOL_ADDR}")
-    print(f"Mining to {MINING_ADDRESS} via {host}:{port}")
+    print(f"Mining to {MINING_ADDRESS} via {host}:{port} on {NPROC} cores")
 
     difficulty = 1.0
-    job = None
     signed_prev = set()
-    hashes = 0
     t0 = time.time()
     while True:
-        # drain pending messages (non-blocking-ish)
+        # submit any solutions the workers found
         try:
-            m = c.recv(0.05 if job else 30)
+            while True:
+                jid, en2h, ntimeh, nonceh = solutions.get_nowait()
+                c.send("mining.submit", [MINING_ADDRESS, jid, en2h, ntimeh, nonceh])
+                print(f"share submitted (job {jid}, {time.time()-t0:.0f}s up)")
+        except Exception:
+            pass
+        try:
+            m = c.recv(0.3)
         except socket.timeout:
-            m = None
-        if m is not None:
-            method = m.get("method")
-            if method == "mining.set_difficulty":
-                difficulty = float(m["params"][0])
-            elif method == "mining.notify":
-                p = m["params"]
-                be = stratum_to_be(p[1])
-                if SIGNER and be not in signed_prev:
-                    signed_prev.add(be)
-                    sig = SIGNER.sign(f"PROM:{be}".encode()).signature.hex()
-                    c.send("prom.sign", [sig])
-                    continue  # discounted job will arrive
-                job = p
-            elif m.get("error"):
-                pass
             continue
-        if job is None:
-            continue
-        # one grinding batch for the current job
-        job_id, prev_s, coinb1, coinb2, branch, ver, bits, ntime = job[:8]
-        en2 = os.urandom(en2_size)
-        coinb = bytes.fromhex(coinb1) + bytes.fromhex(en1) + en2 + bytes.fromhex(coinb2)
-        root = sha256d(coinb)
-        for sib in branch:
-            root = sha256d(root + bytes.fromhex(sib))
-        prev_le = bytes.fromhex(stratum_to_be(prev_s))[::-1]
-        vint = int(ver, 16); bint = int(bits, 16); tint = int(ntime, 16)
-        share_target = int(DIFF1 / difficulty) if difficulty > 0 else DIFF1
-        pre = struct.pack("<I", vint) + prev_le + root + struct.pack("<I", tint) + struct.pack("<I", bint)
-        for nonce in range(0, 1 << 20):
-            h = int.from_bytes(sha256d(pre + struct.pack("<I", nonce)), "little")
-            hashes += 1
-            if h < share_target:
-                c.send("mining.submit", [MINING_ADDRESS, job_id, en2.hex(), f"{tint:08x}", f"{nonce:08x}"])
-                el = time.time() - t0
-                print(f"share submitted (job {job_id}, {hashes/max(el,0.1):.0f} H/s)")
-                break
-        else:
-            continue  # exhausted this en2, loop picks a new one
+        if m is None:
+            raise ConnectionError("stratum closed")
+        method = m.get("method")
+        if method == "mining.set_difficulty":
+            difficulty = float(m["params"][0])
+        elif method == "mining.notify":
+            p = m["params"]
+            be = stratum_to_be(p[1])
+            if SIGNER and be not in signed_prev:
+                signed_prev.add(be)
+                sig = SIGNER.sign(f"PROM:{be}".encode()).signature.hex()
+                c.send("prom.sign", [sig])
+                continue  # discounted job will arrive; mine that
+            job_id, prev_s, coinb1, coinb2, branch, ver, bits, ntime = p[:8]
+            shared["job"] = {
+                "job_id": job_id, "en1": en1, "en2_size": en2_size,
+                "coinb1": coinb1, "coinb2": coinb2, "branch": branch,
+                "prev_le": bytes.fromhex(stratum_to_be(prev_s))[::-1].hex(),
+                "ver": int(ver, 16), "bits": int(bits, 16), "ntime": int(ntime, 16),
+                "share_target": int(DIFF1 / difficulty) if difficulty > 0 else DIFF1,
+            }
+            shared["gen"] = shared.get("gen", 0) + 1
 
 
 def main():
@@ -185,11 +212,20 @@ def main():
         print("NOTE: no SOLANA_KEYPAIR — mining at normal 1x (set it to claim your discount).")
     host, _, port = STRATUM_URL.partition(":")
     port = int(port or "3335")
+
+    mgr = Manager()
+    shared = mgr.dict()
+    shared["gen"] = 0
+    solutions = Queue()
+    procs = [Process(target=worker, args=(i, shared, solutions), daemon=True) for i in range(NPROC)]
+    for p in procs:
+        p.start()
+
     while True:
         try:
-            mine_once(host, port)
+            mine_once(host, port, shared, solutions)
         except KeyboardInterrupt:
-            print("\nstopping"); return
+            print("\nstopping"); break
         except Exception as e:
             print(f"connection lost ({e}); reconnecting in 5s...")
             time.sleep(5)

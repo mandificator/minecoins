@@ -41,7 +41,13 @@ python3 prom-miner.py
 
 It connects to Promethium Chain, mines to your address, and reconnects on its
 own. A block you find pays you in full — this is solo mining to your own address,
-not a pool that holds your coins.
+not a pool that holds your coins. **It uses all your CPU cores by default** (set
+`PROM_THREADS=N` to limit).
+
+> For serious hashpower: Promethium is standard SHA-256, so you can also point a
+> dedicated miner (cpuminer for CPU, or a SHA-256 ASIC) at the stratum endpoint
+> with your address as the username. Those run at full native speed but can't
+> claim the difficulty discount (no per-block signature) — so they mine at 1×.
 
 To mine to a specific address: `export MINING_ADDRESS=prom1q...` first.
 
