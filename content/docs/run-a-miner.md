@@ -52,6 +52,23 @@ not a pool that holds your coins. **It uses all your CPU cores by default** (set
 > with your address as the username. Those run at full native speed but can't
 > claim the difficulty discount (no per-block signature) — so they mine at 1×.
 
+## Setting your share difficulty (NiceHash, ASICs, big rigs)
+
+By default the pool uses a low share difficulty that suits CPUs — most miners
+don't need to change anything. But high-hashpower miners (NiceHash, ASICs) often
+require a higher difficulty (NiceHash, for example, refuses pools below 500,000).
+Set it yourself via the **stratum password**: `d=<difficulty>`.
+
+```
+URL:      stratum+tcp://stratum.promethium.work:3335
+Username: <your prom address>
+Password: d=500000          # or higher — match what your miner/NiceHash needs
+```
+
+- Leave the password as `x` (or anything without `d=`) → you get the normal
+  default difficulty. Existing miners are unaffected.
+- Set `d=<num>` → the pool gives you exactly that difficulty.
+
 To mine to a specific address: `export MINING_ADDRESS=prom1q...` first.
 
 ## Mine easier — claim your discount
