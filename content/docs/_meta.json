@@ -1,19 +1,72 @@
 {
   "pages": [
-    { "slug": "introduction", "title": "Introduction" },
-    { "slug": "the-loop", "title": "The Loop" },
-    { "slug": "promethium-decay", "title": "Promethium & Decay" },
-    { "slug": "mining", "title": "Mining" },
-    { "slug": "stabilization-plant", "title": "The Stabilization Plant" },
-    { "slug": "rd-institute", "title": "R&D Institute" },
-    { "slug": "relief-fund", "title": "Relief Fund" },
-    { "slug": "recruitment-office", "title": "Recruitment Office" },
-    { "slug": "hiring-hall", "title": "Hiring Hall" },
-    { "slug": "tokenomics", "title": "Tokenomics" },
-    { "slug": "fees-x402", "title": "Fees & x402" },
-    { "slug": "architecture", "title": "Architecture" },
-    { "slug": "get-started", "title": "Get Started" },
-    { "slug": "faq", "title": "FAQ" },
-    { "slug": "glossary", "title": "Glossary" }
+    {
+      "slug": "introduction",
+      "title": "Introduction"
+    },
+    {
+      "slug": "the-loop",
+      "title": "The Loop"
+    },
+    {
+      "slug": "promethium-decay",
+      "title": "Promethium & Decay"
+    },
+    {
+      "slug": "mining",
+      "title": "Mining"
+    },
+    {
+      "slug": "run-a-miner",
+      "title": "Run a Miner"
+    },
+    {
+      "slug": "stabilization-plant",
+      "title": "The Stabilization Plant"
+    },
+    {
+      "slug": "rd-institute",
+      "title": "R&D Institute"
+    },
+    {
+      "slug": "relief-fund",
+      "title": "Relief Fund"
+    },
+    {
+      "slug": "recruitment-office",
+      "title": "Recruitment Office"
+    },
+    {
+      "slug": "hiring-hall",
+      "title": "Hiring Hall"
+    },
+    {
+      "slug": "tokenomics",
+      "title": "Tokenomics"
+    },
+    {
+      "slug": "fees-x402",
+      "title": "Fees & x402"
+    },
+    {
+      "slug": "architecture",
+      "title": "Architecture"
+    },
+    {
+      "slug": "get-started",
+      "title": "Get Started"
+    },
+    {
+      "slug": "agentic-mining",
+      "title": "Agentic Mining"
+    },
+    {
+      "slug": "faq",
+      "title": "FAQ"
+    },
+    {
+      "slug": "glossary",
+      "title": "Glossary"
+    }
   ]
 }
