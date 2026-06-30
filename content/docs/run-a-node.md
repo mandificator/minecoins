@@ -46,6 +46,7 @@ rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
 rpcport=18105
 addnode=seed.promethium.work:8144
+fallbackfee=0.0001            # young chain has no fee-estimation data yet; needed to SEND
 EOF
 ```
 
