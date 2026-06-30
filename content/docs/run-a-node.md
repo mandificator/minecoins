@@ -69,6 +69,24 @@ prom-cli -datadir="$HOME/.prom" getnewaddress           # your prom1... address
 prom-cli -datadir="$HOME/.prom" sendtoaddress <prom1...> <amount>
 ```
 
+## Importing an existing address
+
+Mined to an address you generated elsewhere (e.g. with `prom-keygen`) and want
+this node to see those coins? Import its key **with a rescan** — otherwise the
+node only scans forward from the import moment and the balance looks empty even
+though the coins are on-chain.
+
+```bash
+prom-cli getdescriptorinfo "wpkh(<WIF>)"            # get the #checksum
+prom-cli deriveaddresses "wpkh(<WIF>)#<checksum>"   # optional: confirm the address
+prom-cli -rpcwallet=main importdescriptors \
+  '[{"desc":"wpkh(<WIF>)#<checksum>","timestamp":0,"label":"mine"}]'
+```
+
+`"timestamp":0` tells it to scan from genesis. Already imported without it and the
+balance looks off? Just run `prom-cli rescanblockchain 0`. (Make sure the node is
+fully synced first — `getblockcount` should equal the network tip.)
+
 ## Staking discount (automatic)
 
 If your mining address has staked $PROM on Solana, the node automatically mines at

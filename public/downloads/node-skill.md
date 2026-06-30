@@ -90,6 +90,33 @@ oracle data. If you alter your local oracle data to grant yourself a larger disc
 your blocks are rejected by every honest node and you fork onto a dead chain. So leave
 the oracle alone — honest nodes always agree, cheaters self-eject.
 
+## Importing an existing address (e.g. your miner address)
+
+If you mined to an address you generated elsewhere (e.g. with `prom-keygen`) and
+want this node's wallet to see and spend those coins, import its key **with a
+rescan** — otherwise the node only scans from the import moment forward and the
+balance looks empty even though the coins are on-chain.
+
+```bash
+# 1. checksum for the descriptor
+prom-cli getdescriptorinfo "wpkh(<WIF>)"
+# 2. (optional) confirm it derives the address you expect
+prom-cli deriveaddresses "wpkh(<WIF>)#<checksum>"
+# 3. import WITH timestamp 0 so it scans the whole chain from genesis
+prom-cli -rpcwallet=main importdescriptors \
+  '[{"desc":"wpkh(<WIF>)#<checksum>","timestamp":0,"label":"mine"}]'
+```
+
+`"timestamp":0` is the important part. If you already imported without it and the
+balance looks wrong / shows few UTXOs, just force a rescan:
+
+```bash
+prom-cli rescanblockchain 0
+```
+
+Make sure the node is fully synced first (`getblockcount` = the network tip) — the
+rescan only finds what your node already has.
+
 ## Troubleshooting
 
 - `getpeerinfo` empty → check outbound P2P to `seed.promethium.work:8144` isn't firewalled.
