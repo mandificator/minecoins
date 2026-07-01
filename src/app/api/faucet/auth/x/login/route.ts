@@ -14,7 +14,8 @@ export async function GET(req: Request) {
   const origin = new URL(req.url).origin;
 
   // Demo mode: no X app configured — inject a sample eligible session so the
-  // whole flow is testable.
+  // whole flow is testable. Relative Location so it works regardless of how the
+  // host is proxied (Cloudflare / self-host see localhost internally).
   if (!isConfigured()) {
     const demo: XProfile = {
       id: "demo",
@@ -28,7 +29,10 @@ export async function GET(req: Request) {
       reasons: [],
       demo: true,
     };
-    const res = NextResponse.redirect(`${origin}/faucet?connected=demo#claim`);
+    const res = new NextResponse(null, {
+      status: 302,
+      headers: { Location: "/faucet?connected=demo#claim" },
+    });
     res.cookies.set(FAUCET_SESSION_COOKIE, signSession(demo), cookieOptions());
     return res;
   }
