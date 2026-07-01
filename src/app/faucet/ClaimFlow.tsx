@@ -16,9 +16,6 @@ type ClaimResult = {
   ok: boolean;
   reward?: number;
   verified?: boolean;
-  ranNode?: boolean;
-  nodeReward?: number;
-  nodeDepositAddress?: string;
   error?: string;
   reasons?: string[];
 };
@@ -32,8 +29,8 @@ const ERROR_TEXT: Record<string, string> = {
   server: "Something went wrong. Please try again.",
 };
 
-// Bracketed link styled exactly like NeonButton (used for navigations to API
-// routes, which must be plain anchors — not client-side <Link>).
+// Bracketed link styled like NeonButton (used for navigations to API routes,
+// which must be plain anchors — not client-side <Link>).
 const BTN =
   "inline-flex items-center justify-center gap-2 border border-border px-4 py-2 font-mono uppercase tracking-wider text-title transition-colors duration-150 bg-transparent hover:bg-white/[0.06]";
 
@@ -48,7 +45,7 @@ function Bracket({ children }: { children: React.ReactNode }) {
 }
 
 const INPUT =
-  "w-full border border-border bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-title";
+  "w-full min-w-0 border border-border bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-title";
 
 function shareIntent(s: FaucetSettings): string {
   const p = new URLSearchParams({
@@ -65,7 +62,6 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   const [address, setAddress] = useState("");
   const [tweetUrl, setTweetUrl] = useState("");
   const [postedConfirmed, setPostedConfirmed] = useState(false);
-  const [ranNode, setRanNode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<ClaimResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -108,7 +104,6 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           address,
           tweetUrl: tweetUrl || undefined,
           postedConfirmed,
-          ranNode,
         }),
       });
       const data: ClaimResult = await res.json();
@@ -131,25 +126,13 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   // ---- Success ------------------------------------------------------------
   if (result?.ok) {
     return (
-      <TerminalCard title="CLAIM RECORDED" accent="green">
-        <p className="text-title">
-          ✓ {result.reward} PROM queued for your address:
-        </p>
+      <TerminalCard title="CLAIM RECORDED">
+        <p className="text-title">✓ {result.reward} PROM queued for your address:</p>
         <p className="mt-2 break-all text-fg">{address}</p>
-        <p className="mt-3 text-fg-dim">
+        <p className="mt-3 break-words text-fg-dim">
           Payouts are sent in batches by the distribution team. Keep this wallet —
           that&apos;s where your PROM lands.
         </p>
-        {ranNode && (
-          <div className="mt-4 border border-border p-3">
-            <p className="text-title">// NODE BONUS ARMED</p>
-            <p className="mt-1 text-fg-dim">
-              Send {settings.nodeDeposit} PROM from your node to unlock{" "}
-              {settings.nodeReward} PROM back:
-            </p>
-            <p className="mt-1 break-all text-fg">{settings.nodeDepositAddress}</p>
-          </div>
-        )}
         <div className="mt-5">
           <NeonButton
             onClick={() => {
@@ -167,9 +150,9 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="flex flex-col gap-4">
       {me?.configured === false && (
-        <p className="border border-border bg-bg-alt/60 px-3 py-2 text-fg-dim">
+        <p className="break-words border border-border bg-bg-alt/60 px-3 py-2 text-fg-dim">
           <span className="text-title">// demo mode</span> — X keys not configured.
           &ldquo;Connect&rdquo; injects a sample eligible account so you can try the
           full flow.
@@ -177,10 +160,8 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
       )}
 
       {/* STEP 1 — CONNECT */}
-      <TerminalCard
-        title={`STEP 1 // CONNECT X ${connected ? "— ✓" : ""}`}
-      >
-        <p className="mb-3 text-fg-dim">
+      <TerminalCard title="STEP 1 · CONNECT X">
+        <p className="mb-3 break-words text-fg-dim">
           Account must be {settings.minAccountAgeDays}+ days old with{" "}
           {settings.minFollowers}+ followers. Checked automatically.
         </p>
@@ -190,12 +171,15 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           </a>
         ) : (
           <div className="border border-border p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-title">
+            <div className="flex items-center justify-between gap-2">
+              <span className="min-w-0 break-all text-title">
                 @{profile?.username}
                 {profile?.verified && <span title="Verified"> ✔</span>}
               </span>
-              <a className="text-fg-dim hover:underline" href="/api/faucet/auth/x/logout">
+              <a
+                className="shrink-0 text-fg-dim hover:underline"
+                href="/api/faucet/auth/x/logout"
+              >
                 disconnect
               </a>
             </div>
@@ -208,7 +192,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
                 {profile?.verified ? " (verified tier)" : ""}.
               </p>
             ) : (
-              <ul className="mt-2 list-inside list-disc text-fg-dim">
+              <ul className="mt-2 list-inside list-disc break-words text-fg-dim">
                 {profile?.reasons.map((r) => (
                   <li key={r}>{r}</li>
                 ))}
@@ -220,25 +204,20 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
 
       {/* STEP 2 — POST */}
       <div className={locked ? "pointer-events-none opacity-40" : ""}>
-        <TerminalCard title={`STEP 2 // POST ABOUT $PROM ${postedConfirmed ? "— ✓" : ""}`}>
-          <p className="mb-3 text-fg-dim">
+        <TerminalCard title="STEP 2 · POST">
+          <p className="mb-3 break-words text-fg-dim">
             We wrote the post for you. Copy it or open X pre-filled.
           </p>
-          <div className="border border-border bg-bg-alt/60 p-3 text-fg">
+          <div className="break-words border border-border bg-bg-alt/60 p-3 text-fg">
             {settings.shareText}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             <NeonButton onClick={copyPost}>{copied ? "COPIED ✓" : "COPY TEXT"}</NeonButton>
-            <a
-              className={BTN}
-              href={shareIntent(settings)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Bracket>OPEN X PRE-FILLED →</Bracket>
+            <a className={BTN} href={shareIntent(settings)} target="_blank" rel="noreferrer">
+              <Bracket>OPEN X →</Bracket>
             </a>
             <a className={BTN} href="/img/faucet-share.svg" download>
-              <Bracket>DOWNLOAD IMAGE</Bracket>
+              <Bracket>IMAGE</Bracket>
             </a>
           </div>
           <label className="mt-4 flex cursor-pointer items-start gap-2 text-fg">
@@ -261,8 +240,10 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
 
       {/* STEP 3 — ADDRESS */}
       <div className={locked ? "pointer-events-none opacity-40" : ""}>
-        <TerminalCard title="STEP 3 // YOUR PROM ADDRESS">
-          <p className="mb-3 text-fg-dim">Paste your Promethium address.</p>
+        <TerminalCard title="STEP 3 · ADDRESS">
+          <p className="mb-3 break-words text-fg-dim">
+            Paste your Promethium address.
+          </p>
           <input
             className={INPUT}
             placeholder="Your Promethium (PROM) address"
@@ -271,27 +252,14 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
             spellCheck={false}
           />
           <a
-            className="mt-2 inline-block text-title hover:underline"
+            className="mt-2 inline-block break-words text-title hover:underline"
             href={settings.addressGuideUrl}
           >
             &gt; Don&apos;t have one? How to create a Promethium address →
           </a>
 
-          <label className="mt-4 flex cursor-pointer items-start gap-2 border border-border p-3 text-fg">
-            <input
-              type="checkbox"
-              className="mt-1 accent-title"
-              checked={ranNode}
-              onChange={(e) => setRanNode(e.target.checked)}
-            />
-            <span>
-              I run a node — I&apos;ll send {settings.nodeDeposit} PROM to prove it
-              and get {settings.nodeReward} PROM back.
-            </span>
-          </label>
-
           {error && (
-            <p className="mt-3 border border-border bg-bg-alt/60 px-3 py-2 text-title">
+            <p className="mt-3 break-words border border-border bg-bg-alt/60 px-3 py-2 text-title">
               ! {error}
             </p>
           )}

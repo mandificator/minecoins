@@ -7,7 +7,7 @@ import ClaimFlow from "./ClaimFlow";
 export const metadata: Metadata = {
   title: "Faucet",
   description:
-    "Community faucet for $PROM. Connect X, post about Promethium, drop your address and claim free PROM. Node runners earn more.",
+    "Community faucet for $PROM. Connect X, post about Promethium, drop your address and claim free PROM.",
   alternates: { canonical: "/faucet" },
 };
 
@@ -38,14 +38,14 @@ const ELIGIBILITY = [
   `${faucetConfig.rewardVerified} PROM verified`,
 ];
 
-const FAQ: [string, React.ReactNode][] = [
+const FAQ: [string, string][] = [
   [
     "Why do you need my X account?",
     "To keep the faucet fair and bot-free. We only read your public profile (age, followers, verified status) to check eligibility — nothing is posted on your behalf.",
   ],
   [
     "How much PROM do I get?",
-    `${faucetConfig.rewardRegular} PROM for a regular eligible account, ${faucetConfig.rewardVerified} PROM for a verified account, and up to ${faucetConfig.nodeReward} PROM if you run a node.`,
+    `${faucetConfig.rewardRegular} PROM for a regular eligible account, ${faucetConfig.rewardVerified} PROM for a verified account.`,
   ],
   [
     "When does the PROM arrive?",
@@ -65,13 +65,12 @@ export default function FaucetPage() {
           <p className="mt-3 max-w-2xl text-title">Free $PROM for the community.</p>
           <p className="mt-4 max-w-2xl text-fg-dim">
             Post about the element that fights back, drop your address, and claim
-            your coins. Run a node and earn {faucetConfig.nodeReward}×.
+            your coins.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
             {[
               `${faucetConfig.rewardRegular} PROM · regular`,
               `${faucetConfig.rewardVerified} PROM · verified`,
-              `${faucetConfig.nodeReward} PROM · node runners`,
             ].map((p, i, a) => (
               <span key={p} className="flex items-center gap-3">
                 <span className="text-title">{p}</span>
@@ -90,10 +89,10 @@ export default function FaucetPage() {
         <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
           // how the faucet works
         </h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {HOW.map(([title, body]) => (
             <TerminalCard key={title} title={title}>
-              <p className="text-fg">{body}</p>
+              <p className="break-words text-fg">{body}</p>
             </TerminalCard>
           ))}
         </div>
@@ -119,42 +118,19 @@ export default function FaucetPage() {
         <ClaimFlow settings={settings} />
       </section>
 
-      {/* ---------------- NODE BONUS ---------------- */}
-      <section className="py-6">
-        <TerminalCard title="⚡ NODE RUNNER BONUS">
-          <p className="text-title">
-            Send {faucetConfig.nodeDeposit} PROM, get {faucetConfig.nodeReward} PROM
-            back.
-          </p>
-          <p className="mt-2 text-fg-dim">
-            Running a Promethium node? Prove it. Send a tiny{" "}
-            {faucetConfig.nodeDeposit} PROM deposit from your node&apos;s wallet to
-            the address below — that transaction shows us you&apos;re a real node
-            operator, and we send {faucetConfig.nodeReward} PROM straight back.
-          </p>
-          <div className="mt-4 border border-border bg-bg-alt/60 p-3">
-            <p className="text-fg-dim">// node deposit address</p>
-            <p className="mt-1 break-all text-title">
-              {faucetConfig.nodeDepositAddress}
-            </p>
-          </div>
-          <p className="mt-3 text-fg-dim">
-            Tick &ldquo;I run a node&rdquo; when you claim so we watch for your
-            deposit. Send only from a wallet you control.
-          </p>
-        </TerminalCard>
-      </section>
-
       {/* ---------------- FAQ ---------------- */}
       <section className="py-12">
         <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">// faq</h2>
-        <div className="grid gap-4">
-          {FAQ.map(([q, a]) => (
-            <TerminalCard key={q} title={q}>
-              <p className="text-fg-dim">{a}</p>
-            </TerminalCard>
-          ))}
-        </div>
+        <TerminalCard title="FAQ">
+          <dl className="flex flex-col gap-4">
+            {FAQ.map(([q, a]) => (
+              <div key={q}>
+                <dt className="break-words text-title">&gt; {q}</dt>
+                <dd className="mt-1 break-words text-fg-dim">{a}</dd>
+              </div>
+            ))}
+          </dl>
+        </TerminalCard>
       </section>
     </div>
   );
