@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none" font-family="'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace">
+  <rect width="1200" height="675" fill="#0a2bd6"/>
+  <!-- dot-matrix -->
+  <g fill="#ffffff" fill-opacity="0.09">
+    <circle cx="0" cy="0" r="0"/>
+  </g>
+  <!-- frame -->
+  <rect x="48" y="48" width="1104" height="579" fill="none" stroke="#6f8ce6" stroke-width="2"/>
+
+  <!-- title bar: ┌─[ PROMETHIUM FAUCET ]───┐ -->
+  <text x="72" y="112" fill="#bcd4ff" font-size="30">┌─[ PROMETHIUM FAUCET ]────────────────────────────────────────────────┐</text>
+
+  <!-- element tile -->
+  <g transform="translate(72,150)">
+    <rect x="0" y="0" width="140" height="140" fill="none" stroke="#bcd4ff" stroke-width="2"/>
+    <text x="16" y="38" fill="#ffffff" fill-opacity="0.62" font-size="22">61</text>
+    <text x="16" y="104" fill="#ffffff" font-size="60" font-weight="700">Pm</text>
+    <text x="92" y="128" fill="#bcd4ff" font-size="20">[145]</text>
+  </g>
+
+  <text x="240" y="205" fill="#ffffff" font-size="58" font-weight="700">Free $PROM for the</text>
+  <text x="240" y="270" fill="#ffffff" font-size="58" font-weight="700">community.</text>
+
+  <text x="72" y="360" fill="#bcd4ff" font-size="26">// post about the element that fights back · drop your address · claim</text>
+
+  <text x="72" y="440" fill="#ffffff" font-size="28">[ 1 PROM regular ]   [ 3 PROM verified ]   [ 10 PROM node runners ]</text>
+
+  <text x="72" y="520" fill="#ffffff" fill-opacity="0.62" font-size="24">Real Proof-of-Work on Promethium Chain · stabilized to Solana as $PROM</text>
+
+  <text x="72" y="592" fill="#bcd4ff" font-size="26">promethium.work/faucet</text>
+  <text x="1080" y="592" fill="#bcd4ff" font-size="30" text-anchor="end">└──────┘</text>
+</svg>

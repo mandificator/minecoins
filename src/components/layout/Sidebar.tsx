@@ -16,6 +16,7 @@ const TOP: Item[] = [
 const BOTTOM: Item[] = [
   { href: "/bridge", label: "STABILIZATION PLANT" },
   { href: "/rent-a-miner", label: "HIRING HALL" },
+  { href: "/faucet", label: "FAUCET" },
 ];
 
 const INVESTMENT_CHILDREN: Item[] = [
