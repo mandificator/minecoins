@@ -48,11 +48,8 @@ const INPUT =
   "w-full min-w-0 border border-border bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-title";
 
 function shareIntent(s: FaucetSettings): string {
-  const p = new URLSearchParams({
-    text: s.shareText,
-    url: s.shareUrl,
-    hashtags: s.shareHashtags.join(","),
-  });
+  const p = new URLSearchParams({ text: s.shareText, url: s.shareUrl });
+  if (s.shareHashtags.length) p.set("hashtags", s.shareHashtags.join(","));
   return `https://twitter.com/intent/tweet?${p.toString()}`;
 }
 
@@ -81,10 +78,11 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
 
   async function copyPost() {
     try {
+      const tags = settings.shareHashtags.length
+        ? "\n" + settings.shareHashtags.map((h) => `#${h}`).join(" ")
+        : "";
       await navigator.clipboard.writeText(
-        `${settings.shareText}\n\n${settings.shareUrl}\n${settings.shareHashtags
-          .map((h) => `#${h}`)
-          .join(" ")}`,
+        `${settings.shareText}\n\n${settings.shareUrl}${tags}`,
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -208,7 +206,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           <p className="mb-3 break-words text-fg-dim">
             We wrote the post for you. Copy it or open X pre-filled.
           </p>
-          <div className="break-words border border-border bg-bg-alt/60 p-3 text-fg">
+          <div className="whitespace-pre-line break-words border border-border bg-bg-alt/60 p-3 text-fg">
             {settings.shareText}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -216,7 +214,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
             <a className={BTN} href={shareIntent(settings)} target="_blank" rel="noreferrer">
               <Bracket>OPEN X →</Bracket>
             </a>
-            <a className={BTN} href="/img/faucet-share.svg" download>
+            <a className={BTN} href="/img/faucet-share.gif" download>
               <Bracket>IMAGE</Bracket>
             </a>
           </div>

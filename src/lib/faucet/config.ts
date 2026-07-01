@@ -27,9 +27,9 @@ export const faucetConfig = {
 
   // Ready-to-post copy handed to users so posting is effortless.
   shareText:
-    "I'm mining $PROM — a real Proof-of-Work coin on Promethium Chain. It surfaces unstable and decays fast (17.7h half-life), so you stabilize it onto @solana before it fades... or let an agent mine while you sleep. The element that fights back.",
+    "win of the day! just got my hands on some fresh-fauceted $PROM\nwhy's it a win? because @promethium_work is the first PoW-mined minecoin on its own dedicated chain, then entangled on @solana",
   shareUrl: "https://promethium.work",
-  shareHashtags: ["Promethium", "PROM", "ProofOfWork"],
+  shareHashtags: [] as string[],
 } as const;
 
 export type FaucetSettings = {
