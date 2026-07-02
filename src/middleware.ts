@@ -5,6 +5,15 @@ const MUTATING = new Set(["POST", "PUT", "DELETE", "PATCH"]);
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // pool.promethium.work is the mining-pool subdomain: its root serves /pool.
+  const host = req.headers.get("host") || "";
+  if (host.startsWith("pool.") && pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/pool";
+    return NextResponse.rewrite(url);
+  }
+
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   const authed = await verifySessionToken(token);
 
@@ -29,5 +38,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/docs/:path*"],
+  matcher: ["/", "/admin/:path*", "/api/docs/:path*"],
 };

@@ -16,6 +16,20 @@ function fmt(n: number | undefined) {
   return Number(n).toLocaleString("en-US", { maximumFractionDigits: 8 });
 }
 
+function fmtDur(s: number | undefined | null) {
+  if (s === undefined || s === null) return "—";
+  if (s < 90) return `${Math.round(s)}s`;
+  return `${(s / 60).toFixed(1)} min`;
+}
+
+function hashfmt(h: number | undefined | null) {
+  if (!h) return "—";
+  const u = ["H/s", "kH/s", "MH/s", "GH/s", "TH/s", "PH/s"];
+  let i = 0, v = h;
+  while (v >= 1000 && i < u.length - 1) { v /= 1000; i++; }
+  return `${v.toFixed(2)} ${u[i]}`;
+}
+
 export default function ExplorerClient() {
   const [chain, setChain] = useState<Json | null>(null);
   const [q, setQ] = useState("");
@@ -89,11 +103,12 @@ export default function ExplorerClient() {
       )}
 
       {chain && chain.online && (
-        <div className="mb-6 grid grid-cols-2 gap-3 font-mono text-sm sm:grid-cols-4">
+        <div className="mb-6 grid grid-cols-2 gap-3 font-mono text-sm sm:grid-cols-5">
           <Stat label="HEIGHT" value={fmt(chain.height)} />
           <Stat label="DIFFICULTY" value={fmt(chain.difficulty)} />
-          <Stat label="HASHRATE" value={chain.networkHashps ? fmt(chain.networkHashps) + " H/s" : "—"} />
-          <Stat label="COIN" value="PROM" />
+          <Stat label="NET HASHRATE" value={hashfmt(chain.networkHashps)} />
+          <Stat label="POOL HASHRATE" value={hashfmt(chain.poolHashps)} />
+          <Stat label="AVG BLOCK" value={fmtDur(chain.avgBlockTime)} />
         </div>
       )}
 
