@@ -18,6 +18,10 @@ type ClaimResult = {
   verified?: boolean;
   error?: string;
   reasons?: string[];
+  referralCode?: string;
+  referredBy?: string | null;
+  referrerBonus?: number;
+  referredExtra?: number;
 };
 
 const ERROR_TEXT: Record<string, string> = {
@@ -26,6 +30,8 @@ const ERROR_TEXT: Record<string, string> = {
   bad_address: "That doesn't look like a valid Promethium address. Double-check it.",
   post_required: "Post about $PROM and confirm (or paste the post link).",
   duplicate: "This address has already claimed. One claim per address.",
+  already_claimed: "This X account has already claimed. One claim per X account.",
+  bad_referral: "That referral code isn't valid. Leave it blank or fix it.",
   server: "Something went wrong. Please try again.",
 };
 
@@ -57,6 +63,8 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   const [me, setMe] = useState<MeResponse | null>(null);
   const [copied, setCopied] = useState(false);
   const [address, setAddress] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+  const [codeCopied, setCodeCopied] = useState(false);
   const [tweetUrl, setTweetUrl] = useState("");
   const [postedConfirmed, setPostedConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -102,6 +110,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           address,
           tweetUrl: tweetUrl || undefined,
           postedConfirmed,
+          referralCode: referralCode || undefined,
         }),
       });
       const data: ClaimResult = await res.json();
@@ -122,27 +131,46 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   }
 
   // ---- Success ------------------------------------------------------------
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(result?.referralCode ?? "");
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+
   if (result?.ok) {
     return (
       <TerminalCard title="CLAIM RECORDED">
         <p className="text-title">✓ {result.reward} PROM queued for your address:</p>
         <p className="mt-2 break-all text-fg">{address}</p>
+        {result.referredBy && (
+          <p className="mt-2 text-fg-dim">
+            + {result.referredExtra} PROM referral bonus applied (code {result.referredBy}).
+          </p>
+        )}
         <p className="mt-3 break-words text-fg-dim">
-          Payouts are sent in batches by the distribution team. Keep this wallet —
-          that&apos;s where your PROM lands.
+          Payouts are sent automatically in batches. Keep this wallet — that&apos;s
+          where your PROM lands.
         </p>
-        <div className="mt-5">
-          <NeonButton
-            onClick={() => {
-              setResult(null);
-              setAddress("");
-              setPostedConfirmed(false);
-              setTweetUrl("");
-            }}
-          >
-            CLAIM FOR ANOTHER WALLET
-          </NeonButton>
+
+        <div className="mt-5 border border-title/50 bg-bg-alt/60 p-3">
+          <p className="text-fg-dim">// your referral code</p>
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+            <span className="break-all font-mono text-xl tracking-widest text-title">
+              {result.referralCode}
+            </span>
+            <NeonButton onClick={copyCode}>{codeCopied ? "COPIED ✓" : "COPY"}</NeonButton>
+          </div>
+          <p className="mt-2 break-words text-fg-dim">
+            Share it. You earn {result.referrerBonus} PROM for every friend who claims
+            with your code, and they get {result.referredExtra} PROM extra.
+          </p>
         </div>
+
+        <p className="mt-4 text-fg-dim">One claim per X account — you&apos;re all set.</p>
       </TerminalCard>
     );
   }
@@ -256,6 +284,15 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
             &gt; Don&apos;t have one? How to create a Promethium address →
           </a>
 
+          <input
+            className={`${INPUT} mt-3 uppercase tracking-widest`}
+            placeholder={`Optional: referral code (+${settings.referredExtra} PROM)`}
+            value={referralCode}
+            onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+            spellCheck={false}
+            maxLength={12}
+          />
+
           {error && (
             <p className="mt-3 break-words border border-border bg-bg-alt/60 px-3 py-2 text-title">
               ! {error}
@@ -269,7 +306,13 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
                 submitting || locked || !address || (!postedConfirmed && !tweetUrl)
               }
             >
-              {submitting ? "SUBMITTING…" : `CLAIM ${rewardTier} PROM`}
+              {submitting
+                ? "SUBMITTING…"
+                : `CLAIM ${
+                    referralCode
+                      ? Math.round((rewardTier + settings.referredExtra) * 10) / 10
+                      : rewardTier
+                  } PROM`}
             </NeonButton>
           </div>
         </TerminalCard>

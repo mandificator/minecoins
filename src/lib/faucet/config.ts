@@ -10,6 +10,12 @@ export const faucetConfig = {
   nodeDeposit: 0.001,
   nodeReward: 10,
 
+  // Referrals: each claimer gets a code. If a new claimer enters a valid code,
+  // the code owner earns referrerBonus and the new claimer gets referredExtra
+  // on top of their 1/3 tier.
+  referrerBonus: 0.5,
+  referredExtra: 0.1,
+
   // Eligibility thresholds for the connected X account.
   minFollowers: 100,
   minAccountAgeDays: 90, // ~3 months
@@ -37,6 +43,8 @@ export type FaucetSettings = {
   rewardVerified: number;
   nodeDeposit: number;
   nodeReward: number;
+  referrerBonus: number;
+  referredExtra: number;
   minFollowers: number;
   minAccountAgeDays: number;
   nodeDepositAddress: string;
@@ -53,6 +61,8 @@ export function faucetClientSettings(): FaucetSettings {
     rewardVerified: c.rewardVerified,
     nodeDeposit: c.nodeDeposit,
     nodeReward: c.nodeReward,
+    referrerBonus: c.referrerBonus,
+    referredExtra: c.referredExtra,
     minFollowers: c.minFollowers,
     minAccountAgeDays: c.minAccountAgeDays,
     nodeDepositAddress: c.nodeDepositAddress,

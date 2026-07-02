@@ -3,9 +3,19 @@ import { NextResponse } from "next/server";
 import { faucetConfig } from "@/lib/faucet/config";
 import { readSession, FAUCET_SESSION_COOKIE } from "@/lib/faucet/session";
 import { isValidPromAddress } from "@/lib/faucet/prom";
-import { hasAddress, saveSubmission } from "@/lib/faucet/store";
+import {
+  hasAddress,
+  saveSubmission,
+  getAccountByXId,
+  getAccountByReferralCode,
+  saveAccount,
+  genReferralCode,
+  type Account,
+} from "@/lib/faucet/store";
 
 export const runtime = "nodejs";
+
+const round8 = (n: number) => Math.round(n * 1e8) / 1e8;
 
 export async function POST(req: Request) {
   const profile = readSession(cookies().get(FAUCET_SESSION_COOKIE)?.value);
@@ -25,12 +35,14 @@ export async function POST(req: Request) {
     tweetUrl?: string;
     ranNode?: boolean;
     postedConfirmed?: boolean;
+    referralCode?: string;
   };
 
   const address = String(body.address ?? "").trim();
   const tweetUrl = body.tweetUrl ? String(body.tweetUrl).trim() : null;
   const ranNode = Boolean(body.ranNode);
   const postedConfirmed = Boolean(body.postedConfirmed);
+  const referralInput = String(body.referralCode ?? "").trim().toUpperCase();
 
   if (!isValidPromAddress(address)) {
     return NextResponse.json({ ok: false, error: "bad_address" }, { status: 400 });
@@ -38,16 +50,45 @@ export async function POST(req: Request) {
   if (!postedConfirmed && !tweetUrl) {
     return NextResponse.json({ ok: false, error: "post_required" }, { status: 400 });
   }
+
+  // one claim per X account
+  if (getAccountByXId(profile.id)) {
+    return NextResponse.json({ ok: false, error: "already_claimed" }, { status: 409 });
+  }
+  // one address per account (address not already taken)
   if (await hasAddress(address)) {
     return NextResponse.json({ ok: false, error: "duplicate" }, { status: 409 });
   }
 
-  const reward = profile.verified
-    ? faucetConfig.rewardVerified
-    : faucetConfig.rewardRegular;
+  // optional referral code
+  let referredBy: string | null = null;
+  if (referralInput) {
+    const owner = getAccountByReferralCode(referralInput);
+    if (!owner || owner.xId === profile.id) {
+      return NextResponse.json({ ok: false, error: "bad_referral" }, { status: 400 });
+    }
+    referredBy = owner.referralCode;
+  }
+
+  const base = profile.verified ? faucetConfig.rewardVerified : faucetConfig.rewardRegular;
+  const reward = round8(base + (referredBy ? faucetConfig.referredExtra : 0));
+  const referralCode = genReferralCode();
+  const createdAt = new Date().toISOString();
+
+  const account: Account = {
+    xId: profile.id,
+    username: profile.username,
+    address,
+    verified: profile.verified,
+    reward,
+    referralCode,
+    referredBy,
+    createdAt,
+  };
+  saveAccount(account);
 
   await saveSubmission({
-    createdAt: new Date().toISOString(),
+    createdAt,
     xId: profile.id,
     username: profile.username,
     followers: profile.followers,
@@ -57,6 +98,8 @@ export async function POST(req: Request) {
     reward,
     ranNode,
     tweetUrl,
+    referralCode,
+    referredBy,
   });
 
   return NextResponse.json({
@@ -64,6 +107,10 @@ export async function POST(req: Request) {
     reward,
     verified: profile.verified,
     ranNode,
+    referralCode,
+    referredBy,
+    referrerBonus: faucetConfig.referrerBonus,
+    referredExtra: faucetConfig.referredExtra,
     nodeReward: faucetConfig.nodeReward,
     nodeDepositAddress: faucetConfig.nodeDepositAddress,
   });
