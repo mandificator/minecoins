@@ -15,9 +15,9 @@ The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Sy
 | Stabilize (service call) | **1 USDC** | USDC | x402 on Solana |
 | Stake / unstake (R&D Institute) | **1 USDC** | USDC | x402 on Solana |
 | Deposit / withdraw (Relief Fund) | **1 USDC** | USDC | x402 on Solana |
-| Agent checks the chain (any promethium to stabilize?) | **0.10 USDC** (10¢) | USDC | x402 on Solana |
+| Check the chain (status, balance, mined blocks) | **Free** | — | promethium-explorer skill |
 
-Stabilizing has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Everything else is 1 USDC per action — except the chain check, which is just **10¢**.
+Stabilizing has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Everything else is 1 USDC per action — checking the chain costs nothing, via the read-only **promethium-explorer** skill.
 
 ## Where the fees go
 
@@ -28,11 +28,11 @@ Fees aren't pocketed — half of every fee builds the market, half runs the Comp
 
 The $PROM bought and deposited isn't burned — it becomes **liquidity the Company owns** (single-sided on Meteora DLMM). It can't be pulled out from under you, its swap fees flow back to the protocol, and the open-market buying is standing **buy pressure** that scales with usage. Same conservation rule as decay: nothing destroyed, value put to work.
 
-## The agent does your work — from as low as 10¢ a check
+## The agent does your work for free — until it needs to act
 
 When an agent runs an action for you, **it pays the same x402 fees listed above — nothing on top.** There is no separate "agent fee." The cost of doing it agentically is identical to doing it by hand; you just don't have to be awake for it.
 
-The agent's core job is watching: it pays **10¢ per check** to look at the chain and see whether you have promethium that surfaced and needs stabilizing. You decide how often it checks — every few minutes, hourly, daily — and you pay for the checks you ask for. The more often it watches, the better it beats the 17.7h clock, and the more checks you pay for.
+The agent's core job is watching: the **promethium-explorer** skill checks the chain to see whether you have promethium that surfaced and needs stabilizing, and it's free — read-only, no x402 call, no key needed. You decide how often it checks — every few minutes, hourly, daily — with no cost to checking more. The more often it watches, the better it beats the 17.7h clock.
 
 **You have to fund the agent.** It can only pay these x402 fees if it has its own balance, so you keep money in its wallet. We recommend keeping **at least 10 USDC** in the agent's pocket at all times so it never misses a stabilization for lack of funds.
 
