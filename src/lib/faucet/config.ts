@@ -27,7 +27,7 @@ export const faucetConfig = {
 
   // Ready-to-post copy handed to users so posting is effortless.
   shareText:
-    "win of the day! just got my hands on some fresh-fauceted $PROM\nwhy's it a win? because @promethium_work is the first PoW-mined minecoin on its own dedicated chain, then entangled on @solana",
+    "win of the day! just got my hands on some fresh-fauceted Promethium\n\nwhy's it a win?\n\nbecause @promethium_work is the first PoW-mined minecoin on its own dedicated chain, then entangled on @solana",
   shareUrl: "https://promethium.work",
   shareHashtags: [] as string[],
 } as const;
