@@ -2,7 +2,13 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getRedirectUri } from "@/lib/faucet/config";
 import { exchangeCode, fetchProfile } from "@/lib/faucet/x";
-import { cookieOptions, FAUCET_SESSION_COOKIE, signSession } from "@/lib/faucet/session";
+import {
+  cookieOptions,
+  FAUCET_SESSION_COOKIE,
+  FAUCET_XTOKEN_COOKIE,
+  signSession,
+  signValue,
+} from "@/lib/faucet/session";
 
 export const runtime = "nodejs";
 
@@ -31,6 +37,8 @@ export async function GET(req: Request) {
 
     const res = back("connected=1");
     res.cookies.set(FAUCET_SESSION_COOKIE, signSession(profile), cookieOptions());
+    // short-lived X token (2h) so the claim step can verify the user's tweet
+    res.cookies.set(FAUCET_XTOKEN_COOKIE, signValue(access_token), cookieOptions(60 * 60 * 2));
     res.cookies.set("prom_pkce", "", { path: "/", maxAge: 0 });
     res.cookies.set("prom_state", "", { path: "/", maxAge: 0 });
     return res;

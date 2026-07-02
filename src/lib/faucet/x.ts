@@ -8,6 +8,45 @@ import type { XProfile } from "./session";
 const AUTHORIZE = "https://twitter.com/i/oauth2/authorize";
 const TOKEN = "https://api.twitter.com/2/oauth2/token";
 const ME = "https://api.twitter.com/2/users/me";
+const TWEETS = "https://api.twitter.com/2/tweets";
+
+export type TweetCheck =
+  | { ok: true; authorId: string; text: string }
+  | { ok: false; status: number; reason: string };
+
+// Pull the numeric tweet id out of an x.com / twitter.com status link.
+export function tweetIdFromUrl(u: string): string | null {
+  const m = u.match(/status(?:es)?\/(\d{5,25})/);
+  return m ? m[1] : null;
+}
+
+// Fetch a tweet by id (user-context token). Logs the live X rate-limit /
+// access-level headers so we can read off the actual plan/quota.
+export async function getTweet(token: string, id: string): Promise<TweetCheck> {
+  const url = `${TWEETS}/${id}?tweet.fields=author_id`;
+  let res: Response;
+  try {
+    res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  } catch (e) {
+    return { ok: false, status: 0, reason: `network: ${(e as Error).message}` };
+  }
+  console.log(
+    "[faucet:x-tweet]",
+    "status", res.status,
+    "| rate-limit", res.headers.get("x-rate-limit-limit"),
+    "remaining", res.headers.get("x-rate-limit-remaining"),
+    "| app-24h", res.headers.get("x-app-limit-24hour-limit"),
+    "| access", res.headers.get("x-access-level") ?? "",
+  );
+  if (!res.ok) {
+    return { ok: false, status: res.status, reason: (await res.text()).slice(0, 200) };
+  }
+  const j = (await res.json().catch(() => ({}))) as {
+    data?: { author_id?: string; text?: string };
+  };
+  if (!j.data) return { ok: false, status: res.status, reason: "tweet not found / deleted" };
+  return { ok: true, authorId: j.data.author_id ?? "", text: j.data.text ?? "" };
+}
 
 export function isConfigured(): boolean {
   return Boolean(process.env.TWITTER_CLIENT_ID);

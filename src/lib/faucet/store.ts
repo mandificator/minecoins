@@ -21,6 +21,7 @@ export type Submission = {
   tweetUrl: string | null;
   referralCode: string; // this claimer's own code
   referredBy: string | null; // code they used, if any
+  postVerified?: boolean; // tweet confirmed via X API (vs API-unavailable fallback)
 };
 
 export type Account = {

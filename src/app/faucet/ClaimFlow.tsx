@@ -28,7 +28,10 @@ const ERROR_TEXT: Record<string, string> = {
   not_connected: "Connect your X account first.",
   not_eligible: "Your account does not meet the eligibility criteria.",
   bad_address: "That doesn't look like a valid Promethium address. Double-check it.",
-  post_required: "Post about $PROM and confirm (or paste the post link).",
+  post_required: "Paste the link to your post so we can verify it.",
+  bad_tweet_url: "That doesn't look like a valid X post link. Paste the full link to your post.",
+  tweet_not_yours: "That post isn't from your connected X account. Paste your own post.",
+  tweet_no_mention: "Your post needs to tag @promethium_work. Edit it (or post again) and retry.",
   duplicate: "This address has already claimed. One claim per address.",
   already_claimed: "This X account has already claimed. One claim per X account.",
   bad_referral: "That referral code isn't valid. Leave it blank or fix it.",
@@ -267,10 +270,13 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           </label>
           <input
             className={`${INPUT} mt-3`}
-            placeholder="Optional: paste your post link (https://x.com/…)"
+            placeholder="Paste your post link (https://x.com/…) — required, we verify it"
             value={tweetUrl}
             onChange={(e) => setTweetUrl(e.target.value)}
           />
+          <p className="mt-1 break-words text-fg-dim">
+            We check your post is yours and tags @promethium_work.
+          </p>
         </TerminalCard>
       </div>
 
@@ -312,9 +318,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           <div className="mt-4">
             <NeonButton
               onClick={submit}
-              disabled={
-                submitting || locked || !address || (!postedConfirmed && !tweetUrl)
-              }
+              disabled={submitting || locked || !address || !tweetUrl}
             >
               {submitting
                 ? "SUBMITTING…"
