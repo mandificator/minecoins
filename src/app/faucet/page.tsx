@@ -17,25 +17,25 @@ const HOW: [string, string][] = [
     `Your account must be at least ${faucetConfig.minAccountAgeDays} days old and have ${faucetConfig.minFollowers}+ followers. We verify this automatically.`,
   ],
   [
-    "② Post about $PROM",
-    "We hand you the text and an image — one click to post. No writing required.",
+    "② Post in your own words",
+    "Tag @promethium_work and share why you're bullish on the chain — your words, not a canned message. We open X pre-tagged; you add the rest.",
   ],
   [
     "③ Drop your address",
-    "Paste your Promethium address. New here? We link a guide that shows you how to make one.",
+    "Paste your Promethium address (and a referral code if you have one). New here? We link a guide that shows you how to make one.",
   ],
   [
     "④ Get PROM",
-    `Criteria verified → your address is recorded and PROM is sent by the distribution team. ${faucetConfig.rewardRegular} PROM for regular accounts, ${faucetConfig.rewardVerified} PROM for verified.`,
+    `Criteria verified → your address is recorded and paid automatically. ${faucetConfig.rewardRegular} PROM regular, ${faucetConfig.rewardVerified} PROM verified, +${faucetConfig.referredExtra} with a referral code.`,
   ],
 ];
 
 const ELIGIBILITY = [
   `X account ≥ ${faucetConfig.minAccountAgeDays} days`,
   `≥ ${faucetConfig.minFollowers} followers`,
-  "1 post about $PROM",
-  `${faucetConfig.rewardRegular} PROM regular`,
-  `${faucetConfig.rewardVerified} PROM verified`,
+  "1 original post tagging @promethium_work",
+  "1 claim per X account",
+  `${faucetConfig.rewardRegular} regular · ${faucetConfig.rewardVerified} verified · +${faucetConfig.referrerBonus}/referral`,
 ];
 
 const FAQ: [string, string][] = [
@@ -49,7 +49,11 @@ const FAQ: [string, string][] = [
   ],
   [
     "When does the PROM arrive?",
-    "We collect and verify addresses here; payouts are sent in batches by the distribution team. Keep the wallet you submitted.",
+    "Automatically — payouts run in batches roughly every half hour. Keep the wallet you submitted; that's where it lands.",
+  ],
+  [
+    "How do referrals work?",
+    `When you claim you get your own referral code. Share it: each friend who claims with it earns you +${faucetConfig.referrerBonus} PROM, and they get +${faucetConfig.referredExtra} on top of their reward. One claim per X account.`,
   ],
 ];
 

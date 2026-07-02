@@ -232,16 +232,26 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
       <div className={locked ? "pointer-events-none opacity-40" : ""}>
         <TerminalCard title="STEP 2 · POST">
           <p className="mb-3 break-words text-fg-dim">
-            We wrote the post for you. Copy it or open X pre-filled.
+            Post about Promethium in <span className="text-title">your own words</span> —
+            please don&apos;t copy-paste. Unique posts reach more people (and X filters
+            duplicate spam). Make it yours:
           </p>
-          <div className="whitespace-pre-line break-words border border-border bg-bg-alt/60 p-3 text-fg">
-            {settings.shareText}
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <NeonButton onClick={copyPost}>{copied ? "COPIED ✓" : "COPY TEXT"}</NeonButton>
+          <ul className="mb-3 list-inside list-disc break-words text-fg">
+            <li>
+              mention <span className="text-title">@promethium_work</span>
+            </li>
+            <li>why you like the chain / what makes it different</li>
+            <li>your bullish take + ideas for the project</li>
+          </ul>
+          <p className="mb-3 break-words text-fg-dim">
+            &ldquo;Open X&rdquo; opens the composer already tagging @promethium_work with
+            the link — just add your own thoughts.
+          </p>
+          <div className="mt-1 flex flex-wrap gap-2">
             <a className={BTN} href={shareIntent(settings)} target="_blank" rel="noreferrer">
               <Bracket>OPEN X →</Bracket>
             </a>
+            <NeonButton onClick={copyPost}>{copied ? "COPIED ✓" : "COPY @ + LINK"}</NeonButton>
             <a className={BTN} href="/img/faucet-share.gif" download>
               <Bracket>IMAGE</Bracket>
             </a>
@@ -253,7 +263,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
               checked={postedConfirmed}
               onChange={(e) => setPostedConfirmed(e.target.checked)}
             />
-            <span>I posted about $PROM</span>
+            <span>I posted about Promethium (tagging @promethium_work)</span>
           </label>
           <input
             className={`${INPUT} mt-3`}

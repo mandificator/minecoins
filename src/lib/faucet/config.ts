@@ -31,9 +31,10 @@ export const faucetConfig = {
 
   officialX: "https://x.com/promethium_work",
 
-  // Ready-to-post copy handed to users so posting is effortless.
-  shareText:
-    "win of the day! just got my hands on some fresh-fauceted Promethium\n\nwhy's it a win?\n\nbecause @promethium_work is the first PoW-mined minecoin on its own dedicated chain, then entangled on @solana",
+  // Post seed. Users write their OWN post (unique posts avoid X's duplicate-spam
+  // filter and reach more people); the composer just opens pre-tagging our handle
+  // + link so they only add their own reasons for being bullish.
+  shareText: "@promethium_work",
   shareUrl: "https://promethium.work",
   shareHashtags: [] as string[],
 } as const;
