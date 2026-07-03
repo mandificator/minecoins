@@ -87,8 +87,12 @@ export default function PoolClient() {
             label="MATURING"
             value={`${fmt(pool.immature_reward, 0)} (${fmt(pool.blocks_immature, 0)} blk)`}
           />
-          <Stat label="PROM PAID OUT" value={fmt(pool.total_paid, 2)} />
+          <Stat label="PAID OUT (TOTAL)" value={fmt(pool.total_paid, 0)} />
           <Stat label="PENDING PAYOUT" value={fmt(pool.total_pending, 2)} />
+          <Stat
+            label="POOL HOLDS NOW"
+            value={`${fmt(pool.wallet_balance, 0)}${pool.wallet_immature ? ` (+${fmt(pool.wallet_immature, 0)} mat)` : ""}`}
+          />
         </div>
       )}
       {pool && (
