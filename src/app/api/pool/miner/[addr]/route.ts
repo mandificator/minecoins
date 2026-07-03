@@ -11,8 +11,12 @@ export async function GET(_req: Request, ctx: { params: Promise<{ addr: string }
     const { addr } = await ctx.params;
     const address = decodeURIComponent(addr).trim();
     const d = JSON.parse(fs.readFileSync(STATS, "utf8"));
-    const m = d.miners?.[address];
-    if (!m) return NextResponse.json({ online: true, found: false, address });
+    const miners = d.miners || {};
+    // own-property check so JS special names (__proto__, constructor, …) don't false-match
+    if (!Object.prototype.hasOwnProperty.call(miners, address)) {
+      return NextResponse.json({ online: true, found: false, address });
+    }
+    const m = miners[address];
     return NextResponse.json({ online: true, found: true, address, updated: d.updated, ...m });
   } catch {
     return NextResponse.json({ online: false, message: "Pool stats are building — check back shortly." });
