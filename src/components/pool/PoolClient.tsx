@@ -30,24 +30,18 @@ export default function PoolClient() {
   const [pool, setPool] = useState<Json | null>(null);
   const [top, setTop] = useState<Json[]>([]);
   const [updated, setUpdated] = useState<number | null>(null);
-  const [ageNow, setAgeNow] = useState(Math.floor(Date.now() / 1000));
   const [q, setQ] = useState("");
   const [miner, setMiner] = useState<Json | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    const load = () =>
-      getJson("")
-        .then((d) => { setPool(d.pool || null); setTop(d.top || []); setUpdated(d.updated || null); })
-        .catch(() => {});
-    load();
-    const fetchTimer = setInterval(load, 60000); // re-pull every 60s
-    const tick = setInterval(() => setAgeNow(Math.floor(Date.now() / 1000)), 1000);
-    return () => { clearInterval(fetchTimer); clearInterval(tick); };
+    getJson("")
+      .then((d) => { setPool(d.pool || null); setTop(d.top || []); setUpdated(d.updated || null); })
+      .catch(() => {});
   }, []);
 
-  const age = updated ? Math.max(0, ageNow - updated) : null;
+  const age = updated ? Math.max(0, Math.floor(Date.now() / 1000) - updated) : null;
 
   async function search(raw?: string) {
     const addr = (raw ?? q).trim();
@@ -100,7 +94,7 @@ export default function PoolClient() {
       {pool && (
         <p className="-mt-6 mb-8 text-right text-[10px] text-fg-dim">
           matured = credited after 100 confirmations · maturing = won, still confirming
-          {age !== null && ` · updated ${age < 90 ? `${age}s` : `${Math.round(age / 60)}m`} ago · auto-refreshes`}
+          {age !== null && ` · data ${age < 90 ? `${age}s` : `${Math.round(age / 60)}m`} old — reload to update`}
         </p>
       )}
 
