@@ -29,14 +29,25 @@ function durfmt(s: number | undefined | null) {
 export default function PoolClient() {
   const [pool, setPool] = useState<Json | null>(null);
   const [top, setTop] = useState<Json[]>([]);
+  const [updated, setUpdated] = useState<number | null>(null);
+  const [ageNow, setAgeNow] = useState(Math.floor(Date.now() / 1000));
   const [q, setQ] = useState("");
   const [miner, setMiner] = useState<Json | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    getJson("").then((d) => { setPool(d.pool || null); setTop(d.top || []); }).catch(() => {});
+    const load = () =>
+      getJson("")
+        .then((d) => { setPool(d.pool || null); setTop(d.top || []); setUpdated(d.updated || null); })
+        .catch(() => {});
+    load();
+    const fetchTimer = setInterval(load, 60000); // re-pull every 60s
+    const tick = setInterval(() => setAgeNow(Math.floor(Date.now() / 1000)), 1000);
+    return () => { clearInterval(fetchTimer); clearInterval(tick); };
   }, []);
+
+  const age = updated ? Math.max(0, ageNow - updated) : null;
 
   async function search(raw?: string) {
     const addr = (raw ?? q).trim();
@@ -74,9 +85,23 @@ export default function PoolClient() {
           <Stat label="TOTAL MINERS" value={fmt(pool.miners, 0)} />
           <Stat label="BLOCKS FOUND" value={fmt(pool.blocks_won, 0)} />
           <Stat label="AVG BLOCK TIME" value={durfmt(pool.avg_block_time)} />
+          <Stat
+            label="MATURED REWARDS"
+            value={`${fmt(pool.matured_reward, 0)} (${fmt(pool.blocks_mature, 0)} blk)`}
+          />
+          <Stat
+            label="MATURING"
+            value={`${fmt(pool.immature_reward, 0)} (${fmt(pool.blocks_immature, 0)} blk)`}
+          />
           <Stat label="PROM PAID OUT" value={fmt(pool.total_paid, 2)} />
           <Stat label="PENDING PAYOUT" value={fmt(pool.total_pending, 2)} />
         </div>
+      )}
+      {pool && (
+        <p className="-mt-6 mb-8 text-right text-[10px] text-fg-dim">
+          matured = credited after 100 confirmations · maturing = won, still confirming
+          {age !== null && ` · updated ${age < 90 ? `${age}s` : `${Math.round(age / 60)}m`} ago · auto-refreshes`}
+        </p>
       )}
 
       {/* search */}
