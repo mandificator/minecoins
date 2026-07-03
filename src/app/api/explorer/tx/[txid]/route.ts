@@ -22,20 +22,36 @@ export async function GET(
       online: true,
       coin: "PROM",
       txid: t.txid,
+      hash: t.hash ?? null, // wtxid (differs from txid when there's witness data)
       blockHash: t.blockhash ?? null,
       confirmations: t.confirmations ?? 0,
       time: t.time ?? null,
+      size: t.size ?? null,
+      vsize: t.vsize ?? null,
+      weight: t.weight ?? null,
+      version: t.version ?? null,
+      locktime: t.locktime ?? null,
       coinbase: isCoinbase,
       vin: (t.vin || []).map((i: any) =>
-        i.coinbase ? { coinbase: true } : { txid: i.txid, vout: i.vout }
+        i.coinbase
+          ? { coinbase: i.coinbase, witness: i.txinwitness ?? null }
+          : {
+              txid: i.txid,
+              vout: i.vout,
+              // full witness stack (hex items) — inscriptions/data live here
+              witness: i.txinwitness ?? null,
+            }
       ),
       vout: (t.vout || []).map((o: any) => ({
         value: o.value,
         n: o.n,
         address: o.scriptPubKey?.address ?? null,
         type: o.scriptPubKey?.type ?? null,
+        scriptPubKeyHex: o.scriptPubKey?.hex ?? null,
       })),
       totalOut: (t.vout || []).reduce((s: number, o: any) => s + (o.value || 0), 0),
+      // full raw transaction hex (serialized, includes the witness) for extraction/verification
+      hex: t.hex ?? null,
     });
   } catch {
     return NextResponse.json(
