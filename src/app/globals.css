@@ -579,13 +579,16 @@ body {
 }
 
 /* hero figures — sized so x,xxx,xxx.xxxxxxxx always fits on one line */
+.dash-hero-row {
+  --dash-hero-size: clamp(1.8rem, 3.6vw, 3.6rem);
+}
 .dash-hero-int {
-  font-size: clamp(1.8rem, 3.6vw, 3.6rem);
+  font-size: var(--dash-hero-size);
   line-height: 1.05;
   letter-spacing: 0.01em;
 }
 .dash-hero-frac {
-  font-size: clamp(0.95rem, 1.8vw, 1.8rem);
+  font-size: calc(var(--dash-hero-size) * 0.72);
   color: var(--fg-dim);
 }
 
@@ -633,6 +636,17 @@ body {
 .dash-flap-sep {
   padding: 0 0.04em;
   color: var(--fg-dim);
+}
+/* the decimals' single long plate — same outer height as the digit
+   plates (1.2 line-height + 2×0.1em padding + 2×1px border), digits
+   change in place (no flip) so they can run fast */
+.dash-flap-long {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--dash-hero-size) * 1.4 + 2px);
+  padding: 0 0.18em;
+  letter-spacing: 0.06em;
+  color: var(--fg);
 }
 @media (prefers-reduced-motion: reduce) {
   .dash-flap-inner {

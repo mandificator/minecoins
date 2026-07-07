@@ -53,7 +53,7 @@ function useLiveValue(base: number, perSec: number, riseMs = 1700) {
       }
     };
     step();
-    const id = setInterval(step, 400);
+    const id = setInterval(step, 120);
     return () => clearInterval(id);
   }, [base, perSec, riseMs]);
   return v;
@@ -131,13 +131,18 @@ function Hero({
         <span className="dash-label">{label}</span>
         <span className="dash-note">{note}</span>
       </div>
-      {/* frac board wraps to its own row when the panel is narrow */}
-      <div className="flex flex-wrap items-baseline gap-y-2 font-bold text-fg">
+      {/* integer digits flip on plates; decimals run fast inside one
+          long plate of the same height. Frac wraps to its own row when
+          the panel is narrow. */}
+      <div className="dash-hero-row flex flex-wrap items-end gap-y-2 font-bold text-fg">
         <span className="dash-hero-int">
           <Flaps text={int} />
         </span>
-        <span className="dash-hero-frac">
-          <Flaps text={"." + frac} />
+        <span className="dash-hero-frac flex items-end">
+          <span className="dash-flap-sep">.</span>
+          <span className="dash-flap dash-flap-long">
+            <span>{frac}</span>
+          </span>
         </span>
       </div>
       <div className="dash-note mt-1">PROM</div>
