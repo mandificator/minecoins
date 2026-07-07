@@ -588,7 +588,7 @@ body {
   letter-spacing: 0.01em;
 }
 .dash-hero-frac {
-  font-size: calc(var(--dash-hero-size) * 0.72);
+  font-size: var(--dash-hero-size);
   color: var(--fg-dim);
 }
 
