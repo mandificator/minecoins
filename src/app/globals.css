@@ -580,13 +580,64 @@ body {
 
 /* hero figures — sized so x,xxx,xxx.xxxxxxxx always fits on one line */
 .dash-hero-int {
-  font-size: clamp(2.2rem, 4.6vw, 4.5rem);
+  font-size: clamp(1.8rem, 3.6vw, 3.6rem);
   line-height: 1.05;
   letter-spacing: 0.01em;
 }
 .dash-hero-frac {
-  font-size: clamp(1.15rem, 2.3vw, 2.25rem);
+  font-size: clamp(0.95rem, 1.8vw, 1.8rem);
   color: var(--fg-dim);
+}
+
+/* split-flap board — every digit on its own plate, split line
+   across the middle, flip on change (stock-exchange style) */
+.dash-flaps {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.08em;
+}
+.dash-flap {
+  position: relative;
+  display: inline-block;
+  padding: 0.1em 0.16em;
+  line-height: 1.2;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0 50%, rgba(0, 0, 0, 0.14) 50% 100%),
+    var(--bg-alt);
+  border: 1px solid rgba(188, 212, 255, 0.3);
+  box-shadow: 0 0.06em 0 rgba(0, 0, 0, 0.4);
+  perspective: 2.5em;
+}
+.dash-flap::after {
+  /* the mechanical split across the middle */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 0.03em;
+  min-height: 1px;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.dash-flap-inner {
+  display: block;
+  backface-visibility: hidden;
+  transform-origin: 50% 50%;
+  animation: dash-flip 0.13s ease-out;
+}
+@keyframes dash-flip {
+  0% { transform: rotateX(-85deg); }
+  100% { transform: rotateX(0); }
+}
+.dash-flap-sep {
+  padding: 0 0.04em;
+  color: var(--fg-dim);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dash-flap-inner {
+    animation: none;
+  }
 }
 .dash-stat {
   font-size: clamp(1.2rem, 4.2vw, 1.7rem) !important;

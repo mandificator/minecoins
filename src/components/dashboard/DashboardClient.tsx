@@ -31,19 +31,19 @@ function hashfmt(h: number) {
 }
 
 /* ---------------- live-ticking number ----------------
-   Counts up to `base` on mount (odometer feel), then drifts
-   at `perSec` so the figure stays visibly alive. */
+   Counts up to `base` on mount, then drifts at `perSec`.
+   Updates in discrete steps (like a split-flap board), not
+   per-frame — each step flips the plates that changed. */
 
 function useLiveValue(base: number, perSec: number, riseMs = 1700) {
   const [v, setV] = useState(0);
   useEffect(() => {
-    let raf = 0;
     const t0 = performance.now();
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const tick = (now: number) => {
-      const el = now - t0;
+    const step = () => {
+      const el = performance.now() - t0;
       if (reduced || el >= riseMs) {
         const drift = reduced ? el : el - riseMs;
         setV(base + (perSec * drift) / 1000);
@@ -51,12 +51,37 @@ function useLiveValue(base: number, perSec: number, riseMs = 1700) {
         const p = 1 - Math.pow(1 - el / riseMs, 3); // ease-out cubic
         setV(base * p);
       }
-      raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    step();
+    const id = setInterval(step, 400);
+    return () => clearInterval(id);
   }, [base, perSec, riseMs]);
   return v;
+}
+
+/* ---------------- split-flap board ----------------
+   Every digit sits on its own plate (stock-exchange flap
+   board); a plate flips when its digit changes. Separators
+   (, .) are printed between plates, not on them. */
+
+function Flaps({ text }: { text: string }) {
+  return (
+    <span className="dash-flaps">
+      {text.split("").map((ch, i) =>
+        /[0-9]/.test(ch) ? (
+          <span key={i} className="dash-flap">
+            <span key={ch} className="dash-flap-inner">
+              {ch}
+            </span>
+          </span>
+        ) : (
+          <span key={i} className="dash-flap-sep">
+            {ch}
+          </span>
+        ),
+      )}
+    </span>
+  );
 }
 
 /* ---------------- chrome ---------------- */
@@ -106,11 +131,13 @@ function Hero({
         <span className="dash-label">{label}</span>
         <span className="dash-note">{note}</span>
       </div>
-      <div className="whitespace-nowrap font-bold text-fg">
-        <span className="dash-hero-int">{int}</span>
-        <span className="dash-hero-frac">.{frac}</span>
-        <span className="dash-hero-frac blink text-title" aria-hidden>
-          ▮
+      {/* frac board wraps to its own row when the panel is narrow */}
+      <div className="flex flex-wrap items-baseline gap-y-2 font-bold text-fg">
+        <span className="dash-hero-int">
+          <Flaps text={int} />
+        </span>
+        <span className="dash-hero-frac">
+          <Flaps text={"." + frac} />
         </span>
       </div>
       <div className="dash-note mt-1">PROM</div>
