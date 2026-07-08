@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import WalletButton from "@/components/web3/WalletButton";
+import { isBridgeLive, X402_FEE_USDC, solanaConfig } from "@/lib/solana/config";
 
 type Quote = {
   address: string;
@@ -16,27 +19,39 @@ type Quote = {
   projected_healthy_spl?: number;
   projected_to_battery?: number;
   tip: number;
-  error?: string;
+};
+
+type Intent = {
+  intentId: string;
+  bridgeAddress: string;
+  opReturnHex: string;
+  command: string;
+  amount: number;
+  solAddress: string;
+  usdcMemo: string;
 };
 
 const fmt = (n: number | undefined, d = 4) =>
   n === undefined ? "—" : n.toLocaleString(undefined, { maximumFractionDigits: d });
 
 export default function BridgeClient() {
+  const { publicKey, connected } = useWallet();
   const [fromAddr, setFromAddr] = useState("");
   const [amount, setAmount] = useState("");
   const [solAddr, setSolAddr] = useState("");
+  const [useConnected, setUseConnected] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
+  const [intent, setIntent] = useState<Intent | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+
+  const dest = useConnected && publicKey ? publicKey.toBase58() : solAddr;
 
   async function getQuote() {
     setErr("");
     setQuote(null);
-    if (!fromAddr.trim()) {
-      setErr("Enter the PROM address you want to bridge from.");
-      return;
-    }
+    setIntent(null);
+    if (!fromAddr.trim()) return setErr("Enter the PROM address you want to bridge from.");
     setLoading(true);
     try {
       const q = new URLSearchParams({ address: fromAddr.trim() });
@@ -52,107 +67,188 @@ export default function BridgeClient() {
     }
   }
 
+  async function createIntent() {
+    setErr("");
+    setIntent(null);
+    if (!dest.trim()) return setErr("Enter a destination Solana address (or use your connected wallet).");
+    setLoading(true);
+    try {
+      const r = await fetch("/api/bridge/intent", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ fromAddress: fromAddr.trim(), amount: Number(amount), solAddress: dest.trim() }),
+      });
+      const d = await r.json();
+      if (!r.ok) setErr(d.error || "Could not create the bridge intent.");
+      else setIntent(d);
+    } catch (e: any) {
+      setErr(String(e?.message || e));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const healthPct = quote ? Math.round(quote.healthy_fraction * 1000) / 10 : 0;
+  const canIntent = !!quote && !quote.over_cap && !quote.insufficient_balance && Number(amount) > 0;
+  const bridgeLive = isBridgeLive();
 
   return (
-    <main style={{ maxWidth: 640, margin: "0 auto", padding: "2rem 1.25rem", fontFamily: "system-ui, sans-serif" }}>
+    <main style={{ maxWidth: 660, margin: "0 auto", padding: "2rem 1.25rem", fontFamily: "system-ui, sans-serif" }}>
       <div style={{ fontSize: 12, letterSpacing: 1, opacity: 0.6, textTransform: "uppercase" }}>
         Internal · testing only
       </div>
       <h1 style={{ fontSize: 28, margin: "0.25rem 0 0.5rem" }}>PROM → Solana Bridge</h1>
       <p style={{ opacity: 0.75, lineHeight: 1.5, marginTop: 0 }}>
-        Bridge up to one block subsidy of PROM per transaction. You receive the{" "}
-        <b>healthy</b> portion as SPL PROM on Solana; the <b>decayed</b> portion goes to the
-        Relief Fund battery. The figure below is an estimate — the exact split is computed from
-        the actual coins you send.
+        Bridge up to one block subsidy of PROM per transaction. You receive the <b>healthy</b>{" "}
+        portion as SPL PROM on Solana; the <b>decayed</b> portion goes to the Relief Fund battery.
       </p>
 
-      <div style={{ display: "grid", gap: 12, marginTop: 20 }}>
-        <label style={{ display: "grid", gap: 4 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>PROM address to bridge from</span>
-          <input
-            value={fromAddr}
-            onChange={(e) => setFromAddr(e.target.value)}
-            placeholder="prom1…"
-            style={inputStyle}
-          />
-        </label>
-
-        <label style={{ display: "grid", gap: 4 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>
-            Amount to bridge (max = current block subsidy{quote ? ` = ${quote.subsidy_cap}` : ""})
+      {/* Step 1 — wallet */}
+      <Section n={1} title="Connect your Solana wallet">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <WalletButton />
+          <span style={{ fontSize: 13, opacity: 0.7 }}>
+            {connected && publicKey ? `Connected: ${publicKey.toBase58().slice(0, 4)}…${publicKey.toBase58().slice(-4)}` : "Any Solana wallet"}
           </span>
-          <input
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="e.g. 50"
-            inputMode="decimal"
-            style={inputStyle}
-          />
-        </label>
+        </div>
+      </Section>
 
-        <label style={{ display: "grid", gap: 4 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>Destination Solana address (SPL PROM)</span>
-          <input
-            value={solAddr}
-            onChange={(e) => setSolAddr(e.target.value)}
-            placeholder="Your Solana wallet address"
-            style={inputStyle}
-          />
-        </label>
-
-        <button onClick={getQuote} disabled={loading} style={buttonStyle}>
-          {loading ? "Checking…" : "Estimate healthy vs decayed"}
-        </button>
-      </div>
+      {/* Step 2 — form */}
+      <Section n={2} title="What to bridge">
+        <div style={{ display: "grid", gap: 12 }}>
+          <Field label="PROM address to bridge from">
+            <input value={fromAddr} onChange={(e) => setFromAddr(e.target.value)} placeholder="prom1…" style={inputStyle} />
+          </Field>
+          <Field label={`Amount (max = block subsidy${quote ? ` = ${quote.subsidy_cap}` : ""})`}>
+            <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="e.g. 50" inputMode="decimal" style={inputStyle} />
+          </Field>
+          <Field label="Destination Solana address (SPL PROM)">
+            <input
+              value={dest}
+              onChange={(e) => setSolAddr(e.target.value)}
+              placeholder="Your Solana address"
+              style={{ ...inputStyle, opacity: useConnected ? 0.6 : 1 }}
+              disabled={useConnected}
+            />
+            <label style={{ fontSize: 13, opacity: 0.8, display: "flex", gap: 6, alignItems: "center", marginTop: 4 }}>
+              <input
+                type="checkbox"
+                checked={useConnected}
+                onChange={(e) => setUseConnected(e.target.checked)}
+                disabled={!connected}
+              />
+              Use my connected wallet {connected ? "" : "(connect first)"}
+            </label>
+          </Field>
+          <button onClick={getQuote} disabled={loading} style={buttonStyle}>
+            {loading ? "Checking…" : "Estimate healthy vs decayed"}
+          </button>
+        </div>
+      </Section>
 
       {err && (
-        <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: "#fee", color: "#900", fontSize: 14 }}>
-          {err}
-        </div>
+        <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: "#fee", color: "#900", fontSize: 14 }}>{err}</div>
       )}
 
+      {/* estimate */}
       {quote && (
-        <div style={{ marginTop: 20, border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
+        <div style={{ marginTop: 16, border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <b>Estimate</b>
             <span style={{ fontSize: 12, opacity: 0.6 }}>tip {quote.tip}</span>
           </div>
-
           <div style={{ margin: "12px 0" }}>
             <div style={{ height: 10, borderRadius: 6, overflow: "hidden", background: "#eee", display: "flex" }}>
               <div style={{ width: `${healthPct}%`, background: "#22a06b" }} />
               <div style={{ width: `${100 - healthPct}%`, background: "#d9534f" }} />
             </div>
             <div style={{ fontSize: 13, marginTop: 6, opacity: 0.8 }}>
-              Address is <b>{healthPct}%</b> healthy right now ({fmt(quote.healthy)} healthy /{" "}
-              {fmt(quote.decayed)} decayed of {fmt(quote.nominal)} nominal across {quote.utxos} UTXOs)
+              Address is <b>{healthPct}%</b> healthy ({fmt(quote.healthy)} healthy / {fmt(quote.decayed)} decayed of {fmt(quote.nominal)} nominal)
             </div>
           </div>
-
           {quote.amount !== undefined && (
             <div style={{ display: "grid", gap: 6, fontSize: 15 }}>
-              {quote.insufficient_balance && (
-                <div style={{ color: "#900" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>
-              )}
-              {quote.over_cap && (
-                <div style={{ color: "#900" }}>
-                  ⚠ Over the {quote.subsidy_cap}-PROM per-transaction cap — reduce the amount or bridge in multiple ops.
-                </div>
-              )}
+              {quote.insufficient_balance && <div style={{ color: "#900" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>}
+              {quote.over_cap && <div style={{ color: "#900" }}>⚠ Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</div>}
               <Row label="You bridge (nominal)" value={`${fmt(quote.amount)} PROM`} />
-              <Row label="→ You receive on Solana (healthy)" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} strong />
-              <Row label="→ To Relief Fund battery (decayed)" value={`≈ ${fmt(quote.projected_to_battery)} PROM`} />
+              <Row label="→ You receive (healthy)" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} strong />
+              <Row label="→ To battery (decayed)" value={`≈ ${fmt(quote.projected_to_battery)} PROM`} />
             </div>
           )}
-
           <p style={{ fontSize: 12, opacity: 0.6, marginTop: 12, marginBottom: 0 }}>
-            Estimate only — the exact split is computed from the actual UTXOs you spend, after the PROM
-            deposit confirms. (Solana payment + PROM send command coming next.)
+            Estimate only — the exact split is computed from the actual coins you send.
           </p>
         </div>
       )}
+
+      {/* Step 3 — bridge */}
+      {quote && (
+        <Section n={3} title="Bridge">
+          <button onClick={createIntent} disabled={loading || !canIntent} style={{ ...buttonStyle, opacity: canIntent ? 1 : 0.5 }}>
+            {loading ? "Preparing…" : "Prepare bridge transfer"}
+          </button>
+
+          {intent && (
+            <div style={{ marginTop: 14, display: "grid", gap: 14 }}>
+              {/* USDC step */}
+              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+                <b>A. Pay the {X402_FEE_USDC} USDC bridge fee (Solana)</b>
+                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>
+                  Memo: <code>{intent.usdcMemo}</code> — links your USDC payment to this bridge.
+                </div>
+                <button
+                  disabled={!bridgeLive || !connected}
+                  title={!bridgeLive ? "Solana bridge/battery addresses not set yet" : !connected ? "Connect wallet first" : undefined}
+                  style={{ ...buttonStyle, marginTop: 10, opacity: bridgeLive && connected ? 1 : 0.5 }}
+                >
+                  {bridgeLive ? `Pay ${X402_FEE_USDC} USDC` : "Coming — Solana addresses not set"}
+                </button>
+              </div>
+
+              {/* PROM command */}
+              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+                <b>B. Send the PROM (run on your PROM node)</b>
+                <div style={{ fontSize: 13, opacity: 0.8, margin: "4px 0 8px" }}>
+                  Sends {intent.amount} PROM to the bridge with the OP_RETURN that carries your intent + Solana address:
+                </div>
+                <pre style={preStyle}>{intent.command}</pre>
+                <button onClick={() => navigator.clipboard?.writeText(intent.command)} style={{ ...buttonStyle, marginTop: 8, padding: "7px 12px", fontSize: 13 }}>
+                  Copy command
+                </button>
+                <div style={{ fontSize: 12, opacity: 0.6, marginTop: 8 }}>
+                  Bridge address: <code>{intent.bridgeAddress}</code>
+                </div>
+              </div>
+
+              <p style={{ fontSize: 12, opacity: 0.6, margin: 0 }}>
+                After the PROM deposit confirms, the bridge computes the EXACT healthy/decayed from the coins you actually
+                sent, credits your Solana address + the battery, and logs it to the bridge history.
+              </p>
+            </div>
+          )}
+        </Section>
+      )}
     </main>
+  );
+}
+
+function Section({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginTop: 22 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
+        <span style={{ opacity: 0.5 }}>{n}.</span> {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label style={{ display: "grid", gap: 4 }}>
+      <span style={{ fontSize: 13, fontWeight: 600 }}>{label}</span>
+      {children}
+    </label>
   );
 }
 
@@ -171,6 +267,8 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid #ccc",
   fontSize: 15,
   fontFamily: "ui-monospace, monospace",
+  width: "100%",
+  boxSizing: "border-box",
 };
 
 const buttonStyle: React.CSSProperties = {
@@ -182,4 +280,16 @@ const buttonStyle: React.CSSProperties = {
   fontSize: 15,
   fontWeight: 600,
   cursor: "pointer",
+};
+
+const preStyle: React.CSSProperties = {
+  background: "#0d1117",
+  color: "#c9d1d9",
+  padding: 12,
+  borderRadius: 8,
+  fontSize: 12.5,
+  overflowX: "auto",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+  margin: 0,
 };
