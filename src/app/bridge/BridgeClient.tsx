@@ -18,6 +18,9 @@ type Quote = {
   insufficient_balance?: boolean;
   projected_healthy_spl?: number;
   projected_to_battery?: number;
+  bridge_fee_pct?: number;
+  projected_bridge_fee?: number;
+  projected_net_spl?: number;
   tip: number;
 };
 
@@ -171,7 +174,12 @@ export default function BridgeClient() {
               {quote.insufficient_balance && <div style={{ color: "#900" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>}
               {quote.over_cap && <div style={{ color: "#900" }}>⚠ Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</div>}
               <Row label="You bridge (nominal)" value={`${fmt(quote.amount)} PROM`} />
-              <Row label="→ You receive (healthy)" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} strong />
+              <Row label="Healthy" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} />
+              <Row
+                label={`− ${Math.round((quote.bridge_fee_pct ?? 0.02) * 100)}% bridge fee`}
+                value={`≈ ${fmt(quote.projected_bridge_fee)} PROM`}
+              />
+              <Row label="→ You receive (SPL)" value={`≈ ${fmt(quote.projected_net_spl)} PROM`} strong />
               <Row label="→ To battery (decayed)" value={`≈ ${fmt(quote.projected_to_battery)} PROM`} />
             </div>
           )}

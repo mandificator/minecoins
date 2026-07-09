@@ -25,6 +25,10 @@ export const solanaConfig = {
   batteryStakeAddress:
     process.env.NEXT_PUBLIC_BATTERY_STAKE_ADDRESS ||
     "GQ75fQr1FpdqQj2rprsTCbav62Jsnvmbtn3io3hVamXX",
+  // Solana account that receives the 2% bridge fee taken from the healthy $PROM.
+  bridgeFeeAddress:
+    process.env.NEXT_PUBLIC_BRIDGE_FEE_ADDRESS ||
+    "EPRPcLNMH65nxfSjWi6bdMkcifeym3DMbt5JTJ23HvHH",
 } as const;
 
 export const isStakingLive = (): boolean =>

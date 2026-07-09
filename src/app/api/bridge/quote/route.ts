@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { promRpc } from "@/lib/promRpc";
+import { BRIDGE_FEE_PCT } from "@/lib/solana/config";
 import { execFile } from "child_process";
 import { promisify } from "util";
 
 const pexec = promisify(execFile);
+const round8 = (n: number) => Math.round(n * 1e8) / 1e8;
 export const dynamic = "force-dynamic";
 
 // Path to the internal decay indexer (reads decay.db read-only in `quote` mode).
@@ -45,10 +47,18 @@ export async function GET(req: Request) {
     const { stdout } = await pexec("python3", args, { timeout: 8000 });
     const data = JSON.parse(stdout);
     const amt = amount !== null ? parseFloat(amount) : null;
+    // 2% fee on the HEALTHY portion → bridge fee address; user receives the rest.
+    const feePct = BRIDGE_FEE_PCT;
+    const grossHealthy = typeof data.projected_healthy_spl === "number" ? data.projected_healthy_spl : null;
+    const bridgeFee = grossHealthy === null ? null : round8(grossHealthy * feePct);
+    const netSpl = grossHealthy === null ? null : round8(grossHealthy - (bridgeFee ?? 0));
     return NextResponse.json({
       ...data,
       subsidy_cap: cap,
       over_cap: amt !== null ? amt > cap + 1e-9 : false,
+      bridge_fee_pct: feePct,
+      projected_bridge_fee: bridgeFee, // 2% of healthy → fee address
+      projected_net_spl: netSpl, // what the user actually receives
       tip: height,
     });
   } catch (e: any) {

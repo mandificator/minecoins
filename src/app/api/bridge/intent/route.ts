@@ -4,7 +4,7 @@ import { randomBytes } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
 import { promRpc } from "@/lib/promRpc";
-import { solanaConfig } from "@/lib/solana/config";
+import { solanaConfig, BRIDGE_FEE_PCT } from "@/lib/solana/config";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +78,8 @@ export async function POST(req: Request) {
     bridgeAddress,
     opReturnHex,
     heightAtQuote: height,
+    bridgeFeeAddress: solanaConfig.bridgeFeeAddress,
+    bridgeFeePct: BRIDGE_FEE_PCT, // 2% of healthy → fee address, at settle
   };
 
   try {
@@ -98,5 +100,7 @@ export async function POST(req: Request) {
     amount,
     solAddress,
     usdcMemo: intentId, // the 1-USDC Solana payment must carry this memo
+    bridgeFeeAddress: solanaConfig.bridgeFeeAddress,
+    bridgeFeePct: BRIDGE_FEE_PCT, // 2% of the healthy $PROM goes here
   });
 }
