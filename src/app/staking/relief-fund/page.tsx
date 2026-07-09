@@ -4,10 +4,11 @@ import Link from "next/link";
 import StakePanel from "@/components/web3/StakePanel";
 import { NeonLink } from "@/components/ui/NeonButton";
 import TerminalCard from "@/components/ui/TerminalCard";
+import { RELIEF_RELEASE_PCT, RELIEF_MIN_STAKE_DAYS } from "@/lib/solana/config";
 
 export const metadata: Metadata = {
   title: "Relief Fund",
-  description: "Deposit $PROM, the Syndicate puts it to work, you earn interest in $PROM.",
+  description: "Stake $PROM, earn a daily share of the decay the battery collects.",
 };
 
 export default function ReliefFundPage() {
@@ -33,9 +34,12 @@ export default function ReliefFundPage() {
       </div>
       <TerminalCard title="WHAT IT IS" accent="cyan">
         <p className="leading-relaxed">
-          Deposit <span className="text-fg">$PROM</span> and earn{" "}
+          Stake <span className="text-fg">$PROM</span> and earn{" "}
           <span className="text-fg">interest, paid in $PROM</span> — stable, on
-          Solana, no decay. Your yield is powered by everyone else&apos;s delay.
+          Solana, no decay. Each day the battery releases{" "}
+          <span className="text-fg">{RELIEF_RELEASE_PCT}%</span> of its balance
+          to stakers, split by your share. Your yield is powered by everyone
+          else&apos;s delay.
         </p>
       </TerminalCard>
 
@@ -49,8 +53,8 @@ export default function ReliefFundPage() {
             </h2>
             <p className="text-fg-dim">
               Every miner who stabilizes late loses a slice to decay, and that
-              slice settles into the Fund via the Stabilization Plant. The Fund
-              pays it back out to depositors as interest.
+              slice settles into the battery via the Stabilization Plant. The
+              battery pays it back out to stakers as interest.
             </p>
           </div>
 
@@ -60,13 +64,19 @@ export default function ReliefFundPage() {
             </h2>
             <ol className="list-decimal space-y-2 pl-5 text-fg-dim">
               <li>
-                Deposit <span className="text-fg">$PROM</span> into the Relief
-                Fund on Solana.
+                Stake <span className="text-fg">$PROM</span> into the Relief
+                Fund on Solana (a {RELIEF_MIN_STAKE_DAYS}-day minimum lock).
               </li>
-              <li>Your share of payouts is proportional to your deposit.</li>
               <li>
-                Interest accrues in <span className="text-title">$PROM</span> —
-                stable, no decay, yours to keep.
+                Each day the battery releases{" "}
+                <span className="text-fg">{RELIEF_RELEASE_PCT}%</span> of its
+                balance to stakers.
+              </li>
+              <li>
+                You get a <span className="text-fg">pro-rata share</span> — your
+                stake ÷ total staked — paid in{" "}
+                <span className="text-title">$PROM</span>, no decay, yours to
+                keep.
               </li>
             </ol>
           </div>
@@ -76,9 +86,15 @@ export default function ReliefFundPage() {
               Good to know
             </h2>
             <ul className="space-y-2 text-fg-dim">
-              <li>This is a separate pool from the R&amp;D Institute — you can be in both.</li>
-              <li>Yield scales with the Fund&apos;s intake — busier network, more interest.</li>
-              <li>Deposit / withdraw each cost 1 USDC via x402.</li>
+              <li>Separate pool from the R&amp;D Institute — you can be in both.</li>
+              <li>
+                {RELIEF_MIN_STAKE_DAYS}-day minimum lock; yield is paid daily.
+              </li>
+              <li>
+                Yield scales with the battery&apos;s intake — busier network,
+                more decay collected, more interest.
+              </li>
+              <li>Staking / unstaking costs 1 USDC via x402.</li>
             </ul>
           </div>
 

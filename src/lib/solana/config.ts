@@ -21,6 +21,10 @@ export const solanaConfig = {
   promBridgeAddress:
     process.env.NEXT_PUBLIC_PROM_BRIDGE_ADDRESS ||
     "prom1qhpup76k3d8hr7aydl6cl4s8q4s8z7upr4pdvt7",
+  // Solana account where users stake $PROM to earn yield from the battery (Relief Fund).
+  batteryStakeAddress:
+    process.env.NEXT_PUBLIC_BATTERY_STAKE_ADDRESS ||
+    "GQ75fQr1FpdqQj2rprsTCbav62Jsnvmbtn3io3hVamXX",
 } as const;
 
 export const isStakingLive = (): boolean =>
@@ -41,3 +45,10 @@ export const X402_FEE_USDC = 1;
 export const BRIDGE_FEE_PCT = 0.02;
 /** Maximum mining difficulty discount achievable by staking. */
 export const MAX_DISCOUNT = 3;
+
+/** Relief Fund (battery) staking — % of the battery released to stakers each day. */
+export const RELIEF_RELEASE_PCT = 2;
+/** Relief Fund minimum stake lock (days). */
+export const RELIEF_MIN_STAKE_DAYS = 30;
+/** Relief Fund (battery) is stakeable only once the $PROM token is deployed. */
+export const isReliefLive = (): boolean => isTokenLive();

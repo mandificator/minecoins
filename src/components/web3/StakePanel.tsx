@@ -6,14 +6,15 @@ import { NeonButton } from "@/components/ui/NeonButton";
 import WalletButton from "@/components/web3/WalletButton";
 import {
   isStakingLive,
+  isReliefLive,
   isTokenLive,
   MAX_DISCOUNT,
   X402_FEE_USDC,
+  RELIEF_RELEASE_PCT,
+  RELIEF_MIN_STAKE_DAYS,
   solanaConfig,
 } from "@/lib/solana/config";
 import { estimateDiscount, getTokenBalance, type Pool } from "@/lib/solana/staking";
-
-const COMING = "Coming at mainnet — staking program not deployed yet.";
 
 export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const { connection } = useConnection();
@@ -21,7 +22,11 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  const live = isStakingLive();
+  const isDiff = pool === "difficulty";
+  const live = isDiff ? isStakingLive() : isReliefLive();
+  const coming = isDiff
+    ? "Coming at mainnet — staking program not deployed yet."
+    : "Coming at mainnet — $PROM token not deployed yet.";
   const amt = Math.max(0, Number(amount) || 0);
   const discount = useMemo(() => estimateDiscount(amt), [amt]);
   const pct = ((discount - 1) / (MAX_DISCOUNT - 1)) * 100;
@@ -39,8 +44,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
       cancelled = true;
     };
   }, [connected, publicKey, connection]);
-
-  const isDiff = pool === "difficulty";
 
   return (
     <div className="border border-border bg-bg-alt/60">
@@ -96,7 +99,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               />
             </div>
             <p className="mt-1 text-fg-dim">
-              {/* TODO: replace with the published curve */}
               Lowers your personal mining difficulty, capped at {MAX_DISCOUNT}×.
               Placeholder curve — the real one ships with the protocol.
             </p>
@@ -105,13 +107,14 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
           <div className="border border-border bg-bg p-3">
             <div className="flex items-center justify-between">
               <span className="uppercase tracking-widest text-fg-dim">
-                Estimated interest
+                Daily yield
               </span>
               <span className="neon-green font-mono">—</span>
             </div>
             <p className="mt-1 text-fg-dim">
-              Earn interest in $PROM — paid on Solana, stable, no decay. Funded by
-              the decay captured from late stabilizations.
+              Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
+              to stakers, split by your share (your stake ÷ total staked). Paid
+              in $PROM, no decay. {RELIEF_MIN_STAKE_DAYS}-day minimum lock.
             </p>
           </div>
         )}
@@ -125,7 +128,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               color="magenta"
               className="flex-1"
               disabled={!live || amt <= 0}
-              title={!live ? COMING : undefined}
+              title={!live ? coming : undefined}
             >
               {isDiff ? "STAKE" : "DEPOSIT"}
             </NeonButton>
@@ -133,7 +136,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               color="cyan"
               className="flex-1"
               disabled={!live || amt <= 0}
-              title={!live ? COMING : undefined}
+              title={!live ? coming : undefined}
             >
               {isDiff ? "UNSTAKE" : "WITHDRAW"}
             </NeonButton>
