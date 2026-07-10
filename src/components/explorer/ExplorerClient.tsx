@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Corners } from "@/components/ui/Panel";
 
 type Json = Record<string, any>;
 
@@ -89,21 +90,21 @@ export default function ExplorerClient() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="mb-1 text-2xl font-bold text-amber">PROMETHIUM EXPLORER</h1>
+      <h1 className="dash-title mb-1 font-bold text-title">PROMETHIUM EXPLORER</h1>
       <p className="mb-6 text-sm text-fg-dim">
         Verify it yourself — every block, transaction, and address on the
         Promethium Chain. Read-only.
       </p>
 
       {launching && (
-        <div className="mb-6 rounded border border-fg-dim/30 p-4 text-sm text-fg-dim">
+        <div className="dash-panel relative mb-6 p-4 text-sm text-fg-dim">
           The chain is launching — the explorer goes live with Promethium
           mainnet. The tools and API are ready now.
         </div>
       )}
 
       {chain && chain.online && (
-        <div className="mb-6 grid grid-cols-2 gap-3 font-mono text-sm sm:grid-cols-5">
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
           <Stat label="HEIGHT" value={fmt(chain.height)} />
           <Stat label="DIFFICULTY" value={fmt(chain.difficulty)} />
           <Stat label="NET HASHRATE" value={hashfmt(chain.networkHashps)} />
@@ -123,18 +124,15 @@ export default function ExplorerClient() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="block height / block hash / txid / prom… address"
-          className="flex-1 rounded border border-fg-dim/40 bg-transparent px-3 py-2 font-mono text-sm text-fg outline-none focus:border-amber"
+          className="flex-1 border border-title bg-transparent px-3 py-2 font-mono text-sm text-fg outline-none focus:border-fg"
         />
-        <button
-          type="submit"
-          className="rounded border border-amber px-4 py-2 text-sm font-bold text-amber hover:bg-amber/10"
-        >
+        <button type="submit" className="dash-label border border-title px-4 py-2 hover:bg-white/[0.06]">
           SEARCH
         </button>
       </form>
 
       {loading && <p className="text-sm text-fg-dim">Looking…</p>}
-      {err && <p className="text-sm text-red-400">{err}</p>}
+      {err && <p className="text-sm text-title">! {err}</p>}
 
       {result && kind === "address" && <AddressView d={result} />}
       {result && kind === "block" && <BlockView d={result} onOpen={search} />}
@@ -142,13 +140,13 @@ export default function ExplorerClient() {
 
       {chain && chain.online && chain.latest?.length > 0 && !result && (
         <div className="mt-8">
-          <h2 className="mb-2 text-sm font-bold text-amber">LATEST BLOCKS</h2>
+          <h2 className="dash-label mb-2">LATEST BLOCKS</h2>
           <div className="font-mono text-xs">
             {chain.latest.map((b: Json) => (
               <button
                 key={b.hash}
                 onClick={() => search(String(b.height))}
-                className="flex w-full justify-between border-b border-fg-dim/15 py-1.5 text-left hover:text-amber"
+                className="flex w-full justify-between border-b border-line py-1.5 text-left hover:text-title"
               >
                 <span>#{b.height}</span>
                 <span className="text-fg-dim">{b.txCount} tx</span>
@@ -161,10 +159,7 @@ export default function ExplorerClient() {
 
       {rich && rich.online && rich.top?.length > 0 && !result && (
         <div className="mt-8">
-          <button
-            onClick={() => setShowRich((v) => !v)}
-            className="mb-2 text-sm font-bold text-amber hover:underline"
-          >
+          <button onClick={() => setShowRich((v) => !v)} className="dash-label mb-2 hover:underline">
             RICH LIST — TOP HOLDERS {showRich ? "▾" : "▸"}
           </button>
           {showRich && (
@@ -176,11 +171,11 @@ export default function ExplorerClient() {
                 <button
                   key={h.address}
                   onClick={() => search(h.address)}
-                  className="flex w-full justify-between gap-3 border-b border-fg-dim/15 py-1 text-left hover:text-amber"
+                  className="flex w-full justify-between gap-3 border-b border-line py-1 text-left hover:text-title"
                 >
                   <span className="text-fg-dim">#{h.rank}</span>
                   <span className="flex-1 truncate">{h.address}</span>
-                  <span className="text-amber">{fmt(h.balance)}</span>
+                  <span className="text-title">{fmt(h.balance)}</span>
                   <span className="text-fg-dim">{h.pct}%</span>
                 </button>
               ))}
@@ -189,13 +184,13 @@ export default function ExplorerClient() {
         </div>
       )}
 
-      <div className="mt-10 border-t border-fg-dim/20 pt-4 text-xs text-fg-dim">
+      <div className="mt-10 border-t border-line pt-4 text-xs text-fg-dim">
         Use it from your agent:{" "}
-        <a href="/downloads/explorer-skill.md" className="text-amber hover:underline">
+        <a href="/downloads/explorer-skill.md" className="text-title hover:underline">
           download explorer-skill.md
         </a>{" "}
         ·{" "}
-        <a href="/docs/explorer" className="text-amber hover:underline">
+        <a href="/docs/explorer" className="text-title hover:underline">
           explorer documentation
         </a>
       </div>
@@ -205,16 +200,17 @@ export default function ExplorerClient() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-fg-dim/25 p-2">
-      <div className="text-[10px] text-fg-dim">{label}</div>
-      <div className="truncate text-amber">{value}</div>
+    <div className="dash-panel relative p-2">
+      <Corners />
+      <div className="dash-note">{label}</div>
+      <div className="truncate text-title">{value}</div>
     </div>
   );
 }
 
 function Row({ k, v, mono = true }: { k: string; v: any; mono?: boolean }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-fg-dim/15 py-1.5">
+    <div className="flex justify-between gap-4 border-b border-line py-1.5">
       <span className="text-fg-dim">{k}</span>
       <span className={`text-right ${mono ? "font-mono" : ""} break-all text-fg`}>{String(v)}</span>
     </div>
@@ -224,7 +220,7 @@ function Row({ k, v, mono = true }: { k: string; v: any; mono?: boolean }) {
 function BlockView({ d, onOpen }: { d: Json; onOpen: (q: string) => void }) {
   return (
     <div className="text-sm">
-      <h2 className="mb-2 text-amber">BLOCK #{d.height}</h2>
+      <h2 className="dash-label mb-2">BLOCK #{d.height}</h2>
       <Row k="hash" v={d.hash} />
       <Row k="time" v={new Date(d.time * 1000).toUTCString()} />
       <Row k="miner" v={d.miner || "—"} />
@@ -232,7 +228,7 @@ function BlockView({ d, onOpen }: { d: Json; onOpen: (q: string) => void }) {
       <Row k="transactions" v={d.txCount} />
       <Row k="size" v={`${d.size} bytes`} />
       {d.previousBlockHash && (
-        <button onClick={() => onOpen(d.previousBlockHash)} className="mt-3 text-xs text-amber hover:underline">
+        <button onClick={() => onOpen(d.previousBlockHash)} className="dash-note mt-3 hover:underline">
           ◂ previous block
         </button>
       )}
@@ -243,7 +239,7 @@ function BlockView({ d, onOpen }: { d: Json; onOpen: (q: string) => void }) {
 function TxView({ d }: { d: Json }) {
   return (
     <div className="text-sm">
-      <h2 className="mb-2 text-amber">TRANSACTION</h2>
+      <h2 className="dash-label mb-2">TRANSACTION</h2>
       <Row k="txid" v={d.txid} />
       <Row k="confirmations" v={d.confirmations} />
       <Row k="coinbase" v={d.coinbase ? "yes (block reward)" : "no"} />
@@ -259,7 +255,7 @@ function TxView({ d }: { d: Json }) {
 function AddressView({ d }: { d: Json }) {
   return (
     <div className="text-sm">
-      <h2 className="mb-2 text-amber">ADDRESS</h2>
+      <h2 className="dash-label mb-2">ADDRESS</h2>
       <Row k="address" v={d.address} />
       <Row k="balance" v={`${fmt(d.balance)} PROM`} />
       <Row k="unspent outputs" v={d.utxos} />

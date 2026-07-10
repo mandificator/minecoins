@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import TerminalCard from "@/components/ui/TerminalCard";
 import { NeonButton } from "@/components/ui/NeonButton";
+import Panel from "@/components/ui/Panel";
 import type { FaucetSettings } from "@/lib/faucet/config";
 import type { XProfile } from "@/lib/faucet/session";
 
@@ -38,23 +39,13 @@ const ERROR_TEXT: Record<string, string> = {
   server: "Something went wrong. Please try again.",
 };
 
-// Bracketed link styled like NeonButton (used for navigations to API routes,
-// which must be plain anchors — not client-side <Link>).
+// Link styled like NeonButton (used for navigations to API routes, which
+// must be plain anchors — not client-side <Link>).
 const BTN =
-  "inline-flex items-center justify-center gap-2 border border-border px-4 py-2 font-mono uppercase tracking-wider text-title transition-colors duration-150 bg-transparent hover:bg-white/[0.06]";
-
-function Bracket({ children }: { children: React.ReactNode }) {
-  return (
-    <span>
-      <span className="text-fg-dim">[ </span>
-      {children}
-      <span className="text-fg-dim"> ]</span>
-    </span>
-  );
-}
+  "dash-label inline-flex items-center justify-center gap-2 border border-title px-4 py-2 transition-colors duration-150 bg-transparent hover:bg-white/[0.06]";
 
 const INPUT =
-  "w-full min-w-0 border border-border bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-title";
+  "w-full min-w-0 border border-title bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-fg";
 
 function shareIntent(s: FaucetSettings): string {
   const p = new URLSearchParams({ text: s.shareText, url: s.shareUrl });
@@ -159,10 +150,9 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           where your PROM lands.
         </p>
 
-        <div className="mt-5 border border-title/50 bg-bg-alt/60 p-3">
-          <p className="text-fg-dim">// your referral code</p>
-          <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-            <span className="break-all font-mono text-xl tracking-widest text-title">
+        <Panel label="YOUR REFERRAL CODE" className="mt-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="break-all font-mono tracking-widest text-title">
               {result.referralCode}
             </span>
             <NeonButton onClick={copyCode}>{codeCopied ? "COPIED ✓" : "COPY"}</NeonButton>
@@ -171,7 +161,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
             Share it. You earn {result.referrerBonus} PROM for every friend who claims
             with your code, and they get {result.referredExtra} PROM extra.
           </p>
-        </div>
+        </Panel>
 
         <p className="mt-4 text-fg-dim">One claim per X account — you&apos;re all set.</p>
       </TerminalCard>
@@ -181,7 +171,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
   return (
     <div className="flex flex-col gap-4">
       {me?.configured === false && (
-        <p className="break-words border border-border bg-bg-alt/60 px-3 py-2 text-fg-dim">
+        <p className="dash-panel relative break-words px-3 py-2 text-fg-dim">
           <span className="text-title">// demo mode</span> — X keys not configured.
           &ldquo;Connect&rdquo; injects a sample eligible account so you can try the
           full flow.
@@ -196,10 +186,10 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
         </p>
         {!connected ? (
           <a className={BTN} href="/api/faucet/auth/x/login">
-            <Bracket>CONNECT WITH X</Bracket>
+            CONNECT WITH X
           </a>
         ) : (
-          <div className="border border-border p-3">
+          <div className="dash-panel relative p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="min-w-0 break-all text-title">
                 @{profile?.username}
@@ -252,11 +242,11 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           </p>
           <div className="mt-1 flex flex-wrap gap-2">
             <a className={BTN} href={shareIntent(settings)} target="_blank" rel="noreferrer">
-              <Bracket>OPEN X →</Bracket>
+              OPEN X →
             </a>
             <NeonButton onClick={copyPost}>{copied ? "COPIED ✓" : "COPY @ + LINK"}</NeonButton>
             <a className={BTN} href="/img/faucet-share.gif" download>
-              <Bracket>IMAGE</Bracket>
+              IMAGE
             </a>
           </div>
           <label className="mt-4 flex cursor-pointer items-start gap-2 text-fg">
@@ -310,7 +300,7 @@ export default function ClaimFlow({ settings }: { settings: FaucetSettings }) {
           />
 
           {error && (
-            <p className="mt-3 break-words border border-border bg-bg-alt/60 px-3 py-2 text-title">
+            <p className="dash-panel relative mt-3 break-words px-3 py-2 text-title">
               ! {error}
             </p>
           )}

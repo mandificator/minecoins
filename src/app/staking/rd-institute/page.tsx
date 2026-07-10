@@ -32,7 +32,7 @@ export default function RdInstitutePage() {
           className="mb-10 h-auto w-1/3"
         />
       </div>
-      <TerminalCard title="WHAT IT IS" accent="magenta">
+      <TerminalCard title="WHAT IT IS">
         <p className="leading-relaxed">
           Stake <span className="text-fg">$PROM</span> to fund the
           Syndicate&apos;s research. In return, you&apos;re issued better tools
@@ -46,9 +46,7 @@ export default function RdInstitutePage() {
 
         <div className="space-y-8 text-sm leading-relaxed">
           <div>
-            <h2 className="mb-3 uppercase tracking-widest text-fg-dim">
-              How it works
-            </h2>
+            <h2 className="dash-label mb-3">How it works</h2>
             <ol className="list-decimal space-y-2 pl-5 text-fg-dim">
               <li>
                 Stake <span className="text-fg">$PROM</span> into the R&amp;D
@@ -64,9 +62,7 @@ export default function RdInstitutePage() {
           </div>
 
           <div>
-            <h2 className="mb-3 uppercase tracking-widest text-fg-dim">
-              Good to know
-            </h2>
+            <h2 className="dash-label mb-3">Good to know</h2>
             <ul className="space-y-2 text-fg-dim">
               <li>It&apos;s personal — your discount doesn&apos;t change anyone else&apos;s.</li>
               <li>Stacks with the Recruitment Office labour bonus (up to 2×).</li>

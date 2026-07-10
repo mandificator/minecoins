@@ -65,7 +65,7 @@ export default function FaucetPage() {
       {/* ---------------- HERO ---------------- */}
       <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
         <div className="flex flex-col items-center text-center">
-          <h1 className="tracking-[0.2em] text-title">PROMETHIUM FAUCET</h1>
+          <h1 className="dash-title font-bold text-title">PROMETHIUM FAUCET</h1>
           <p className="mt-3 max-w-2xl text-title">Free $PROM for the community.</p>
           <p className="mt-4 max-w-2xl text-fg-dim">
             Post about the element that fights back, drop your address, and claim
@@ -90,9 +90,7 @@ export default function FaucetPage() {
 
       {/* ---------------- HOW IT WORKS ---------------- */}
       <section className="py-12">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
-          // how the faucet works
-        </h2>
+        <h2 className="dash-label mb-5">// how the faucet works</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {HOW.map(([title, body]) => (
             <TerminalCard key={title} title={title}>
@@ -116,15 +114,13 @@ export default function FaucetPage() {
 
       {/* ---------------- CLAIM APP ---------------- */}
       <section id="claim" className="scroll-mt-8 py-12">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
-          // claim your prom
-        </h2>
+        <h2 className="dash-label mb-5">// claim your prom</h2>
         <ClaimFlow settings={settings} />
       </section>
 
       {/* ---------------- FAQ ---------------- */}
       <section className="py-12">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">// faq</h2>
+        <h2 className="dash-label mb-5">// faq</h2>
         <TerminalCard title="FAQ">
           <dl className="flex flex-col gap-4">
             {FAQ.map(([q, a]) => (

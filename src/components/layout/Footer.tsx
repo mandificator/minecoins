@@ -6,9 +6,6 @@ export default function Footer() {
   return (
     <footer className="mt-20 border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-8">
-        <pre className="ascii mb-4 text-fg-dim text-[10px] leading-none overflow-hidden">
-{`└──────────────────────────────────────────────────────────────────────────┘`}
-        </pre>
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
             <div className="neon-green font-bold tracking-[0.2em]">PROMETHIUM</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { Corners } from "@/components/ui/Panel";
 
 type Item = { q: string; a: ReactNode };
 
@@ -126,9 +127,9 @@ const FAQ_ITEMS: Item[] = [
 ];
 
 /**
- * FAQ panels — all open by default, each item header styled like
- * TerminalCard's ASCII title bar, caret reused from the Sidebar's DOCS
- * expand/collapse pattern. Still individually collapsible.
+ * FAQ panels — all open by default, dash-panel chrome with corner ticks,
+ * caret reused from the Sidebar's DOCS expand/collapse pattern. Still
+ * individually collapsible.
  */
 export default function FaqAccordion() {
   const [closed, setClosed] = useState<Set<number>>(new Set());
@@ -146,20 +147,19 @@ export default function FaqAccordion() {
       {FAQ_ITEMS.map((item, i) => {
         const isOpen = !closed.has(i);
         return (
-          <div key={item.q} className="border border-border bg-bg-alt/60">
+          <div key={item.q} className="dash-panel relative">
+            <Corners />
             <button
               type="button"
               onClick={() => toggle(i)}
               aria-expanded={isOpen}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left font-mono text-xs"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left font-mono"
             >
-              <span className="select-none text-fg-dim">┌─[</span>
               <span className="flex-1 text-fg">{item.q}</span>
-              <span className="select-none text-fg-dim">]</span>
-              <span className="select-none text-fg-dim">{isOpen ? "▾" : "▸"}</span>
+              <span className="dash-note select-none">{isOpen ? "▾" : "▸"}</span>
             </button>
             {isOpen && (
-              <div className="border-t border-border p-4 text-sm leading-relaxed text-fg-dim">
+              <div className="border-t border-line p-4 text-sm leading-relaxed text-fg-dim">
                 {item.a}
               </div>
             )}

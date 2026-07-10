@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Corners } from "@/components/ui/Panel";
 
 type Json = Record<string, any>;
 const API = "/api/pool";
@@ -58,15 +59,15 @@ export default function PoolClient() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="mb-1 text-2xl font-bold text-amber">PROMETHIUM POOL</h1>
+      <h1 className="dash-title mb-1 font-bold text-title">PROMETHIUM POOL</h1>
       <p className="mb-6 text-sm text-fg-dim">
         Shared PPLNS mining — combine hashpower, earn a proportional share of every
         block the pool finds, paid to your own address. 0% fee. Payouts daily.
       </p>
 
       {/* connect box */}
-      <div className="mb-6 rounded border border-fg-dim/25 p-3 font-mono text-xs text-fg-dim">
-        <div className="text-amber">Connect a miner:</div>
+      <div className="dash-panel relative mb-6 p-3 font-mono text-xs text-fg-dim">
+        <div className="text-title">Connect a miner:</div>
         <div>stratum+tcp://stratum.promethium.work:3337</div>
         <div>username = your prom1… payout address · password = anything</div>
       </div>
@@ -108,18 +109,19 @@ export default function PoolClient() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="your prom1… address — see what you'll be paid + what you've received"
-          className="flex-1 rounded border border-fg-dim/40 bg-transparent px-3 py-2 font-mono text-sm text-fg outline-none focus:border-amber"
+          className="flex-1 border border-title bg-transparent px-3 py-2 font-mono text-sm text-fg outline-none focus:border-fg"
         />
-        <button type="submit" className="rounded border border-amber px-4 py-2 text-sm font-bold text-amber hover:bg-amber/10">
+        <button type="submit" className="dash-label border border-title px-4 py-2 hover:bg-white/[0.06]">
           CHECK
         </button>
       </form>
 
       {loading && <p className="text-sm text-fg-dim">Looking…</p>}
-      {err && <p className="text-sm text-red-400">{err}</p>}
+      {err && <p className="text-sm text-title">! {err}</p>}
 
       {miner && (
-        <div className="mb-8 rounded border border-amber/40 p-4 font-mono text-sm">
+        <div className="dash-panel relative mb-8 p-4 font-mono text-sm">
+          <Corners />
           <div className="mb-2 break-all text-xs text-fg-dim">{miner.address}</div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <Stat label="PENDING (NEXT PAYOUT)" value={`${fmt(miner.pending)} PROM`} />
@@ -136,26 +138,26 @@ export default function PoolClient() {
       {/* top earners */}
       {top.length > 0 && !miner && (
         <div className="mt-6">
-          <h2 className="mb-2 text-sm font-bold text-amber">TOP MINERS</h2>
+          <h2 className="dash-label mb-2">TOP MINERS</h2>
           <div className="font-mono text-xs">
-            <div className="flex justify-between border-b border-fg-dim/20 py-1 text-fg-dim">
+            <div className="flex justify-between border-b border-line py-1 text-fg-dim">
               <span>address</span><span>paid + pending</span>
             </div>
             {top.map((m, i) => (
               <button key={m.address} onClick={() => { setQ(m.address); search(m.address); }}
-                className="flex w-full justify-between gap-3 border-b border-fg-dim/10 py-1 text-left hover:text-amber">
+                className="flex w-full justify-between gap-3 border-b border-line py-1 text-left hover:text-title">
                 <span className="text-fg-dim">#{i + 1}</span>
                 <span className="flex-1 truncate">{m.address}</span>
-                <span className="text-amber">{fmt(m.paid + m.pending, 2)}</span>
+                <span className="text-title">{fmt(m.paid + m.pending, 2)}</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      <div className="mt-10 border-t border-fg-dim/20 pt-4 text-xs text-fg-dim">
-        Agent setup: <a href="/downloads/pool-skill.md" className="text-amber hover:underline">pool-skill.md</a>
-        {" · "}<a href="/docs/mining-pool" className="text-amber hover:underline">docs</a>
+      <div className="mt-10 border-t border-line pt-4 text-xs text-fg-dim">
+        Agent setup: <a href="/downloads/pool-skill.md" className="text-title hover:underline">pool-skill.md</a>
+        {" · "}<a href="/docs/mining-pool" className="text-title hover:underline">docs</a>
       </div>
     </div>
   );
@@ -163,9 +165,10 @@ export default function PoolClient() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-fg-dim/25 p-2">
-      <div className="text-[10px] text-fg-dim">{label}</div>
-      <div className="truncate text-amber">{value}</div>
+    <div className="dash-panel relative p-2">
+      <Corners />
+      <div className="dash-note">{label}</div>
+      <div className="truncate text-title">{value}</div>
     </div>
   );
 }

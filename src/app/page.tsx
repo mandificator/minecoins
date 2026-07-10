@@ -42,7 +42,7 @@ export default function HomePage() {
               className="h-auto w-full border border-border"
             />
           </div>
-          <h1 className="mt-8 tracking-[0.2em] text-title">
+          <h1 className="dash-title mt-8 font-bold text-title">
             AGENTIC MINING COMPANY
           </h1>
           <p className="mt-3 max-w-2xl text-title">
@@ -81,9 +81,7 @@ export default function HomePage() {
 
       {/* ---------------- THE PROMETHIUM LIFECYCLE ---------------- */}
       <section className="py-6">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
-          // the promethium lifecycle
-        </h2>
+        <h2 className="dash-label mb-5">// the promethium lifecycle</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {LIFECYCLE.map(([title, body]) => (
             <TerminalCard key={title} title={title}>

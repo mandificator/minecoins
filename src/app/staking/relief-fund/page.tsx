@@ -32,7 +32,7 @@ export default function ReliefFundPage() {
           className="mb-10 h-auto w-1/3"
         />
       </div>
-      <TerminalCard title="WHAT IT IS" accent="cyan">
+      <TerminalCard title="WHAT IT IS">
         <p className="leading-relaxed">
           Stake <span className="text-fg">$PROM</span> and earn{" "}
           <span className="text-fg">interest, paid in $PROM</span> — stable, on
@@ -48,9 +48,7 @@ export default function ReliefFundPage() {
 
         <div className="space-y-8 text-sm leading-relaxed">
           <div>
-            <h2 className="mb-3 uppercase tracking-widest text-fg-dim">
-              Where the interest comes from
-            </h2>
+            <h2 className="dash-label mb-3">Where the interest comes from</h2>
             <p className="text-fg-dim">
               Every miner who stabilizes late loses a slice to decay, and that
               slice settles into the battery via the Stabilization Plant. The
@@ -59,9 +57,7 @@ export default function ReliefFundPage() {
           </div>
 
           <div>
-            <h2 className="mb-3 uppercase tracking-widest text-fg-dim">
-              How it works
-            </h2>
+            <h2 className="dash-label mb-3">How it works</h2>
             <ol className="list-decimal space-y-2 pl-5 text-fg-dim">
               <li>
                 Stake <span className="text-fg">$PROM</span> into the Relief
@@ -82,9 +78,7 @@ export default function ReliefFundPage() {
           </div>
 
           <div>
-            <h2 className="mb-3 uppercase tracking-widest text-fg-dim">
-              Good to know
-            </h2>
+            <h2 className="dash-label mb-3">Good to know</h2>
             <ul className="space-y-2 text-fg-dim">
               <li>Separate pool from the R&amp;D Institute — you can be in both.</li>
               <li>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Corners } from "@/components/ui/Panel";
 import {
   fetchDashboardData,
   HALF_LIFE_HOURS,
@@ -85,17 +86,6 @@ function Flaps({ text }: { text: string }) {
 }
 
 /* ---------------- chrome ---------------- */
-
-function Corners() {
-  return (
-    <span aria-hidden>
-      <i className="dash-corner tl" />
-      <i className="dash-corner tr" />
-      <i className="dash-corner bl" />
-      <i className="dash-corner br" />
-    </span>
-  );
-}
 
 function UtcClock() {
   const [s, setS] = useState("");

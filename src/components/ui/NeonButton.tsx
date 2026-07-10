@@ -13,24 +13,13 @@ const colorMap: Record<Color, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 border border-border px-4 py-2 font-mono uppercase tracking-wider text-title transition-colors duration-150 bg-transparent hover:bg-white/[0.06] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent";
+  "dash-label inline-flex items-center justify-center gap-2 border border-title px-4 py-2 transition-colors duration-150 bg-transparent hover:bg-white/[0.06] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent";
 
 type CommonProps = {
   children: ReactNode;
   color?: Color;
   className?: string;
 };
-
-/** Renders `[ LABEL ]` bracketed terminal-style button text. */
-function Bracketed({ children }: { children: ReactNode }) {
-  return (
-    <span>
-      <span className="text-fg-dim">[ </span>
-      {children}
-      <span className="text-fg-dim"> ]</span>
-    </span>
-  );
-}
 
 export function NeonLink({
   href,
@@ -43,13 +32,13 @@ export function NeonLink({
   if (external) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
-        <Bracketed>{children}</Bracketed>
+        {children}
       </a>
     );
   }
   return (
     <Link href={href} className={cls}>
-      <Bracketed>{children}</Bracketed>
+      {children}
     </Link>
   );
 }
@@ -76,7 +65,7 @@ export function NeonButton({
       title={title}
       className={`${base} ${colorMap[color]} ${className}`}
     >
-      <Bracketed>{children}</Bracketed>
+      {children}
     </button>
   );
 }

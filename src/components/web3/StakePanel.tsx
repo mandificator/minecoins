@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { NeonButton } from "@/components/ui/NeonButton";
+import Panel from "@/components/ui/Panel";
 import WalletButton from "@/components/web3/WalletButton";
 import {
   isStakingLive,
@@ -46,28 +47,20 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   }, [connected, publicKey, connection]);
 
   return (
-    <div className="border border-border bg-bg-alt/60">
-      <div className="flex items-center gap-2 border-b border-border px-3 py-2 font-mono">
-        <span className="text-fg-dim">┌─[</span>
-        <span className="uppercase tracking-widest text-neon-magenta">
-          {isDiff ? "R&D Institute" : "Relief Fund"}
-        </span>
-        <span className="text-fg-dim">]──┐</span>
-      </div>
-
-      <div className="space-y-5 p-5">
+    <Panel label={isDiff ? "R&D Institute" : "Relief Fund"}>
+      <div className="space-y-5">
         {/* balance */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-3">
-          <span className="text-fg-dim">$PROM balance</span>
-          <span className="neon-green font-mono">
+        <div className="flex items-center justify-between border-b border-line pb-3">
+          <span className="dash-note">$PROM balance</span>
+          <span className="font-mono text-fg">
             {balance === null ? "—" : balance.toLocaleString()}{" "}
-            <span className="text-fg-dim">PROM</span>
+            <span className="dash-note">PROM</span>
           </span>
         </div>
 
         {/* amount */}
         <label className="block">
-          <span className="mb-1 block uppercase tracking-widest text-fg-dim">
+          <span className="dash-note mb-1 block">
             {isDiff ? "Amount to stake ($PROM)" : "Amount to deposit ($PROM)"}
           </span>
           <input
@@ -77,7 +70,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0"
-            className="w-full border border-border bg-bg px-3 py-2 font-mono text-fg outline-none focus:border-neon-magenta"
+            className="w-full border border-title bg-bg px-3 py-2 font-mono text-fg outline-none focus:border-fg"
           />
         </label>
 
@@ -85,18 +78,13 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         {isDiff ? (
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <span className="uppercase tracking-widest text-fg-dim">
-                Estimated difficulty discount
-              </span>
-              <span className="neon-magenta font-mono">
+              <span className="dash-note">Estimated difficulty discount</span>
+              <span className="font-mono text-title">
                 {discount.toFixed(2)}× / {MAX_DISCOUNT}×
               </span>
             </div>
-            <div className="h-3 w-full border border-border bg-bg">
-              <div
-                className="h-full bg-neon-magenta/70 transition-all"
-                style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
-              />
+            <div className="dash-meter">
+              <div style={{ width: `${Math.min(100, Math.max(0, pct))}%` }} />
             </div>
             <p className="mt-1 text-fg-dim">
               Lowers your personal mining difficulty, capped at {MAX_DISCOUNT}×.
@@ -104,12 +92,10 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
             </p>
           </div>
         ) : (
-          <div className="border border-border bg-bg p-3">
+          <div className="dash-panel relative p-3">
             <div className="flex items-center justify-between">
-              <span className="uppercase tracking-widest text-fg-dim">
-                Daily yield
-              </span>
-              <span className="neon-green font-mono">—</span>
+              <span className="dash-note">Daily yield</span>
+              <span className="font-mono text-title">—</span>
             </div>
             <p className="mt-1 text-fg-dim">
               Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
@@ -125,7 +111,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         ) : (
           <div className="flex gap-3">
             <NeonButton
-              color="magenta"
               className="flex-1"
               disabled={!live || amt <= 0}
               title={!live ? coming : undefined}
@@ -133,7 +118,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               {isDiff ? "STAKE" : "DEPOSIT"}
             </NeonButton>
             <NeonButton
-              color="cyan"
               className="flex-1"
               disabled={!live || amt <= 0}
               title={!live ? coming : undefined}
@@ -144,11 +128,10 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         )}
 
         <p className="text-fg-dim">
-          Each action costs{" "}
-          <span className="text-amber">{X402_FEE_USDC} USDC</span> via x402 on
-          Solana — the agent pays the same, no extra.
+          Each action costs <span className="text-title">{X402_FEE_USDC} USDC</span>{" "}
+          via x402 on Solana — the agent pays the same, no extra.
         </p>
       </div>
-    </div>
+    </Panel>
   );
 }

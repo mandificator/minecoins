@@ -33,7 +33,7 @@ const SKILLS = [
 export default function AgenticMiningPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="tracking-[0.2em] text-title">AGENTIC MINING</h1>
+      <h1 className="dash-title font-bold text-title">AGENTIC MINING</h1>
       <p className="mt-3 max-w-2xl text-fg-dim">
         The Agentic Mining Company runs on intent, not dashboards.
       </p>
@@ -75,12 +75,10 @@ export default function AgenticMiningPage() {
       </section>
 
       <section className="pb-8">
-        <h2 className="mb-5 uppercase tracking-[0.3em] text-fg-dim">
-          // published skills
-        </h2>
+        <h2 className="dash-label mb-5">// published skills</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {SKILLS.map((skill) => (
-            <TerminalCard key={skill.name} title={skill.name} accent="cyan">
+            <TerminalCard key={skill.name} title={skill.name}>
               <p className="leading-relaxed text-fg-dim">{skill.desc}</p>
               <div className="mt-4">
                 <NeonLink href={skill.href}>DOWNLOAD</NeonLink>
