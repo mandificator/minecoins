@@ -1,0 +1,13 @@
+{
+  "name": "Promethium",
+  "symbol": "PROM",
+  "description": "PROM is the Solana token entangled 1:1 with Promethium, a real Proof-of-Work coin mined on its own chain. Every PROM in circulation is backed by a coin mined on Promethium chain. Max supply 21,000,000.",
+  "image": "https://promethium.work/token/prom.png",
+  "external_url": "https://promethium.work",
+  "properties": {
+    "files": [
+      { "uri": "https://promethium.work/token/prom.png", "type": "image/png" }
+    ],
+    "category": "image"
+  }
+}
