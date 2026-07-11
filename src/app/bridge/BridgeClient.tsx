@@ -55,12 +55,14 @@ export default function BridgeClient() {
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [paySig, setPaySig] = useState<string | null>(null);
   const [err, setErr] = useState("");
 
   async function payUsdc() {
     if (!publicKey || !intent) return;
     setErr("");
     setPaying(true);
+    setPaySig(null);
     try {
       const fromAta = await getAssociatedTokenAddress(USDC_MINT, publicKey);
       const toAta = await getAssociatedTokenAddress(USDC_MINT, DEV_ADDR);
@@ -72,15 +74,34 @@ export default function BridgeClient() {
       });
       const tx = new Transaction().add(transferIx, memoIx);
       const sig = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(sig, "confirmed");
-      const r = await fetch("/api/bridge/verify-payment", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ intentId: intent.intentId, signature: sig }),
-      });
-      const d = await r.json();
-      if (!r.ok && !d.paid) setErr(d.error || "Payment could not be verified.");
-      else setPaid(true);
+      setPaySig(sig); // show the tx immediately
+
+      // Poll the verify endpoint (it checks the tx on-chain) — robust vs confirmTransaction hangs.
+      let ok = false;
+      for (let i = 0; i < 15 && !ok; i++) {
+        await new Promise((r) => setTimeout(r, 2500));
+        try {
+          const r = await fetch("/api/bridge/verify-payment", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ intentId: intent.intentId, signature: sig }),
+          });
+          const d = await r.json();
+          if (d.paid) {
+            ok = true;
+            setPaid(true);
+          } else if (r.status !== 400) {
+            // 400 = tx not indexed yet, keep polling; other errors stop
+            setErr(d.error || "Payment could not be verified.");
+            break;
+          }
+        } catch {
+          /* transient — keep polling */
+        }
+      }
+      if (!ok && !err) {
+        setErr("Payment sent — still confirming on-chain. It'll register shortly; your tx is above.");
+      }
     } catch (e: any) {
       setErr(String(e?.message || e));
     } finally {
@@ -257,9 +278,17 @@ export default function BridgeClient() {
                 >
                   {paid ? "✓ Paid" : paying ? "Paying…" : bridgeLive ? `Pay ${X402_FEE_USDC} USDC` : "Coming — bridge not live yet"}
                 </button>
+                {paySig && (
+                  <div style={{ fontSize: 12, marginTop: 6 }}>
+                    <a href={`https://solscan.io/tx/${paySig}`} target="_blank" rel="noopener noreferrer" style={{ color: "#8ab4ff" }}>
+                      View payment tx ↗
+                    </a>
+                    {paying && !paid && <span style={{ opacity: 0.7 }}> — confirming on-chain…</span>}
+                  </div>
+                )}
                 {paid && (
                   <div style={{ fontSize: 12, color: "#7ee0a8", marginTop: 6 }}>
-                    Fee paid ✓ — now run the PROM command below to complete your bridge.
+                    ✓ Fee paid — now run the PROM command below to complete your bridge.
                   </div>
                 )}
               </div>
