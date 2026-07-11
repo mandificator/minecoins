@@ -8,6 +8,11 @@ export const dynamic = "force-dynamic";
 const FACILITATOR = process.env.X402_FACILITATOR_URL || "https://facilitator.x402endpoints.online";
 const USDC_MINT = process.env.USDC_MINT || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // Solana mainnet USDC
 const PAY_TO = process.env.BRIDGE_USDC_PAY_TO || ""; // dev's USDC token account — set at launch
+// x402 SVM fixes: payTo must be the dev WALLET (client derives the ATA itself, not ATA-of-ATA),
+// and extra.feePayer (the facilitator's Solana fee-payer, which sponsors the tx) is REQUIRED by the SDK.
+const PAY_TO_WALLET = process.env.BRIDGE_USDC_PAY_TO_WALLET || "AFAGicmTvYxtuEsUBwet2EYtbB1r7C6TZCWkm9gbGexa";
+const X402_FEE_PAYER = process.env.X402_FEE_PAYER || "9JRPU5K4haWWo1g3WSjCaq283uYcbxvfdEATkaSLw9X8";
+const PUBLIC_BASE = process.env.PUBLIC_BASE_URL || "https://promethium.work";
 const PRICE = process.env.BRIDGE_USDC_PRICE || "1000000"; // 1 USDC (6 decimals)
 const NETWORK = process.env.X402_NETWORK || "solana";
 const X402_VERSION = 1;
@@ -37,10 +42,10 @@ function paymentRequirements(intentId: string, resource: string) {
     resource,
     description: `Promethium bridge fee for intent ${intentId}`,
     mimeType: "application/json",
-    payTo: PAY_TO,
+    payTo: PAY_TO_WALLET,
     maxTimeoutSeconds: 120,
     asset: USDC_MINT,
-    extra: { intentId },
+    extra: { intentId, feePayer: X402_FEE_PAYER },
   };
 }
 
@@ -59,7 +64,7 @@ export async function POST(req: Request, { params }: { params: { intentId: strin
     return NextResponse.json({ error: "Bridge payment not live yet." }, { status: 503 });
   }
 
-  const reqs = paymentRequirements(intentId, req.url);
+  const reqs = paymentRequirements(intentId, `${PUBLIC_BASE}/api/bridge/pay/${intentId}`);
 
   const xPayment = req.headers.get("X-PAYMENT");
   if (!xPayment) {
