@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/bridge",
     "/rent-a-miner",
     "/explorer",
+    "/block",
     "/docs",
   ].map((path) => ({
     url: `${BASE}${path}`,

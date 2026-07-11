@@ -582,6 +582,11 @@ body {
 .dash-hero-row {
   --dash-hero-size: clamp(1.8rem, 3.6vw, 3.6rem);
 }
+/* /block — a single integer, no decimals, so it can run much bigger
+   (streaming-friendly). Same flap plates, just a taller size. */
+.dash-hero-row.block-hero {
+  --dash-hero-size: clamp(3rem, 11vw, 8.5rem);
+}
 .dash-hero-int {
   font-size: var(--dash-hero-size);
   line-height: 1.05;
