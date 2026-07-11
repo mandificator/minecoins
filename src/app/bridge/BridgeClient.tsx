@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { getAssociatedTokenAddress, createTransferInstruction } from "@solana/spl-token";
 import WalletButton from "@/components/web3/WalletButton";
 import { isBridgeLive, X402_FEE_USDC, solanaConfig } from "@/lib/solana/config";
+
+const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const DEV_ADDR = new PublicKey("AFAGicmTvYxtuEsUBwet2EYtbB1r7C6TZCWkm9gbGexa");
+const MEMO_PROGRAM = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
 type Quote = {
   address: string;
@@ -38,7 +44,8 @@ const fmt = (n: number | undefined, d = 4) =>
   n === undefined ? "—" : n.toLocaleString(undefined, { maximumFractionDigits: d });
 
 export default function BridgeClient() {
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connected, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   const [fromAddr, setFromAddr] = useState("");
   const [amount, setAmount] = useState("");
   const [solAddr, setSolAddr] = useState("");
@@ -46,7 +53,40 @@ export default function BridgeClient() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [intent, setIntent] = useState<Intent | null>(null);
   const [loading, setLoading] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [paid, setPaid] = useState(false);
   const [err, setErr] = useState("");
+
+  async function payUsdc() {
+    if (!publicKey || !intent) return;
+    setErr("");
+    setPaying(true);
+    try {
+      const fromAta = await getAssociatedTokenAddress(USDC_MINT, publicKey);
+      const toAta = await getAssociatedTokenAddress(USDC_MINT, DEV_ADDR);
+      const transferIx = createTransferInstruction(fromAta, toAta, publicKey, 1_000_000); // 1 USDC (6 dec)
+      const memoIx = new TransactionInstruction({
+        keys: [],
+        programId: MEMO_PROGRAM,
+        data: new TextEncoder().encode(intent.intentId) as any,
+      });
+      const tx = new Transaction().add(transferIx, memoIx);
+      const sig = await sendTransaction(tx, connection);
+      await connection.confirmTransaction(sig, "confirmed");
+      const r = await fetch("/api/bridge/verify-payment", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ intentId: intent.intentId, signature: sig }),
+      });
+      const d = await r.json();
+      if (!r.ok && !d.paid) setErr(d.error || "Payment could not be verified.");
+      else setPaid(true);
+    } catch (e: any) {
+      setErr(String(e?.message || e));
+    } finally {
+      setPaying(false);
+    }
+  }
 
   const dest = useConnected && publicKey ? publicKey.toBase58() : solAddr;
 
@@ -210,12 +250,18 @@ export default function BridgeClient() {
                   Memo: <code>{intent.usdcMemo}</code> — links your USDC payment to this bridge.
                 </div>
                 <button
-                  disabled={!bridgeLive || !connected}
-                  title={!bridgeLive ? "Solana bridge/battery addresses not set yet" : !connected ? "Connect wallet first" : undefined}
-                  style={{ ...buttonStyle, marginTop: 10, opacity: bridgeLive && connected ? 1 : 0.5 }}
+                  onClick={payUsdc}
+                  disabled={!bridgeLive || !connected || paying || paid}
+                  title={!bridgeLive ? "Bridge not live yet" : !connected ? "Connect wallet first" : undefined}
+                  style={{ ...buttonStyle, marginTop: 10, opacity: bridgeLive && connected && !paid ? 1 : 0.5 }}
                 >
-                  {bridgeLive ? `Pay ${X402_FEE_USDC} USDC` : "Coming — Solana addresses not set"}
+                  {paid ? "✓ Paid" : paying ? "Paying…" : bridgeLive ? `Pay ${X402_FEE_USDC} USDC` : "Coming — bridge not live yet"}
                 </button>
+                {paid && (
+                  <div style={{ fontSize: 12, color: "#7ee0a8", marginTop: 6 }}>
+                    Fee paid ✓ — now run the PROM command below to complete your bridge.
+                  </div>
+                )}
               </div>
 
               {/* PROM command */}
@@ -234,8 +280,9 @@ export default function BridgeClient() {
               </div>
 
               <p style={{ fontSize: 12, opacity: 0.6, margin: 0 }}>
-                After the PROM deposit confirms, the bridge computes the EXACT healthy/decayed from the coins you actually
-                sent, credits your Solana address + the battery, and logs it to the bridge history.
+                After your PROM deposit confirms, the bridge computes the exact healthy/decayed split from the coins you
+                actually sent and queues your payout. $PROM settlements are released shortly after in batches — your
+                bridge is recorded and safe, not lost.
               </p>
             </div>
           )}
