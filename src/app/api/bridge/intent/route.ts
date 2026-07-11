@@ -39,6 +39,11 @@ export async function POST(req: Request) {
   if (!(amount > 0)) {
     return NextResponse.json({ error: "Amount must be a positive number." }, { status: 400 });
   }
+  // A Promethium (prom1…) address can coincidentally decode as a Solana pubkey — reject it
+  // outright so nobody sends their $PROM into an address they do not control.
+  if (/^prom/i.test(solAddress)) {
+    return NextResponse.json({ error: "That looks like a Promethium address. Enter your SOLANA wallet address — it never starts with \"prom\"." }, { status: 400 });
+  }
   let solPk: PublicKey;
   try {
     solPk = new PublicKey(solAddress);

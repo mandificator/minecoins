@@ -135,6 +135,7 @@ export default function BridgeClient() {
     setErr("");
     setIntent(null);
     if (!dest.trim()) return setErr("Enter a destination Solana address (or use your connected wallet).");
+    if (/^prom/i.test(dest.trim())) return setErr("That looks like a Promethium address. Enter your SOLANA wallet address — it never starts with \"prom\".");
     setLoading(true);
     try {
       const r = await fetch("/api/bridge/intent", {
