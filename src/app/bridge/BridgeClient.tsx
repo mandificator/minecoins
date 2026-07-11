@@ -105,7 +105,7 @@ export default function BridgeClient() {
         Bridge up to one block subsidy of PROM per transaction. You receive the <b>healthy</b>{" "}
         portion as SPL PROM on Solana; the <b>decayed</b> portion goes to the Relief Fund battery.
       </p>
-      <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 8, background: "#eef4ff", border: "1px solid #cdddff", fontSize: 13, lineHeight: 1.5 }}>
+      <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.18)", color: "#dbe4ff", fontSize: 13, lineHeight: 1.5 }}>
         ℹ️ <b>$PROM is live on Solana</b> — mint <code>promP7gZmjt3fMVWfx47swYBpfwrjb2m3TX4c3woDBu</code>.
         The bridge activates at <b>block 29300</b> on the Promethium chain — the decay clock starts then;
         until activation all PROM stays 100% healthy.
@@ -155,18 +155,18 @@ export default function BridgeClient() {
       </Section>
 
       {err && (
-        <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: "#fee", color: "#900", fontSize: 14 }}>{err}</div>
+        <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: "rgba(220,60,60,0.15)", border: "1px solid rgba(220,60,60,0.4)", color: "#ff9c9c", fontSize: 14 }}>{err}</div>
       )}
 
       {/* estimate */}
       {quote && (
-        <div style={{ marginTop: 16, border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
+        <div style={{ marginTop: 16, border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, padding: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <b>Estimate</b>
             <span style={{ fontSize: 12, opacity: 0.6 }}>tip {quote.tip}</span>
           </div>
           <div style={{ margin: "12px 0" }}>
-            <div style={{ height: 10, borderRadius: 6, overflow: "hidden", background: "#eee", display: "flex" }}>
+            <div style={{ height: 10, borderRadius: 6, overflow: "hidden", background: "rgba(255,255,255,0.12)", display: "flex" }}>
               <div style={{ width: `${healthPct}%`, background: "#22a06b" }} />
               <div style={{ width: `${100 - healthPct}%`, background: "#d9534f" }} />
             </div>
@@ -176,8 +176,8 @@ export default function BridgeClient() {
           </div>
           {quote.amount !== undefined && (
             <div style={{ display: "grid", gap: 6, fontSize: 15 }}>
-              {quote.insufficient_balance && <div style={{ color: "#900" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>}
-              {quote.over_cap && <div style={{ color: "#900" }}>⚠ Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</div>}
+              {quote.insufficient_balance && <div style={{ color: "#ff9c9c" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>}
+              {quote.over_cap && <div style={{ color: "#ff9c9c" }}>⚠ Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</div>}
               <Row label="You bridge (nominal)" value={`${fmt(quote.amount)} PROM`} />
               <Row label="Healthy" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} />
               <Row
@@ -204,7 +204,7 @@ export default function BridgeClient() {
           {intent && (
             <div style={{ marginTop: 14, display: "grid", gap: 14 }}>
               {/* USDC step */}
-              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+              <div style={{ border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: 14 }}>
                 <b>A. Pay the {X402_FEE_USDC} USDC bridge fee (Solana)</b>
                 <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>
                   Memo: <code>{intent.usdcMemo}</code> — links your USDC payment to this bridge.
@@ -219,7 +219,7 @@ export default function BridgeClient() {
               </div>
 
               {/* PROM command */}
-              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+              <div style={{ border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: 14 }}>
                 <b>B. Send the PROM (run on your PROM node)</b>
                 <div style={{ fontSize: 13, opacity: 0.8, margin: "4px 0 8px" }}>
                   Sends {intent.amount} PROM to the bridge with the OP_RETURN that carries your intent + Solana address:
@@ -277,7 +277,9 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 const inputStyle: React.CSSProperties = {
   padding: "10px 12px",
   borderRadius: 8,
-  border: "1px solid #ccc",
+  border: "1px solid rgba(255,255,255,0.25)",
+  background: "rgba(0,0,0,0.25)",
+  color: "#e8ecff",
   fontSize: 15,
   fontFamily: "ui-monospace, monospace",
   width: "100%",
