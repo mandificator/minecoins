@@ -22,6 +22,10 @@ The Plant decants your batch. The pure fraction that survived the wait crystalli
 
 So: **you send X PROMETHIUM, you receive Y $PROM**, where `Y = X - decayed`. The faster you stabilize, the smaller the decayed slice, the closer Y gets to X.
 
+## One-way: the PROMETHIUM is burned
+
+The PROMETHIUM you feed into the Plant is never stockpiled or re-spent. Once your batch is decanted and your $PROM is on Solana, the incoming PROMETHIUM is swept to a **black hole** — a provably-unspendable address (no private key can ever exist for it), so those coins are destroyed forever. That is what makes the bridge truly one-way: chain-side PROMETHIUM leaves circulation as stable $PROM takes its place on Solana. **There is no reverse bridge.**
+
 ## Fees
 
 - **2%** of the stabilized amount, taken in **$PROM**.
