@@ -163,7 +163,7 @@ export default function BlockClient() {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <Tile label="DIFFICULTY" value={fmtInt(chain.difficulty)} />
             <Tile label="NETWORK HASHRATE" value={hashfmt(chain.networkHashps)} />
-            <Tile label="POOL HASHRATE" value={hashfmt(chain.poolHashps)} sub="stratum.promethium.work" />
+            <Tile label="POOL HASHRATE" value={hashfmt(chain.poolHashps)} />
             <Tile label="AVG BLOCK TIME" value={fmtDur(chain.avgBlockTime)} />
           </div>
 
