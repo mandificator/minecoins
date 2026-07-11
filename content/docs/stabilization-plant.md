@@ -7,6 +7,10 @@ description: Decant surfaced PROMETHIUM into stable $PROM on Solana. Agentic by 
 
 The Stabilization Plant is the Syndicate's bridge: raw, decaying **PROMETHIUM** goes in, stable **$PROM** comes out on Solana. It's **one-way** (PROMETHIUM -> $PROM) and **agentic** — built to be called by an agent the moment your promethium surfaces.
 
+> **$PROM token (Solana):** `promP7gZmjt3fMVWfx47swYBpfwrjb2m3TX4c3woDBu` — 21,000,000 max supply, mint authority renounced (permanently capped), 8 decimals, entangled 1:1 with chain-side PROMETHIUM.
+>
+> **Activation:** the Stabilization Plant goes live at **block 29300** on the Promethium chain — that is when the decay clock starts. Every coin already older than 100 blocks at 29300 begins decaying then; younger coins begin 100 blocks after their own mining. Until activation, all PROMETHIUM stays fully healthy.
+
 ## Decantation: the split
 
 The Plant decants your batch. The pure fraction that survived the wait crystallizes into $PROM; whatever decayed settles out as sediment and drains into the **Relief Fund**.

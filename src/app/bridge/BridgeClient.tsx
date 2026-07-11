@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import WalletButton from "@/components/web3/WalletButton";
-import { NeonButton } from "@/components/ui/NeonButton";
-import Panel from "@/components/ui/Panel";
-import { isBridgeLive, X402_FEE_USDC } from "@/lib/solana/config";
+import { isBridgeLive, X402_FEE_USDC, solanaConfig } from "@/lib/solana/config";
 
 type Quote = {
   address: string;
@@ -38,9 +36,6 @@ type Intent = {
 
 const fmt = (n: number | undefined, d = 4) =>
   n === undefined ? "—" : n.toLocaleString(undefined, { maximumFractionDigits: d });
-
-const INPUT =
-  "w-full min-w-0 border border-title bg-bg-alt/60 px-3 py-2 font-mono text-fg placeholder:text-fg-dim focus:outline-none focus:border-fg disabled:opacity-60";
 
 export default function BridgeClient() {
   const { publicKey, connected } = useWallet();
@@ -101,183 +96,170 @@ export default function BridgeClient() {
   const bridgeLive = isBridgeLive();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16">
-      <p className="dash-note mb-1">internal · testing only</p>
-      <h1 className="dash-title mb-2 font-bold text-title">PROM → SOLANA BRIDGE</h1>
-      <p className="mb-8 max-w-2xl text-sm text-fg-dim">
-        Bridge up to one block subsidy of PROM per transaction. You receive the{" "}
-        <span className="text-title">healthy</span> portion as SPL PROM on Solana; the{" "}
-        <span className="text-title">decayed</span> portion goes to the Relief Fund battery.
-      </p>
-
-      <div className="space-y-6">
-        {/* Step 1 — wallet */}
-        <Panel label="STEP 1 · CONNECT WALLET">
-          <div className="flex flex-wrap items-center gap-3">
-            <WalletButton />
-            <span className="text-sm text-fg-dim">
-              {connected && publicKey
-                ? `Connected: ${publicKey.toBase58().slice(0, 4)}…${publicKey.toBase58().slice(-4)}`
-                : "Any Solana wallet"}
-            </span>
-          </div>
-        </Panel>
-
-        {/* Step 2 — form */}
-        <Panel label="STEP 2 · WHAT TO BRIDGE">
-          <div className="grid gap-4">
-            <Field label="PROM address to bridge from">
-              <input
-                value={fromAddr}
-                onChange={(e) => setFromAddr(e.target.value)}
-                placeholder="prom1…"
-                className={INPUT}
-              />
-            </Field>
-            <Field label={`Amount (max = block subsidy${quote ? ` = ${quote.subsidy_cap}` : ""})`}>
-              <input
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="e.g. 50"
-                inputMode="decimal"
-                className={INPUT}
-              />
-            </Field>
-            <Field label="Destination Solana address (SPL PROM)">
-              <input
-                value={dest}
-                onChange={(e) => setSolAddr(e.target.value)}
-                placeholder="Your Solana address"
-                disabled={useConnected}
-                className={INPUT}
-              />
-              <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-fg-dim">
-                <input
-                  type="checkbox"
-                  className="accent-title"
-                  checked={useConnected}
-                  onChange={(e) => setUseConnected(e.target.checked)}
-                  disabled={!connected}
-                />
-                Use my connected wallet {connected ? "" : "(connect first)"}
-              </label>
-            </Field>
-            <NeonButton onClick={getQuote} disabled={loading}>
-              {loading ? "CHECKING…" : "ESTIMATE HEALTHY VS DECAYED"}
-            </NeonButton>
-          </div>
-        </Panel>
-
-        {err && <p className="dash-panel relative px-3 py-2 text-title">! {err}</p>}
-
-        {/* estimate */}
-        {quote && (
-          <Panel label="ESTIMATE" note={`tip ${quote.tip}`}>
-            <div className="dash-meter">
-              <div style={{ width: `${healthPct}%` }} />
-            </div>
-            <p className="mt-2 text-sm text-fg-dim">
-              Address is <span className="text-title">{healthPct}%</span> healthy (
-              {fmt(quote.healthy)} healthy / {fmt(quote.decayed)} decayed of {fmt(quote.nominal)}{" "}
-              nominal)
-            </p>
-
-            {quote.amount !== undefined && (
-              <div className="mt-4 space-y-2 text-sm">
-                {quote.insufficient_balance && (
-                  <p className="text-title">! This address holds only {fmt(quote.nominal)} PROM.</p>
-                )}
-                {quote.over_cap && (
-                  <p className="text-title">! Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</p>
-                )}
-                <Row label="You bridge (nominal)" value={`${fmt(quote.amount)} PROM`} />
-                <Row label="Healthy" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} />
-                <Row
-                  label={`− ${Math.round((quote.bridge_fee_pct ?? 0.02) * 100)}% bridge fee`}
-                  value={`≈ ${fmt(quote.projected_bridge_fee)} PROM`}
-                />
-                <Row label="→ You receive (SPL)" value={`≈ ${fmt(quote.projected_net_spl)} PROM`} strong />
-                <Row label="→ To battery (decayed)" value={`≈ ${fmt(quote.projected_to_battery)} PROM`} />
-              </div>
-            )}
-            <p className="dash-note mt-4">
-              estimate only — the exact split is computed from the actual coins you send
-            </p>
-          </Panel>
-        )}
-
-        {/* Step 3 — bridge */}
-        {quote && (
-          <Panel label="STEP 3 · BRIDGE">
-            <NeonButton onClick={createIntent} disabled={loading || !canIntent}>
-              {loading ? "PREPARING…" : "PREPARE BRIDGE TRANSFER"}
-            </NeonButton>
-
-            {intent && (
-              <div className="mt-4 space-y-4">
-                {/* USDC step */}
-                <div className="dash-panel relative p-4">
-                  <p className="text-title">A. Pay the {X402_FEE_USDC} USDC bridge fee (Solana)</p>
-                  <p className="mt-1 text-sm text-fg-dim">
-                    Memo: <code className="border border-line bg-bg px-1">{intent.usdcMemo}</code> — links your
-                    USDC payment to this bridge.
-                  </p>
-                  <div className="mt-3">
-                    <NeonButton
-                      disabled={!bridgeLive || !connected}
-                      title={
-                        !bridgeLive
-                          ? "Solana bridge/battery addresses not set yet"
-                          : !connected
-                            ? "Connect wallet first"
-                            : undefined
-                      }
-                    >
-                      {bridgeLive ? `PAY ${X402_FEE_USDC} USDC` : "COMING — ADDRESSES NOT SET"}
-                    </NeonButton>
-                  </div>
-                </div>
-
-                {/* PROM command */}
-                <div className="dash-panel relative p-4">
-                  <p className="text-title">B. Send the PROM (run on your PROM node)</p>
-                  <p className="mt-1 text-sm text-fg-dim">
-                    Sends {intent.amount} PROM to the bridge with the OP_RETURN that carries your intent + Solana
-                    address:
-                  </p>
-                  <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all border border-dashed border-line bg-bg-alt p-3 text-xs text-title">
-                    {intent.command}
-                  </pre>
-                  <div className="mt-2">
-                    <NeonButton
-                      className="text-xs"
-                      onClick={() => navigator.clipboard?.writeText(intent.command)}
-                    >
-                      COPY COMMAND
-                    </NeonButton>
-                  </div>
-                  <p className="mt-2 text-xs text-fg-dim">
-                    Bridge address: <code className="border border-line bg-bg px-1">{intent.bridgeAddress}</code>
-                  </p>
-                </div>
-
-                <p className="dash-note">
-                  after the PROM deposit confirms, the bridge computes the exact healthy/decayed from the coins
-                  you actually sent, credits your Solana address + the battery, and logs it to the bridge history
-                </p>
-              </div>
-            )}
-          </Panel>
-        )}
+    <main style={{ maxWidth: 660, margin: "0 auto", padding: "2rem 1.25rem", fontFamily: "system-ui, sans-serif" }}>
+      <div style={{ fontSize: 12, letterSpacing: 1, opacity: 0.6, textTransform: "uppercase" }}>
+        Internal · testing only
       </div>
+      <h1 style={{ fontSize: 28, margin: "0.25rem 0 0.5rem" }}>PROM → Solana Bridge</h1>
+      <p style={{ opacity: 0.75, lineHeight: 1.5, marginTop: 0 }}>
+        Bridge up to one block subsidy of PROM per transaction. You receive the <b>healthy</b>{" "}
+        portion as SPL PROM on Solana; the <b>decayed</b> portion goes to the Relief Fund battery.
+      </p>
+      <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 8, background: "#eef4ff", border: "1px solid #cdddff", fontSize: 13, lineHeight: 1.5 }}>
+        ℹ️ <b>$PROM is live on Solana</b> — mint <code>promP7gZmjt3fMVWfx47swYBpfwrjb2m3TX4c3woDBu</code>.
+        The bridge activates at <b>block 29300</b> on the Promethium chain — the decay clock starts then;
+        until activation all PROM stays 100% healthy.
+      </div>
+
+      {/* Step 1 — wallet */}
+      <Section n={1} title="Connect your Solana wallet">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <WalletButton />
+          <span style={{ fontSize: 13, opacity: 0.7 }}>
+            {connected && publicKey ? `Connected: ${publicKey.toBase58().slice(0, 4)}…${publicKey.toBase58().slice(-4)}` : "Any Solana wallet"}
+          </span>
+        </div>
+      </Section>
+
+      {/* Step 2 — form */}
+      <Section n={2} title="What to bridge">
+        <div style={{ display: "grid", gap: 12 }}>
+          <Field label="PROM address to bridge from">
+            <input value={fromAddr} onChange={(e) => setFromAddr(e.target.value)} placeholder="prom1…" style={inputStyle} />
+          </Field>
+          <Field label={`Amount (max = block subsidy${quote ? ` = ${quote.subsidy_cap}` : ""})`}>
+            <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="e.g. 50" inputMode="decimal" style={inputStyle} />
+          </Field>
+          <Field label="Destination Solana address (SPL PROM)">
+            <input
+              value={dest}
+              onChange={(e) => setSolAddr(e.target.value)}
+              placeholder="Your Solana address"
+              style={{ ...inputStyle, opacity: useConnected ? 0.6 : 1 }}
+              disabled={useConnected}
+            />
+            <label style={{ fontSize: 13, opacity: 0.8, display: "flex", gap: 6, alignItems: "center", marginTop: 4 }}>
+              <input
+                type="checkbox"
+                checked={useConnected}
+                onChange={(e) => setUseConnected(e.target.checked)}
+                disabled={!connected}
+              />
+              Use my connected wallet {connected ? "" : "(connect first)"}
+            </label>
+          </Field>
+          <button onClick={getQuote} disabled={loading} style={buttonStyle}>
+            {loading ? "Checking…" : "Estimate healthy vs decayed"}
+          </button>
+        </div>
+      </Section>
+
+      {err && (
+        <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: "#fee", color: "#900", fontSize: 14 }}>{err}</div>
+      )}
+
+      {/* estimate */}
+      {quote && (
+        <div style={{ marginTop: 16, border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+            <b>Estimate</b>
+            <span style={{ fontSize: 12, opacity: 0.6 }}>tip {quote.tip}</span>
+          </div>
+          <div style={{ margin: "12px 0" }}>
+            <div style={{ height: 10, borderRadius: 6, overflow: "hidden", background: "#eee", display: "flex" }}>
+              <div style={{ width: `${healthPct}%`, background: "#22a06b" }} />
+              <div style={{ width: `${100 - healthPct}%`, background: "#d9534f" }} />
+            </div>
+            <div style={{ fontSize: 13, marginTop: 6, opacity: 0.8 }}>
+              Address is <b>{healthPct}%</b> healthy ({fmt(quote.healthy)} healthy / {fmt(quote.decayed)} decayed of {fmt(quote.nominal)} nominal)
+            </div>
+          </div>
+          {quote.amount !== undefined && (
+            <div style={{ display: "grid", gap: 6, fontSize: 15 }}>
+              {quote.insufficient_balance && <div style={{ color: "#900" }}>⚠ This address holds only {fmt(quote.nominal)} PROM.</div>}
+              {quote.over_cap && <div style={{ color: "#900" }}>⚠ Over the {quote.subsidy_cap}-PROM cap — reduce the amount.</div>}
+              <Row label="You bridge (nominal)" value={`${fmt(quote.amount)} PROM`} />
+              <Row label="Healthy" value={`≈ ${fmt(quote.projected_healthy_spl)} PROM`} />
+              <Row
+                label={`− ${Math.round((quote.bridge_fee_pct ?? 0.02) * 100)}% bridge fee`}
+                value={`≈ ${fmt(quote.projected_bridge_fee)} PROM`}
+              />
+              <Row label="→ You receive (SPL)" value={`≈ ${fmt(quote.projected_net_spl)} PROM`} strong />
+              <Row label="→ To battery (decayed)" value={`≈ ${fmt(quote.projected_to_battery)} PROM`} />
+            </div>
+          )}
+          <p style={{ fontSize: 12, opacity: 0.6, marginTop: 12, marginBottom: 0 }}>
+            Estimate only — the exact split is computed from the actual coins you send.
+          </p>
+        </div>
+      )}
+
+      {/* Step 3 — bridge */}
+      {quote && (
+        <Section n={3} title="Bridge">
+          <button onClick={createIntent} disabled={loading || !canIntent} style={{ ...buttonStyle, opacity: canIntent ? 1 : 0.5 }}>
+            {loading ? "Preparing…" : "Prepare bridge transfer"}
+          </button>
+
+          {intent && (
+            <div style={{ marginTop: 14, display: "grid", gap: 14 }}>
+              {/* USDC step */}
+              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+                <b>A. Pay the {X402_FEE_USDC} USDC bridge fee (Solana)</b>
+                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>
+                  Memo: <code>{intent.usdcMemo}</code> — links your USDC payment to this bridge.
+                </div>
+                <button
+                  disabled={!bridgeLive || !connected}
+                  title={!bridgeLive ? "Solana bridge/battery addresses not set yet" : !connected ? "Connect wallet first" : undefined}
+                  style={{ ...buttonStyle, marginTop: 10, opacity: bridgeLive && connected ? 1 : 0.5 }}
+                >
+                  {bridgeLive ? `Pay ${X402_FEE_USDC} USDC` : "Coming — Solana addresses not set"}
+                </button>
+              </div>
+
+              {/* PROM command */}
+              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 14 }}>
+                <b>B. Send the PROM (run on your PROM node)</b>
+                <div style={{ fontSize: 13, opacity: 0.8, margin: "4px 0 8px" }}>
+                  Sends {intent.amount} PROM to the bridge with the OP_RETURN that carries your intent + Solana address:
+                </div>
+                <pre style={preStyle}>{intent.command}</pre>
+                <button onClick={() => navigator.clipboard?.writeText(intent.command)} style={{ ...buttonStyle, marginTop: 8, padding: "7px 12px", fontSize: 13 }}>
+                  Copy command
+                </button>
+                <div style={{ fontSize: 12, opacity: 0.6, marginTop: 8 }}>
+                  Bridge address: <code>{intent.bridgeAddress}</code>
+                </div>
+              </div>
+
+              <p style={{ fontSize: 12, opacity: 0.6, margin: 0 }}>
+                After the PROM deposit confirms, the bridge computes the EXACT healthy/decayed from the coins you actually
+                sent, credits your Solana address + the battery, and logs it to the bridge history.
+              </p>
+            </div>
+          )}
+        </Section>
+      )}
+    </main>
+  );
+}
+
+function Section({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginTop: 22 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
+        <span style={{ opacity: 0.5 }}>{n}.</span> {title}
+      </div>
+      {children}
     </div>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="grid gap-1">
-      <span className="dash-note">{label}</span>
+    <label style={{ display: "grid", gap: 4 }}>
+      <span style={{ fontSize: 13, fontWeight: 600 }}>{label}</span>
       {children}
     </label>
   );
@@ -285,9 +267,42 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
-    <div className="flex justify-between gap-3">
-      <span className="text-fg-dim">{label}</span>
-      <span className={strong ? "font-bold text-title" : "text-fg"}>{value}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+      <span style={{ opacity: 0.8 }}>{label}</span>
+      <span style={{ fontWeight: strong ? 700 : 500 }}>{value}</span>
     </div>
   );
 }
+
+const inputStyle: React.CSSProperties = {
+  padding: "10px 12px",
+  borderRadius: 8,
+  border: "1px solid #ccc",
+  fontSize: 15,
+  fontFamily: "ui-monospace, monospace",
+  width: "100%",
+  boxSizing: "border-box",
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: "11px 16px",
+  borderRadius: 8,
+  border: "none",
+  background: "#111",
+  color: "#fff",
+  fontSize: 15,
+  fontWeight: 600,
+  cursor: "pointer",
+};
+
+const preStyle: React.CSSProperties = {
+  background: "#0d1117",
+  color: "#c9d1d9",
+  padding: 12,
+  borderRadius: 8,
+  fontSize: 12.5,
+  overflowX: "auto",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+  margin: 0,
+};
