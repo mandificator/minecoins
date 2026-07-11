@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import WalletButton from "@/components/web3/WalletButton";
+import { useGlitch } from "@/components/effects/GlitchProvider";
 import type { MetaPage } from "@/lib/docs";
 
 type Item = { href: string; label: string };
@@ -32,6 +33,7 @@ function isActive(pathname: string, href: string): boolean {
 
 export default function Sidebar({ docs }: { docs: MetaPage[] }) {
   const pathname = usePathname();
+  const { enabled: glitchOn, toggle: toggleGlitch } = useGlitch();
   const onDocs = pathname.startsWith("/docs");
   const [docsOpen, setDocsOpen] = useState(onDocs);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -146,6 +148,16 @@ export default function Sidebar({ docs }: { docs: MetaPage[] }) {
         </div>
 
         {BOTTOM.map(link)}
+
+        <button
+          type="button"
+          onClick={toggleGlitch}
+          aria-pressed={glitchOn}
+          className="mt-3 flex w-full items-center justify-between whitespace-nowrap border-t border-bg/25 pt-3 text-left hover:underline"
+        >
+          <span>GLITCH FX</span>
+          <span className="text-bg/60">{glitchOn ? "ON" : "OFF"}</span>
+        </button>
       </div>
     </nav>
   );

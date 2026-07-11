@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useGlitch } from "@/components/effects/GlitchProvider";
 
 /**
  * CRT / digital-signal glitch overlay.
@@ -15,9 +16,11 @@ import { useEffect, useState } from "react";
  * Disabled under prefers-reduced-motion.
  */
 export default function CRTEffect() {
+  const { enabled } = useGlitch();
   const [bars, setBars] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const content = document.getElementById("page-content");
@@ -99,7 +102,9 @@ export default function CRTEffect() {
       cancelAnimationFrame(raf);
       reset();
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <div className="crt" aria-hidden>
