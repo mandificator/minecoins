@@ -12,6 +12,7 @@ const TOP: Item[] = [
   { href: "/", label: "ABOUT" },
   { href: "/agentic-mining", label: "AGENTIC MINING" },
   { href: "/explorer", label: "EXPLORER" },
+  { href: "/imprints", label: "IMPRINTS" },
 ];
 const BOTTOM: Item[] = [
   { href: "/bridge", label: "STABILIZATION PLANT" },
