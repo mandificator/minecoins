@@ -23,6 +23,8 @@ Simple, fixed, and impossible to mess with after launch.
 
 ## The token side — Solana
 
+- **Mint address:** `promP7gZmjt3fMVWfx47swYBpfwrjb2m3TX4c3woDBu` — live on Solana mainnet (classic SPL, 8 decimals).
+
 - All 21M **$PROM** minted once into a **locked reserve**.
 - **Mint authority revoked** — no more can ever exist.
 - **No freeze / no blacklist** — nobody can touch your $PROM.
