@@ -134,6 +134,7 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <NeonLink href="/docs/get-started">START MINING</NeonLink>
           <NeonLink href="/agentic-mining">AGENTIC MINING →</NeonLink>
+          <NeonLink href="/imprints">CHAIN IMPRINTS →</NeonLink>
         </div>
       </section>
     </div>
