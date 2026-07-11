@@ -28,6 +28,16 @@ const SKILLS = [
     desc: "Installs, builds, and runs a full Promethium node — independently validates the chain, sends/receives PROM, and applies the staking discount automatically.",
     href: "/downloads/node-skill.md",
   },
+  {
+    name: "promethium-bridge",
+    desc: "Stabilizes surfaced PROM before it decays — bridges it to $PROM SPL on Solana. Sends the deposit with an OP_RETURN, pays the 1 USDC fee (x402 or wallet), and receives the healthy portion; the decayed part funds the Relief battery. Decay freezes the moment the deposit confirms.",
+    href: "/downloads/bridge-skill.md",
+  },
+  {
+    name: "promethium-battery",
+    desc: "Stakes $PROM into the Relief Fund battery (30-day minimum) for daily yield, and claims or unstakes on request. Automates the 1 USDC per-action fee.",
+    href: "/downloads/battery-stake-skill.md",
+  },
 ];
 
 export default function AgenticMiningPage() {
