@@ -27,7 +27,32 @@ Staking and unstaking each cost **1 USDC**, paid via x402 — and the fee goes t
 ## Prerequisites
 - A Solana wallet holding $PROM SPL (from the bridge — see `bridge-skill.md`) + ≥1 USDC per stake/unstake action.
 
-## Flow
+## Agentic flow (x402) — the main way
+
+Every action is driven by two calls against `promethium.work`: create an intent (free), then pay its 1-USDC fee over x402. The `intentId` ties the fee to the action.
+
+```
+1. Create the intent
+   POST /api/battery/intent   { "action": "stake"|"unstake"|"claim", "address": "<your-solana>", "amount": <PROM, stake only> }
+   -> { intentId, action, stakeAddress, batteryAddress, usdcMemo, payEndpoint, instructions }
+
+2. Pay the 1-USDC fee (x402, goes to the BATTERY)
+   GET /api/battery/pay/<intentId>        (unpaid -> HTTP 402 with the terms; payTo = battery)
+   pay via the facilitator https://facilitator.x402endpoints.online, then retry the SAME
+   /api/battery/pay/<intentId> with the X-PAYMENT header. On settle we record the action.
+
+3. STAKE only — also send your $PROM
+   Send <amount> $PROM to the stake account (stakeAddress from step 1). The indexer credits
+   you as a staker (by the sender); the 30-day lock starts on deposit.
+```
+
+- **Stake:** intent(action=stake, amount) → pay 1 USDC (x402) → send $PROM to the stake account.
+- **Unstake** (after the 30-day lock): intent(action=unstake) → pay 1 USDC (x402). Principal returned by the Relief Fund.
+- **Claim:** intent(action=claim) → pay 1 USDC (x402). Your accrued yield is paid in $PROM. (Yield also auto-distributes daily — claim is an on-demand pull; you're never paid twice for the same accrual.)
+
+Complete the payment through **our** `/api/battery/pay` endpoint (not out-of-band with the facilitator) — that's what records it against your intent.
+
+## Manual flow (browser / direct)
 
 ### Stake
 One transaction, two transfers:
@@ -39,7 +64,7 @@ Both go in the SAME tx, so you can't stake without paying the fee. Your stake is
 Nothing to do. Each day the distributor computes your pro-rata, time-weighted share of the 2% release and pays it to your Solana address in $PROM. No claim, no fee.
 
 ### Unstake principal (after the 30-day lock)
-1. Pay **1 USDC → the battery** via x402.
+1. Pay **1 USDC → the battery** via x402 (or a direct transfer with the intentId memo).
 2. Submit an unstake request (`POST /api/stake/request` with your address + the fee tx signature).
 Your principal $PROM is returned once the request is processed.
 
