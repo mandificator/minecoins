@@ -69,10 +69,15 @@ export default function ReliefFundPage() {
                 balance to stakers.
               </li>
               <li>
-                You get a <span className="text-fg">pro-rata share</span> — your
-                stake ÷ total staked — paid in{" "}
-                <span className="text-title">$PROM</span>, no decay, yours to
-                keep.
+                Your share is <span className="text-fg">time-weighted</span> —
+                by how much you stake <em>and</em> how long you hold it: your
+                (stake × time) ÷ everyone&apos;s (stake × time). You earn from
+                the moment you stake, only for the time you stay in.
+              </li>
+              <li>
+                Paid in <span className="text-title">$PROM</span>, no decay,
+                yours to keep. Principal is locked {RELIEF_MIN_STAKE_DAYS} days;
+                yield is not.
               </li>
             </ol>
           </div>

@@ -240,8 +240,10 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
             </div>
             <p className="mt-1 text-fg-dim">
               Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
-              to stakers, split by your share (your stake ÷ total staked). Paid
-              in $PROM, no decay. {RELIEF_MIN_STAKE_DAYS}-day minimum lock.
+              to stakers, split <span className="text-fg">time-weighted</span> —
+              by your stake size × how long you hold it. Paid in $PROM, no decay.
+              You earn from the moment you stake; {RELIEF_MIN_STAKE_DAYS}-day
+              lock on principal.
             </p>
           </div>
         )}

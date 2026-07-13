@@ -18,13 +18,15 @@ The Relief Fund is where decayed promethium ends up. Every miner who stabilizes 
 
 ## How it works
 
-1. Deposit **$PROM** into the Relief Fund on Solana.
-2. Your share of payouts is **proportional to your deposit**.
-3. Interest accrues in **$PROM** — stable, no decay, yours to keep.
+1. Deposit **$PROM** into the Relief Fund on Solana. You start earning the moment your deposit is indexed (within minutes) — no waiting period.
+2. Each day the Fund releases **2% of its current balance** to depositors.
+3. Your share is **time-weighted by both how much you deposit and how long you hold it**: `your_share = your(PROM × time) ÷ everyone's(PROM × time)`. Doubling your deposit *or* holding twice as long both double your weight. You only earn for the time you actually stay in — no snapshot gaming.
+4. Interest accrues + is paid in **$PROM** — stable, no decay, yours to keep. Your principal is locked for a **30-day minimum**; yield is not locked.
 
 ## Good to know
 
 - Payouts are in **$PROM** on Solana. Nothing surfaces, nothing re-decays.
+- **2% of the remaining balance daily** — the Fund never empties (it asymptotes) and refills as new decay flows in.
 - Yield scales with the Fund's intake — busier network, more late stabilizations, more interest.
 - This is a separate pool from the **R&D Institute**. You can be in both: earn interest *and* mine easier.
 - Deposit / withdraw each cost **1 USDC** via x402. See **Fees & x402**.
