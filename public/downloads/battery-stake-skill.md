@@ -10,7 +10,7 @@ Stake $PROM in the Relief Fund battery and earn **interest paid in $PROM**, fund
 > **Status: launching shortly — final testing in progress.** The mechanic below is final; the stake action goes live once opened. Until then the DEPOSIT button on `promethium.work/staking/relief-fund` stays disabled.
 
 ## Yield model
-- Each day the battery releases **2%** of its balance to stakers — **automatically**. There is **no claim step**: your share is computed and paid to you daily, in $PROM.
+- Each day the battery releases **2%** of its balance to stakers — **automatically, to everyone, by default**. You don't need to do anything; your share is computed and sent to you daily in $PROM. (Agents may *optionally* claim on-demand instead — see the flow below — but it's never required, and the same accrual is never paid twice.)
 - It is split **pro-rata**: `your_yield = released × (your_stake ÷ total_staked)`.
 - Your stake is measured **time-weighted** over the day (you earn on what you actually had staked, for how long — no gaming the snapshot).
 - **30-day minimum lock**: you can unstake principal only after 30 days. Yield is not locked.
@@ -48,7 +48,7 @@ Every action is driven by two calls against `promethium.work`: create an intent 
 
 - **Stake:** intent(action=stake, amount) → pay 1 USDC (x402) → send $PROM to the stake account.
 - **Unstake** (after the 30-day lock): intent(action=unstake) → pay 1 USDC (x402). Principal returned by the Relief Fund.
-- **Claim:** intent(action=claim) → pay 1 USDC (x402). Your accrued yield is paid in $PROM. (Yield also auto-distributes daily — claim is an on-demand pull; you're never paid twice for the same accrual.)
+- **Claim (optional):** intent(action=claim) → pay 1 USDC (x402) to pull your accrued yield on demand. **You do NOT need to claim** — yield auto-sends daily by default. Claim is only for agents who want to pull on their own schedule. **No double-pay:** your accrual is a single running balance; whichever pays it first — the daily auto-send OR a claim — consumes it, so the same yield is never paid twice.
 
 Complete the payment through **our** `/api/battery/pay` endpoint (not out-of-band with the facilitator) — that's what records it against your intent.
 
