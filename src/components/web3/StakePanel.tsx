@@ -50,7 +50,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const live = isDiff ? isStakingLive() : isReliefLive();
   const coming = isDiff
     ? "Coming at mainnet — staking program not deployed yet."
-    : "Coming soon — Relief Fund staking opens at launch.";
+    : "Relief Fund staking opens shortly — final testing in progress.";
   const amt = Math.max(0, Number(amount) || 0);
   const discount = useMemo(() => estimateDiscount(amt), [amt]);
   const pct = ((discount - 1) / (MAX_DISCOUNT - 1)) * 100;

@@ -7,41 +7,46 @@ description: Stake $PROM SPL in the Promethium Relief Fund (battery) on Solana t
 
 Stake $PROM in the Relief Fund battery and earn **interest paid in $PROM**, funded entirely by the decay other miners lose when they stabilize late. Stable, on Solana, no decay on your position.
 
+> **Status: launching shortly — final testing in progress.** The mechanic below is final; the stake action goes live once opened. Until then the DEPOSIT button on `promethium.work/staking/relief-fund` stays disabled.
+
 ## Yield model
-- Each day the battery releases **2%** of its balance to stakers.
+- Each day the battery releases **2%** of its balance to stakers — **automatically**. There is **no claim step**: your share is computed and paid to you daily, in $PROM.
 - It is split **pro-rata**: `your_yield = released × (your_stake ÷ total_staked)`.
 - Your stake is measured **time-weighted** over the day (you earn on what you actually had staked, for how long — no gaming the snapshot).
-- **30-day minimum lock**: you can unstake principal only after 30 days.
+- **30-day minimum lock**: you can unstake principal only after 30 days. Yield is not locked.
 
 ## Fees
-Every action — **stake, unstake, and claim-yield** — costs **1 USDC → the dev address**, paid via x402.
-(Claiming yield is processed as an unstake of your accrued yield.)
+Staking and unstaking each cost **1 USDC**, paid via x402 — and the fee goes to the **Relief Fund battery** (`2Cd8YiSbw6G5S1VgUGFdd3E6oeKYoQqt2Aemoey1GoZT`), growing the fund everyone earns from. (Receiving yield is free — it's paid to you automatically.)
+
+## Addresses
+| Role | Address |
+|---|---|
+| Stake account ($PROM you stake) | `GQ75fQr1FpdqQj2rprsTCbav62Jsnvmbtn3io3hVamXX` |
+| Battery / Relief Fund (fee + yield source) | `2Cd8YiSbw6G5S1VgUGFdd3E6oeKYoQqt2Aemoey1GoZT` |
 
 ## Prerequisites
-- A Solana wallet holding $PROM SPL (from the bridge — see `bridge-skill.md`) + ≥1 USDC per action for fees.
+- A Solana wallet holding $PROM SPL (from the bridge — see `bridge-skill.md`) + ≥1 USDC per stake/unstake action.
 
 ## Flow
 
 ### Stake
-1. Pay **1 USDC** to the dev address via x402 (facilitator `https://facilitator.x402endpoints.online`).
-2. Send your $PROM to the **battery-stake address** `GQ75fQr1FpdqQj2rprsTCbav62Jsnvmbtn3io3hVamXX`.
-Your stake is recorded automatically (time-weighted) and starts earning the next daily release. The 30-day
-lock starts now.
+One transaction, two transfers:
+1. Send your **$PROM → the stake account** `GQ75fQr1FpdqQj2rprsTCbav62Jsnvmbtn3io3hVamXX`.
+2. Send **1 USDC → the battery** `2Cd8YiSbw6G5S1VgUGFdd3E6oeKYoQqt2Aemoey1GoZT` (the fee).
+Both go in the SAME tx, so you can't stake without paying the fee. Your stake is recorded automatically (the indexer credits the sender), starts earning the next daily release, and the 30-day lock starts now.
 
-### Claim yield (any time)
-1. Pay **1 USDC** to the dev address via x402.
-2. Submit a claim request (recorded as an unstake of your accrued yield).
-The system pays your accrued yield in $PROM from the battery to your address.
+### Earn yield (automatic)
+Nothing to do. Each day the distributor computes your pro-rata, time-weighted share of the 2% release and pays it to your Solana address in $PROM. No claim, no fee.
 
 ### Unstake principal (after the 30-day lock)
-1. Pay **1 USDC** to the dev address via x402.
-2. Submit an unstake request.
-Your principal $PROM is returned once the 30-day lock has elapsed.
+1. Pay **1 USDC → the battery** via x402.
+2. Submit an unstake request (`POST /api/stake/request` with your address + the fee tx signature).
+Your principal $PROM is returned once the request is processed.
+
+### Check your stake
+`GET https://promethium.work/api/stake/status?address=<your-solana-address>` →
+`{ staked, lockDaysLeft, unlockable }`. Battery/pool totals: `GET /api/battery/stats`.
 
 ## Notes
-- Yield scales with the battery's intake — the busier the network and the more miners stabilize late, the
-  more decay the battery collects and the higher the yield.
-- What's automatic: your USDC payment + submitting the request. The outbound $PROM send from the battery is
-  verified before payout (manual at first, then automatic once proven).
-- Live status endpoints (battery balance, total staked, your stake + accrued yield) activate when the $PROM
-  token is deployed.
+- Yield scales with the battery's intake — the busier the network and the more miners stabilize late, the more decay the battery collects and the higher the yield.
+- What's automatic: your stake is credited on-chain by the indexer; yield is distributed daily. The outbound $PROM sends (yield + returned principal) are verified before payout.

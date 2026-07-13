@@ -54,5 +54,11 @@ export const MAX_DISCOUNT = 3;
 export const RELIEF_RELEASE_PCT = 2;
 /** Relief Fund minimum stake lock (days). */
 export const RELIEF_MIN_STAKE_DAYS = 30;
-/** Relief Fund (battery) is stakeable only once the $PROM token is deployed. */
-export const isReliefLive = (): boolean => isTokenLive();
+/**
+ * Relief Fund (battery) staking is live only when the $PROM token is deployed AND
+ * it has been explicitly opened via NEXT_PUBLIC_RELIEF_OPEN=1. The flag lets us
+ * pause/resume relief staking independently of the token (e.g. during testing)
+ * without unsetting the mint (which the $PROM balance readout depends on).
+ */
+export const isReliefLive = (): boolean =>
+  isTokenLive() && (process.env.NEXT_PUBLIC_RELIEF_OPEN || "").trim() === "1";
