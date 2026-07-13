@@ -82,13 +82,19 @@ export default function ReliefFundPage() {
             <ul className="space-y-2 text-fg-dim">
               <li>Separate pool from the R&amp;D Institute — you can be in both.</li>
               <li>
-                {RELIEF_MIN_STAKE_DAYS}-day minimum lock; yield is paid daily.
+                {RELIEF_MIN_STAKE_DAYS}-day minimum lock; yield is paid{" "}
+                <span className="text-fg">automatically, daily</span> — no claim
+                step.
               </li>
               <li>
                 Yield scales with the battery&apos;s intake — busier network,
                 more decay collected, more interest.
               </li>
-              <li>Staking / unstaking costs 1 USDC via x402.</li>
+              <li>
+                Staking / unstaking each cost 1 USDC via x402 — the fee goes to
+                the <span className="text-fg">battery</span>, growing the fund
+                everyone earns from.
+              </li>
             </ul>
           </div>
 
