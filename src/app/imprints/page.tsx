@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Chain Imprints",
   description:
-    "The Promethium chain's state anchored to Solana twice a day — a tamper-proof, publicly verifiable checkpoint against reorgs and double-spends.",
+    "The Promethium chain's state anchored to Solana every 17.7 hours — a tamper-proof, publicly verifiable checkpoint against reorgs and double-spends.",
 };
 
 const F = process.env.IMPRINTS_FILE || "/home/clawd/clawd/prom-imprints/imprints.jsonl";
@@ -23,7 +23,7 @@ export default async function ImprintsPage() {
     <div className="mx-auto max-w-4xl px-4 py-16">
       <h1 className="mb-3 text-2xl font-bold text-title">Chain Imprints</h1>
       <p className="mb-6 max-w-2xl text-sm leading-relaxed text-fg-dim">
-        Every ~12 hours we anchor the Promethium chain onto Solana: a memo transaction from the
+        Every 17.7 hours we anchor the Promethium chain onto Solana: a memo transaction from the
         Promethium dev address stamps the current <span className="text-fg">block height</span> and{" "}
         <span className="text-fg">block hash</span> permanently onto the Solana ledger. The block hash
         commits to the entire chain history, so each imprint is a tamper-proof public checkpoint —

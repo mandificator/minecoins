@@ -82,4 +82,4 @@ Bridging is one-way. The PROM you deposit is not held or re-spent — once the b
 The longer you wait after surfacing, the more decays to the battery — until your deposit confirms, at which point the split locks. Bridge promptly for the best rate. Next step after holding $PROM: stake it in the Relief Fund battery — see `battery-stake-skill.md`.
 
 ## Current status
-The bridge is **live** and computing settlements. During launch the outbound **$PROM SPL payout is briefly held** while we verify the first settlements end-to-end — deposits are matched and queued with their exact frozen split, and payouts are released once verification completes. Chain state is anchored to Solana (memo imprints) twice daily; see `promethium.work/imprints`.
+The bridge is **live** and computing settlements. During launch the outbound **$PROM SPL payout is briefly held** while we verify the first settlements end-to-end — deposits are matched and queued with their exact frozen split, and payouts are released once verification completes. Chain state is anchored to Solana (memo imprints) every 17.7 hours; see `promethium.work/imprints`.

@@ -95,7 +95,7 @@ export default function ExplorerClient() {
         Verify it yourself — every block, transaction, and address on the
         Promethium Chain. Read-only.
       </p>
-      <p className="mb-6 text-xs text-fg-dim">Chain state is anchored to Solana twice a day — <a href="/imprints" className="text-neon-cyan hover:underline">verify the imprints →</a></p>
+      <p className="mb-6 text-xs text-fg-dim">Chain state is anchored to Solana every 17.7 hours — <a href="/imprints" className="text-neon-cyan hover:underline">verify the imprints →</a></p>
 
       {launching && (
         <div className="dash-panel relative mb-6 p-4 text-sm text-fg-dim">
