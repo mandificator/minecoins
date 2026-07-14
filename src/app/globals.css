@@ -599,6 +599,13 @@ body {
 .home-hero-row {
   --dash-hero-size: clamp(1.1rem, 4.6vw, 5.5rem);
 }
+/* two figures sharing one row (md:grid-cols-2) — half the budget of
+   .home-hero-row above, so a smaller vw coefficient + lower cap; still
+   stacks to one column below md, where the single-column budget is far
+   more forgiving than this clamp ever reaches. */
+.home-hero-row-half {
+  --dash-hero-size: clamp(1.1rem, 2.7vw, 3.5rem);
+}
 .dash-hero-int {
   font-size: var(--dash-hero-size);
   line-height: 1.05;

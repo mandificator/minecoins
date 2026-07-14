@@ -95,10 +95,13 @@ export function useLiveValue(base: number, perSec: number, riseMs = 1700) {
 }
 
 /* ---------------- hero figure ----------------
-   size="default" matches /dashboard (wraps to its own row if the
-   panel gets narrow); size="lg" is for the homepage — bigger, and
-   guaranteed to stay on one line (flex-nowrap + a taller-but-safe
-   clamp, see .home-hero-row in globals.css). */
+   size="default" matches /dashboard (wraps to its own row if the panel
+   gets narrow); size="lg" is for the homepage when a figure gets the
+   full row width; size="lg-half" is for the homepage when two figures
+   share a row (md:grid-cols-2) — same idea, smaller safe clamp tuned
+   for half the width. Both "lg*" variants are flex-nowrap + a taller-
+   but-safe clamp (see .home-hero-row / .home-hero-row-half in
+   globals.css) so int+frac can never wrap OR overflow. */
 
 export function Hero({
   label,
@@ -112,13 +115,17 @@ export function Hero({
   note: string;
   value: number;
   perSec: number;
-  size?: "default" | "lg";
+  size?: "default" | "lg" | "lg-half";
   fracDigits?: number;
 }) {
   const v = useLiveValue(value, perSec);
   const { int, frac } = fmtProm(v, fracDigits);
   const rowClass =
-    size === "lg" ? "home-hero-row flex-nowrap" : "dash-hero-row flex-wrap";
+    size === "lg"
+      ? "home-hero-row flex-nowrap"
+      : size === "lg-half"
+        ? "home-hero-row-half flex-nowrap"
+        : "dash-hero-row flex-wrap";
   return (
     <section className="dash-panel relative p-5 sm:p-7">
       <Corners />

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import HomeHeader from "@/components/home/HomeHeader";
 import HomeBottomMenu from "@/components/home/HomeBottomMenu";
 import { Hero, Tile, fmtInt, hashfmt } from "@/components/dashboard/DashWidgets";
@@ -23,15 +22,6 @@ export default function HomeClient() {
       <HomeHeader />
 
       <main className="mx-auto flex w-full max-w-[120rem] flex-1 flex-col items-center justify-center gap-8 px-4 py-10 sm:px-12">
-        <Image
-          src="/img/promethium-logo.png"
-          alt="Promethium — Pm, element 61, [145]"
-          width={500}
-          height={500}
-          priority
-          className="h-auto w-full max-w-[7rem] border border-border sm:max-w-[8rem]"
-        />
-
         {!data && <p className="dash-note">SYNCING…</p>}
 
         {data && (
@@ -54,6 +44,26 @@ export default function HomeClient() {
               size="lg"
               fracDigits={2}
             />
+
+            {/* entangled + relief fund share one row */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Hero
+                label="ENTANGLED ON SOLANA"
+                note="sent to users + LPs from dev"
+                value={data.entangledProm}
+                perSec={0}
+                size="lg-half"
+                fracDigits={2}
+              />
+              <Hero
+                label="RELIEF FUND"
+                note="decayed PROM in the battery on Solana"
+                value={data.reliefProm}
+                perSec={0}
+                size="lg-half"
+                fracDigits={2}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <Tile label="MINERS" value={fmtInt(data.miners)} sub="active · 24h" />
