@@ -51,9 +51,9 @@ export default function HomeHeader() {
                 src={b.icon}
                 alt=""
                 aria-hidden
-                width={56}
-                height={50}
-                className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+                width={112}
+                height={100}
+                className="h-12 w-12 object-contain sm:h-14 sm:w-14"
               />
               <span className="dash-note hidden md:inline">{b.label}</span>
             </Link>

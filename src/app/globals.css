@@ -590,21 +590,21 @@ body {
 /* homepage hero — one per row, full container width (no sidebar to
    share with), so it can run much bigger than /dashboard's, but
    int+frac must NEVER wrap OR overflow (rendered with flex-nowrap +
-   overflow-hidden as a backstop). Paired with Hero's fracDigits={2} on
-   the homepage (vs. 8 on /dashboard) — each flap "plate" is roughly 1em
-   wide including its own padding/border, so a ~12-character string
-   (x,xxx,xxx.xx) is the real budget this clamp is tuned against, not
-   raw glyph width — clears the narrowest supported phone (~320px) at
-   the floor with margin to spare. */
+   overflow-hidden as a backstop). Full 8-decimal precision, same as
+   /dashboard — each flap "plate" is roughly 1em wide including its own
+   padding/border, so an ~18-character string (x,xxx,xxx.xxxxxxxx) is
+   the real budget this clamp is tuned against, not raw glyph width —
+   clears the narrowest supported phone (~320px) at the floor, small
+   but legible, with margin to spare. */
 .home-hero-row {
-  --dash-hero-size: clamp(1.1rem, 4.6vw, 5.5rem);
+  --dash-hero-size: clamp(0.8rem, 4.2vw, 5rem);
 }
 /* two figures sharing one row (md:grid-cols-2) — half the budget of
    .home-hero-row above, so a smaller vw coefficient + lower cap; still
    stacks to one column below md, where the single-column budget is far
    more forgiving than this clamp ever reaches. */
 .home-hero-row-half {
-  --dash-hero-size: clamp(1.1rem, 2.7vw, 3.5rem);
+  --dash-hero-size: clamp(0.7rem, 1.85vw, 3rem);
 }
 .dash-hero-int {
   font-size: var(--dash-hero-size);

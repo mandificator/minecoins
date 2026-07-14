@@ -34,7 +34,6 @@ export default function HomeClient() {
               value={data.minedProm}
               perSec={data.minedPerSec}
               size="lg"
-              fracDigits={2}
             />
             <Hero
               label="TOTAL PROM DECAYED"
@@ -42,7 +41,6 @@ export default function HomeClient() {
               value={data.decayedProm}
               perSec={data.decayedPerSec}
               size="lg"
-              fracDigits={2}
             />
 
             {/* entangled + relief fund share one row */}
@@ -53,7 +51,6 @@ export default function HomeClient() {
                 value={data.entangledProm}
                 perSec={0}
                 size="lg-half"
-                fracDigits={2}
               />
               <Hero
                 label="RELIEF FUND"
@@ -61,7 +58,6 @@ export default function HomeClient() {
                 value={data.reliefProm}
                 perSec={0}
                 size="lg-half"
-                fracDigits={2}
               />
             </div>
 
