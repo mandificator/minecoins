@@ -587,6 +587,14 @@ body {
 .dash-hero-row.block-hero {
   --dash-hero-size: clamp(3rem, 11vw, 8.5rem);
 }
+/* homepage hero — full viewport width to play with (no sidebar), so it
+   can run bigger than /dashboard's, but int+frac must NEVER wrap to a
+   second row (rendered with flex-nowrap, not flex-wrap) — the vw-driven
+   mid value is tuned so the full x,xxx,xxx.xxxxxxxx string still clears
+   the narrowest supported phone width at the clamped floor. */
+.home-hero-row {
+  --dash-hero-size: clamp(1.3rem, 4.6vw, 6rem);
+}
 .dash-hero-int {
   font-size: var(--dash-hero-size);
   line-height: 1.05;

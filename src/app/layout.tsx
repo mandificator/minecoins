@@ -4,8 +4,8 @@ import "./globals.css";
 import GridBackground from "@/components/effects/GridBackground";
 import CRTEffect from "@/components/effects/CRTEffect";
 import { GlitchProvider } from "@/components/effects/GlitchProvider";
-import Sidebar from "@/components/layout/Sidebar";
-import Footer from "@/components/layout/Footer";
+import GlitchToggle from "@/components/effects/GlitchToggle";
+import AppChrome from "@/components/layout/AppChrome";
 import SolanaProvider from "@/components/web3/WalletProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { listDocs } from "@/lib/docs";
@@ -81,13 +81,10 @@ export default function RootLayout({
         <GlitchProvider>
           <GridBackground />
           <SolanaProvider>
-            <Sidebar docs={docs} />
-            <div id="page-content" className="flex min-h-screen flex-col lg:ml-[22rem]">
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <AppChrome docs={docs}>{children}</AppChrome>
           </SolanaProvider>
           <CRTEffect />
+          <GlitchToggle />
         </GlitchProvider>
         <Analytics />
       </body>
