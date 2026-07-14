@@ -150,6 +150,31 @@ function Tile({
   );
 }
 
+/* ---------------- x402 usage box ---------------- */
+
+function X402Box({ count }: { count: number }) {
+  const v = useLiveValue(count, 0);
+  return (
+    <section className="dash-panel relative p-5 sm:p-7">
+      <Corners />
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4">
+        <span className="dash-label">x402 PAYMENTS SETTLED</span>
+        <span className="dash-note">
+          USDC micropayments across Promethium services
+        </span>
+      </div>
+      <div className="dash-hero-row flex flex-wrap items-end font-bold text-fg">
+        <span className="dash-hero-int">
+          <Flaps text={fmtInt(v)} />
+        </span>
+      </div>
+      <div className="dash-note mt-1">
+        on-chain x402 settlements · bridge + services
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- decay curve ----------------
    N(t) = 100 · 2^(−t / 17.7h) over four half-lives.
    Geometry is precomputed at module level (pure constants). */
@@ -438,6 +463,8 @@ export default function DashboardClient() {
               sub="network hashrate"
             />
           </div>
+
+          <X402Box count={data.x402Count ?? 0} />
 
           <DecayChart />
 
