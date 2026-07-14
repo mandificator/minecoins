@@ -10,7 +10,7 @@ const GlitchContext = createContext<{ enabled: boolean; toggle: () => void }>({
 });
 
 export function GlitchProvider({ children }: { children: React.ReactNode }) {
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);

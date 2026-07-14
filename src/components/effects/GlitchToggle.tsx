@@ -2,7 +2,11 @@
 
 import { useGlitch } from "@/components/effects/GlitchProvider";
 
-/** Small, subtle, always-in-the-corner control — replaces the old sidebar nav-item version. */
+/**
+ * Small, subtle toggle — rendered in-flow next to the X/Telegram icons
+ * (Footer.tsx and HomeBottomMenu.tsx), not as a fixed overlay, so it can
+ * never collide with other corner content at any viewport height.
+ */
 export default function GlitchToggle() {
   const { enabled, toggle } = useGlitch();
   return (
@@ -11,7 +15,7 @@ export default function GlitchToggle() {
       onClick={toggle}
       aria-pressed={enabled}
       title={enabled ? "Turn off glitch FX" : "Turn on glitch FX"}
-      className="dash-note fixed bottom-4 right-4 z-[10000] flex items-center gap-1.5 border border-line bg-bg/70 px-2 py-1 opacity-60 backdrop-blur-sm transition-opacity hover:opacity-100"
+      className="dash-note flex shrink-0 items-center gap-1.5 border border-line px-2 py-1 opacity-60 transition-opacity hover:opacity-100"
     >
       <span className={enabled ? "text-title" : ""}>●</span>
       FX

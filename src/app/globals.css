@@ -587,13 +587,17 @@ body {
 .dash-hero-row.block-hero {
   --dash-hero-size: clamp(3rem, 11vw, 8.5rem);
 }
-/* homepage hero — full viewport width to play with (no sidebar), so it
-   can run bigger than /dashboard's, but int+frac must NEVER wrap to a
-   second row (rendered with flex-nowrap, not flex-wrap) — the vw-driven
-   mid value is tuned so the full x,xxx,xxx.xxxxxxxx string still clears
-   the narrowest supported phone width at the clamped floor. */
+/* homepage hero — one per row, full container width (no sidebar to
+   share with), so it can run much bigger than /dashboard's, but
+   int+frac must NEVER wrap OR overflow (rendered with flex-nowrap +
+   overflow-hidden as a backstop). Paired with Hero's fracDigits={2} on
+   the homepage (vs. 8 on /dashboard) — each flap "plate" is roughly 1em
+   wide including its own padding/border, so a ~12-character string
+   (x,xxx,xxx.xx) is the real budget this clamp is tuned against, not
+   raw glyph width — clears the narrowest supported phone (~320px) at
+   the floor with margin to spare. */
 .home-hero-row {
-  --dash-hero-size: clamp(1.3rem, 4.6vw, 6rem);
+  --dash-hero-size: clamp(1.1rem, 4.6vw, 5.5rem);
 }
 .dash-hero-int {
   font-size: var(--dash-hero-size);

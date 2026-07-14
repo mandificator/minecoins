@@ -5,9 +5,9 @@ import { Corners } from "@/components/ui/Panel";
 
 /* ---------------- formatting ---------------- */
 
-export function fmtProm(v: number): { int: string; frac: string } {
-  const [i, f] = Math.max(0, v).toFixed(8).split(".");
-  return { int: Number(i).toLocaleString("en-US"), frac: f };
+export function fmtProm(v: number, fracDigits = 8): { int: string; frac: string } {
+  const [i, f] = Math.max(0, v).toFixed(fracDigits).split(".");
+  return { int: Number(i).toLocaleString("en-US"), frac: f ?? "" };
 }
 
 export function fmtInt(n: number) {
@@ -106,15 +106,17 @@ export function Hero({
   value,
   perSec,
   size = "default",
+  fracDigits = 8,
 }: {
   label: string;
   note: string;
   value: number;
   perSec: number;
   size?: "default" | "lg";
+  fracDigits?: number;
 }) {
   const v = useLiveValue(value, perSec);
-  const { int, frac } = fmtProm(v);
+  const { int, frac } = fmtProm(v, fracDigits);
   const rowClass =
     size === "lg" ? "home-hero-row flex-nowrap" : "dash-hero-row flex-wrap";
   return (
@@ -124,7 +126,7 @@ export function Hero({
         <span className="dash-label">{label}</span>
         <span className="dash-note">{note}</span>
       </div>
-      <div className={`${rowClass} flex items-end gap-y-2 font-bold text-fg`}>
+      <div className={`${rowClass} flex items-end gap-y-2 overflow-hidden font-bold text-fg`}>
         <span className="dash-hero-int">
           <Flaps text={int} />
         </span>

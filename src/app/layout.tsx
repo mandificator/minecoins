@@ -4,7 +4,6 @@ import "./globals.css";
 import GridBackground from "@/components/effects/GridBackground";
 import CRTEffect from "@/components/effects/CRTEffect";
 import { GlitchProvider } from "@/components/effects/GlitchProvider";
-import GlitchToggle from "@/components/effects/GlitchToggle";
 import AppChrome from "@/components/layout/AppChrome";
 import SolanaProvider from "@/components/web3/WalletProvider";
 import { Analytics } from "@vercel/analytics/next";
@@ -84,7 +83,6 @@ export default function RootLayout({
             <AppChrome docs={docs}>{children}</AppChrome>
           </SolanaProvider>
           <CRTEffect />
-          <GlitchToggle />
         </GlitchProvider>
         <Analytics />
       </body>

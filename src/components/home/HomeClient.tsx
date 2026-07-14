@@ -22,36 +22,38 @@ export default function HomeClient() {
     <div className="flex min-h-screen flex-col">
       <HomeHeader />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-8 px-4 py-10 sm:px-8">
+      <main className="mx-auto flex w-full max-w-[120rem] flex-1 flex-col items-center justify-center gap-8 px-4 py-10 sm:px-12">
         <Image
           src="/img/promethium-logo.png"
           alt="Promethium — Pm, element 61, [145]"
           width={500}
           height={500}
           priority
-          className="h-auto w-full max-w-[8rem] border border-border sm:max-w-[10rem]"
+          className="h-auto w-full max-w-[7rem] border border-border sm:max-w-[8rem]"
         />
 
         {!data && <p className="dash-note">SYNCING…</p>}
 
         {data && (
           <div className="w-full space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Hero
-                label="TOTAL PROM MINED"
-                note="all blocks since genesis"
-                value={data.minedProm}
-                perSec={data.minedPerSec}
-                size="lg"
-              />
-              <Hero
-                label="TOTAL PROM DECAYED"
-                note={`lost to the surface · t½ = ${HALF_LIFE_HOURS}h`}
-                value={data.decayedProm}
-                perSec={data.decayedPerSec}
-                size="lg"
-              />
-            </div>
+            {/* stacked full-width so each figure gets the whole row —
+                more room = bigger type without ever risking overflow */}
+            <Hero
+              label="TOTAL PROM MINED"
+              note="all blocks since genesis"
+              value={data.minedProm}
+              perSec={data.minedPerSec}
+              size="lg"
+              fracDigits={2}
+            />
+            <Hero
+              label="TOTAL PROM DECAYED"
+              note={`lost to the surface · t½ = ${HALF_LIFE_HOURS}h`}
+              value={data.decayedProm}
+              perSec={data.decayedPerSec}
+              size="lg"
+              fracDigits={2}
+            />
 
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <Tile label="MINERS" value={fmtInt(data.miners)} sub="active · 24h" />

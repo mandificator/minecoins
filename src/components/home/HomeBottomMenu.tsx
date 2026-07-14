@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiTelegram, SiX } from "react-icons/si";
+import GlitchToggle from "@/components/effects/GlitchToggle";
 
 const MENU: { label: string; href: string; external?: boolean }[] = [
   { label: "MINE PROM", href: "/docs/get-started" },
@@ -53,6 +54,7 @@ export default function HomeBottomMenu() {
         >
           <SiTelegram size={16} />
         </a>
+        <GlitchToggle />
       </div>
     </footer>
   );

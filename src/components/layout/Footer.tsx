@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiTelegram, SiX } from "react-icons/si";
 import BlinkCursor from "@/components/effects/BlinkCursor";
+import GlitchToggle from "@/components/effects/GlitchToggle";
 
 export default function Footer() {
   return (
@@ -48,6 +49,7 @@ export default function Footer() {
               <SiTelegram size={14} />
               <span className="text-[10px] tracking-wider">Telegram</span>
             </a>
+            <GlitchToggle />
           </div>
         </div>
         <div className="mt-6 text-xs text-neon-green">

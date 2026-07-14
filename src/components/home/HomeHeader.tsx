@@ -27,25 +27,25 @@ const BUILDINGS: Building[] = [
 
 export default function HomeHeader() {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line px-4 py-3 sm:px-8">
-      <Link href="/" className="flex shrink-0 items-center gap-2">
+    <header className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-line px-6 py-6 sm:px-10 sm:py-8">
+      <Link href="/" className="flex shrink-0 items-center gap-3">
         <Image
           src="/img/promethium-logo.png"
           alt="Promethium"
           width={64}
           height={64}
           priority
-          className="h-7 w-7 border border-border"
+          className="h-9 w-9 border border-border sm:h-10 sm:w-10"
         />
         <span className="dash-label">PROMETHIUM</span>
       </Link>
 
-      <nav className="flex flex-wrap items-center gap-1 sm:gap-2">
+      <nav className="flex flex-wrap items-center gap-1 sm:gap-3">
         {BUILDINGS.map((b) => (
           <div key={b.href} className="group relative">
             <Link
               href={b.href}
-              className="flex items-center gap-2 border border-transparent px-2 py-1.5 transition-colors hover:border-line hover:bg-white/[0.04]"
+              className="flex items-center gap-2 border border-transparent px-3 py-2 transition-colors hover:border-line hover:bg-white/[0.04]"
             >
               <Image
                 src={b.icon}
@@ -53,7 +53,7 @@ export default function HomeHeader() {
                 aria-hidden
                 width={56}
                 height={50}
-                className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+                className="h-8 w-8 object-contain sm:h-9 sm:w-9"
               />
               <span className="dash-note hidden md:inline">{b.label}</span>
             </Link>
