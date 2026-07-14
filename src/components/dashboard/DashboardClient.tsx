@@ -102,33 +102,6 @@ function Hero({
   );
 }
 
-/* ---------------- retention meter ---------------- */
-
-function RetentionMeter({ mined, decayed }: { mined: number; decayed: number }) {
-  const pct = mined > 0 ? Math.max(0, ((mined - decayed) / mined) * 100) : 0;
-  return (
-    <div className="dash-panel relative p-4">
-      <Corners />
-      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4">
-        <span className="dash-label">SURFACE RETENTION</span>
-        <span className="dash-note">
-          {pct.toFixed(1)}% of mined PROM not yet decayed
-        </span>
-      </div>
-      <div
-        className="dash-meter"
-        role="meter"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Number(pct.toFixed(1))}
-        aria-label="Share of mined PROM not yet decayed"
-      >
-        <div style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
 /* ---------------- stat tile ---------------- */
 
 function Tile({
@@ -205,7 +178,43 @@ const HALF_LIVES = [1, 2, 3, 4].map((k) => ({
   label: `${100 / 2 ** k}%`,
 }));
 
-function DecayChart() {
+// hours-since-mined at which the curve equals a given retention %
+const tForPct = (pct: number) =>
+  pct >= 100 ? 0 : pct <= 0 ? X_MAX : -HALF_LIFE_HOURS * Math.log2(pct / 100);
+
+const A_COLOR = "#ff8a65"; // network retention (decay-heavy)
+const B_COLOR = "#39d9cf"; // bridger retention (healthy)
+
+function RetentionLine({ pct, color, tag }: { pct: number; color: string; tag: string }) {
+  if (!isFinite(pct) || pct <= 0) return null;
+  const y = yp(pct);
+  const tCross = tForPct(pct);
+  return (
+    <g>
+      <line
+        x1={CM.l}
+        x2={CM.l + IW}
+        y1={y}
+        y2={y}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeDasharray="5 4"
+        opacity={0.9}
+      />
+      {tCross > 0 && tCross < X_MAX && (
+        <circle cx={xp(tCross)} cy={y} r={4} fill={color} stroke="var(--bg-alt)" strokeWidth={2} />
+      )}
+      <text x={CM.l + 6} y={y - 6} fontSize={13} fontWeight={700} fill={color}>
+        {tag}
+      </text>
+      <text x={CM.l + IW - 4} y={y - 6} textAnchor="end" fontSize={12} fill={color}>
+        {pct.toFixed(1)}%
+      </text>
+    </g>
+  );
+}
+
+function DecayChart({ aPct, bPct }: { aPct: number; bPct: number }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoverT, setHoverT] = useState<number | null>(null);
 
@@ -347,6 +356,10 @@ function DecayChart() {
           );
         })}
 
+        {/* our real retention lines: a = network-wide, b = bridger */}
+        <RetentionLine pct={aPct} color={A_COLOR} tag="a" />
+        <RetentionLine pct={bPct} color={B_COLOR} tag="b" />
+
         {/* crosshair + tooltip */}
         {hover && (
           <g>
@@ -382,6 +395,36 @@ function DecayChart() {
           </g>
         )}
       </svg>
+      </div>
+
+      {/* legend for the two real retention lines */}
+      <div className="mt-4 flex flex-col gap-2 text-xs sm:flex-row sm:gap-6">
+        <div className="flex items-start gap-2">
+          <span
+            className="mt-1 inline-block h-0 w-5 shrink-0 border-t-2 border-dashed"
+            style={{ borderColor: A_COLOR }}
+          />
+          <span className="text-fg-dim">
+            <span className="font-bold" style={{ color: A_COLOR }}>
+              a · network retention {aPct.toFixed(1)}%
+            </span>{" "}
+            — share of <em>all mined</em> PROM still alive; the rest was never bridged and decayed on
+            the surface.
+          </span>
+        </div>
+        <div className="flex items-start gap-2">
+          <span
+            className="mt-1 inline-block h-0 w-5 shrink-0 border-t-2 border-dashed"
+            style={{ borderColor: B_COLOR }}
+          />
+          <span className="text-fg-dim">
+            <span className="font-bold" style={{ color: B_COLOR }}>
+              b · bridger retention {bPct.toFixed(1)}%
+            </span>{" "}
+            — share of <em>bridged</em> PROM still healthy at bridge time; the decayed remainder went
+            to the relief battery.
+          </span>
+        </div>
       </div>
 
       {/* the same values, reachable without hover */}
@@ -447,7 +490,20 @@ export default function DashboardClient() {
             perSec={data.decayedPerSec}
           />
 
-          <RetentionMeter mined={data.minedProm} decayed={data.decayedProm} />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Hero
+              label="ENTANGLED ON SOLANA"
+              note="sent to users + LPs from dev"
+              value={data.entangledProm}
+              perSec={0}
+            />
+            <Hero
+              label="RELIEF FUND · DECAYED-ENTANGLED"
+              note="decayed PROM in the battery on Solana"
+              value={data.reliefProm}
+              perSec={0}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <Tile label="MINERS" value={fmtInt(data.miners)} sub="active · 24h" />
@@ -466,7 +522,10 @@ export default function DashboardClient() {
 
           <X402Box count={data.x402Count ?? 0} />
 
-          <DecayChart />
+          <DecayChart
+            aPct={data.networkRetentionPct ?? 0}
+            bPct={data.bridgerRetentionPct ?? 0}
+          />
 
           <div className="dash-note flex flex-wrap justify-between gap-x-6 border-t border-fg-dim/20 pt-3">
             <span>

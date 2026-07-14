@@ -13,6 +13,14 @@ export type DashboardData = {
   minedProm: number;
   /** total PROM decayed at the surface */
   decayedProm: number;
+  /** $PROM entangled on Solana — sent to users + LPs (supply − treasury) */
+  entangledProm: number;
+  /** decayed-entangled $PROM held in the relief-fund battery on Solana */
+  reliefProm: number;
+  /** curve line a: % of ALL mined PROM still alive (network-wide surface retention) */
+  networkRetentionPct: number;
+  /** curve line b: % of bridged PROM still healthy at bridge time (bridger retention) */
+  bridgerRetentionPct: number;
   /** live drift rates (PROM/s) so the heroes tick between refetches; 0 freezes them */
   minedPerSec: number;
   decayedPerSec: number;
@@ -30,6 +38,10 @@ const SIMULATED: DashboardData = {
   simulated: true,
   minedProm: 1_847_203.42718305,
   decayedProm: 1_102_847.55912348,
+  entangledProm: 310_000,
+  reliefProm: 97_000,
+  networkRetentionPct: 13,
+  bridgerRetentionPct: 76,
   minedPerSec: 25 / 60,
   decayedPerSec: 3.2691,
   miners: 128,
