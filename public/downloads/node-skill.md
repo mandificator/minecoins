@@ -25,7 +25,7 @@ everyone at base (no discount).
 ## 1. Get the source & build
 
 ```bash
-git clone <REPO_URL> promethium && cd promethium
+git clone https://github.com/Hefaistos2026/Prom-node.git promethium && cd promethium
 # -DENABLE_IPC=OFF avoids needing Cap'n Proto (multiprocess support, not required to run a node)
 cmake -B build -DBUILD_GUI=OFF -DENABLE_IPC=OFF
 cmake --build build -j"$(nproc)" --target bitcoind bitcoin-cli
