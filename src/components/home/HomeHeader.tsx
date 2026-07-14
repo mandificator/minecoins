@@ -27,17 +27,16 @@ const BUILDINGS: Building[] = [
 
 export default function HomeHeader() {
   return (
-    <header className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-line px-6 py-6 sm:px-10 sm:py-8">
-      <Link href="/" className="flex shrink-0 items-center gap-3">
+    <header className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 py-6 sm:px-10 sm:py-8">
+      <Link href="/" className="flex shrink-0 items-center">
         <Image
           src="/img/promethium-logo.png"
           alt="Promethium"
-          width={64}
-          height={64}
+          width={314}
+          height={314}
           priority
-          className="h-9 w-9 border border-border sm:h-10 sm:w-10"
+          className="h-[150px] w-[150px] border border-border object-contain"
         />
-        <span className="dash-label">PROMETHIUM</span>
       </Link>
 
       <nav className="flex flex-wrap items-center gap-1 sm:gap-3">
@@ -49,13 +48,11 @@ export default function HomeHeader() {
             >
               <Image
                 src={b.icon}
-                alt=""
-                aria-hidden
+                alt={b.label}
                 width={314}
                 height={280}
                 className="h-[300px] w-[336px] object-contain"
               />
-              <span className="dash-note hidden md:inline">{b.label}</span>
             </Link>
             {b.underConstruction && (
               <div className="dash-note pointer-events-none absolute left-1/2 top-full z-50 mt-2 w-max -translate-x-1/2 border border-line bg-bg px-2 py-1 text-title opacity-0 transition-opacity duration-150 group-hover:opacity-100">
