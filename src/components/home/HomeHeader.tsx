@@ -27,19 +27,8 @@ const BUILDINGS: Building[] = [
 
 export default function HomeHeader() {
   return (
-    <header className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 py-6 sm:px-10 sm:py-8">
-      <Link href="/" className="flex shrink-0 items-center">
-        <Image
-          src="/img/promethium-logo.png"
-          alt="Promethium"
-          width={314}
-          height={314}
-          priority
-          className="h-[150px] w-[150px] border border-border object-contain"
-        />
-      </Link>
-
-      <nav className="flex flex-wrap items-center gap-1 sm:gap-3">
+    <header className="flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 px-6 py-6 sm:px-10 sm:py-8">
+      <nav className="flex flex-wrap items-center justify-center gap-1 sm:gap-3">
         {BUILDINGS.map((b) => (
           <div key={b.href} className="group relative">
             <Link
