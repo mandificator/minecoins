@@ -120,6 +120,7 @@ export function Hero({
 }) {
   const v = useLiveValue(value, perSec);
   const { int, frac } = fmtProm(v, fracDigits);
+  const isHome = size !== "default";
   const rowClass =
     size === "lg"
       ? "home-hero-row flex-nowrap"
@@ -139,9 +140,15 @@ export function Hero({
         </span>
         <span className="dash-hero-frac flex items-end">
           <span className="dash-flap-sep">.</span>
-          <span className="dash-flap dash-flap-long">
-            <span>{frac}</span>
-          </span>
+          {isHome ? (
+            // homepage: every decimal digit gets its own flap plate, same as the integer part
+            <Flaps text={frac} />
+          ) : (
+            // /dashboard: decimals stay one long fast-ticking plate (unchanged)
+            <span className="dash-flap dash-flap-long">
+              <span>{frac}</span>
+            </span>
+          )}
         </span>
       </div>
       <div className="dash-note mt-1">PROM</div>

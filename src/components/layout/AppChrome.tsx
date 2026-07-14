@@ -20,7 +20,10 @@ export default function AppChrome({
   const pathname = usePathname();
 
   if (pathname === "/") {
-    return <>{children}</>;
+    // Still needs the #page-content id — that's what CRTEffect targets for
+    // the glitch filter. No sidebar offset/classes needed here, HomeClient
+    // already lays itself out full-bleed.
+    return <div id="page-content">{children}</div>;
   }
 
   return (

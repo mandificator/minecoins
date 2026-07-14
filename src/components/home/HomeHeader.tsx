@@ -53,7 +53,7 @@ export default function HomeHeader() {
                 aria-hidden
                 width={314}
                 height={280}
-                className="h-[150px] w-[168px] object-contain"
+                className="h-[300px] w-[336px] object-contain"
               />
               <span className="dash-note hidden md:inline">{b.label}</span>
             </Link>
