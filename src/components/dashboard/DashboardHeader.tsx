@@ -25,7 +25,7 @@ const BUILDINGS: Building[] = [
   },
 ];
 
-export default function HomeHeader() {
+export default function DashboardHeader() {
   return (
     <header className="flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 px-6 py-6 sm:px-10 sm:py-8">
       <nav className="flex flex-wrap items-center justify-center gap-1 sm:gap-3">

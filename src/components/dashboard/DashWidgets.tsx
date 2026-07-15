@@ -95,13 +95,14 @@ export function useLiveValue(base: number, perSec: number, riseMs = 1700) {
 }
 
 /* ---------------- hero figure ----------------
-   size="default" matches /dashboard (wraps to its own row if the panel
-   gets narrow); size="lg" is for the homepage when a figure gets the
-   full row width; size="lg-half" is for the homepage when two figures
-   share a row (md:grid-cols-2) — same idea, smaller safe clamp tuned
-   for half the width. Both "lg*" variants are flex-nowrap + a taller-
-   but-safe clamp (see .home-hero-row / .home-hero-row-half in
-   globals.css) so int+frac can never wrap OR overflow. */
+   size="default" was the original /dashboard look (wraps to its own row
+   if the panel gets narrow, one long fast-ticking plate for decimals).
+   size="lg"/"lg-half" is the full-bleed /dashboard redesign — "lg" for a
+   figure taking the full row, "lg-half" for two figures sharing a row
+   (md:grid-cols-2). Both are flex-nowrap + a taller-but-safe clamp (see
+   .dash-hero-row-lg / .dash-hero-row-lg-half in globals.css) so int+frac
+   can never wrap OR overflow, and give every decimal digit its own flap
+   (not just the integer part). */
 
 export function Hero({
   label,
@@ -120,12 +121,12 @@ export function Hero({
 }) {
   const v = useLiveValue(value, perSec);
   const { int, frac } = fmtProm(v, fracDigits);
-  const isHome = size !== "default";
+  const perDigitFrac = size !== "default";
   const rowClass =
     size === "lg"
-      ? "home-hero-row flex-nowrap"
+      ? "dash-hero-row-lg flex-nowrap"
       : size === "lg-half"
-        ? "home-hero-row-half flex-nowrap"
+        ? "dash-hero-row-lg-half flex-nowrap"
         : "dash-hero-row flex-wrap";
   return (
     <section className="dash-panel relative p-5 sm:p-7">
@@ -140,11 +141,11 @@ export function Hero({
         </span>
         <span className="dash-hero-frac flex items-end">
           <span className="dash-flap-sep">.</span>
-          {isHome ? (
-            // homepage: every decimal digit gets its own flap plate, same as the integer part
+          {perDigitFrac ? (
+            // lg/lg-half: every decimal digit gets its own flap plate, same as the integer part
             <Flaps text={frac} />
           ) : (
-            // /dashboard: decimals stay one long fast-ticking plate (unchanged)
+            // default: decimals stay one long fast-ticking plate (unchanged)
             <span className="dash-flap dash-flap-long">
               <span>{frac}</span>
             </span>

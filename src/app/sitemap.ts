@@ -6,6 +6,7 @@ const BASE = "https://promethium.work";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "",
+    "/dashboard",
     "/agentic-mining",
     "/staking",
     "/bridge",

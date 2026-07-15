@@ -10,6 +10,7 @@ type Item = { href: string; label: string };
 
 const TOP: Item[] = [
   { href: "/", label: "ABOUT" },
+  { href: "/dashboard", label: "DASHBOARD" },
   { href: "/agentic-mining", label: "AGENTIC MINING" },
   { href: "/explorer", label: "EXPLORER" },
   { href: "/imprints", label: "IMPRINTS" },

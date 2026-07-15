@@ -13,7 +13,7 @@ const MENU: { label: string; href: string; external?: boolean }[] = [
   { label: "DOCUMENTATION", href: "/docs" },
 ];
 
-export default function HomeBottomMenu() {
+export default function DashboardBottomMenu() {
   return (
     <footer className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-line px-4 py-5 sm:justify-between sm:px-8">
       <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

@@ -596,14 +596,14 @@ body {
    the real budget this clamp is tuned against, not raw glyph width —
    clears the narrowest supported phone (~320px) at the floor, small
    but legible, with margin to spare. */
-.home-hero-row {
+.dash-hero-row-lg {
   --dash-hero-size: clamp(0.8rem, 4.2vw, 5rem);
 }
 /* two figures sharing one row (md:grid-cols-2) — half the budget of
-   .home-hero-row above, so a smaller vw coefficient + lower cap; still
+   .dash-hero-row-lg above, so a smaller vw coefficient + lower cap; still
    stacks to one column below md, where the single-column budget is far
    more forgiving than this clamp ever reaches. */
-.home-hero-row-half {
+.dash-hero-row-lg-half {
   --dash-hero-size: clamp(0.7rem, 1.85vw, 3rem);
 }
 .dash-hero-int {
