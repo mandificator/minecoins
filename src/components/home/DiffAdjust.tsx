@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Corners } from "@/components/ui/Panel";
 
-type DiffAdjust = {
+export type DiffAdjustData = {
   online: boolean;
-  blocksLeft: number;
+  height: number;
+  difficulty: number;
+  intervalBlocks: number;
   nextRetargetHeight: number;
+  blocksLeft: number;
   windowBlocks: number;
   windowElapsedPct: number;
   avgBlockSec: number;
   targetSpacingSec: number;
+  projectedRatio: number;
   predictedPct: number;
   direction: "up" | "down" | "flat";
   etaSeconds: number;
 };
+
+export function fetchDiffAdjust(): Promise<DiffAdjustData | null> {
+  return fetch("/api/diff-adjust", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((j) => (j && j.online ? (j as DiffAdjustData) : null))
+    .catch(() => null);
+}
 
 function human(sec: number) {
   if (!sec || sec < 0) return "—";
@@ -25,18 +35,8 @@ function human(sec: number) {
 
 // Next-difficulty-adjust readout. Palette stays monochrome (blue/white per the
 // site theme) — direction is carried by the arrow glyph + word, not colour.
-export default function DiffAdjust() {
-  const [d, setD] = useState<DiffAdjust | null>(null);
-
-  useEffect(() => {
-    fetch("/api/diff-adjust", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((j) => {
-        if (j && j.online) setD(j);
-      })
-      .catch(() => {});
-  }, []);
-
+// Data is fetched once by the parent and passed in.
+export default function DiffAdjust({ data: d }: { data: DiffAdjustData | null }) {
   if (!d) return null;
 
   const flat = d.direction === "flat";

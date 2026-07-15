@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import HomeHeader from "@/components/home/HomeHeader";
 import HomeBottomMenu from "@/components/home/HomeBottomMenu";
-import DiffAdjust from "@/components/home/DiffAdjust";
+import DiffAdjust, {
+  fetchDiffAdjust,
+  type DiffAdjustData,
+} from "@/components/home/DiffAdjust";
 import { Hero, Tile, fmtInt, hashfmt } from "@/components/dashboard/DashWidgets";
 import {
   fetchDashboardData,
@@ -13,10 +16,21 @@ import {
 
 export default function HomeClient() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [diff, setDiff] = useState<DiffAdjustData | null>(null);
 
   useEffect(() => {
     fetchDashboardData().then(setData).catch(() => {});
+    fetchDiffAdjust().then(setDiff).catch(() => {});
   }, []);
+
+  const blockPace =
+    diff == null
+      ? "syncing…"
+      : diff.avgBlockSec < diff.targetSpacingSec
+        ? "faster than target"
+        : diff.avgBlockSec > diff.targetSpacingSec
+          ? "slower than target"
+          : "on target";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -62,13 +76,24 @@ export default function HomeClient() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
               <Tile label="MINERS" value={fmtInt(data.miners)} sub="active · 24h" />
               <Tile label="NODES" value={fmtInt(data.nodes)} sub="reachable" />
               <Tile
                 label="CURRENT BLOCK"
                 value={`#${fmtInt(data.blockHeight)}`}
                 sub="chain tip"
+              />
+              <Tile
+                label="AVG BLOCK TIME"
+                value={
+                  diff ? `${(diff.avgBlockSec / 60).toFixed(1)} min` : "—"
+                }
+                sub={
+                  diff
+                    ? `target ${(diff.targetSpacingSec / 60).toFixed(0)} min · ${blockPace}`
+                    : "syncing…"
+                }
               />
               <Tile
                 label="MINING POWER"
@@ -78,7 +103,7 @@ export default function HomeClient() {
             </div>
 
             {/* next difficulty retarget: blocks left + up/down estimate */}
-            <DiffAdjust />
+            <DiffAdjust data={diff} />
           </div>
         )}
       </main>
