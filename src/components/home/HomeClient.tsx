@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import HomeHeader from "@/components/home/HomeHeader";
 import HomeBottomMenu from "@/components/home/HomeBottomMenu";
+import DiffAdjust from "@/components/home/DiffAdjust";
 import { Hero, Tile, fmtInt, hashfmt } from "@/components/dashboard/DashWidgets";
 import {
   fetchDashboardData,
@@ -75,6 +76,9 @@ export default function HomeClient() {
                 sub="network hashrate"
               />
             </div>
+
+            {/* next difficulty retarget: blocks left + up/down estimate */}
+            <DiffAdjust />
           </div>
         )}
       </main>
