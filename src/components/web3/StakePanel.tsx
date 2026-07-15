@@ -33,7 +33,34 @@ type StakeStatus = {
   staked: number;
   lockDaysLeft: number;
   unlockable: boolean;
+  accruedYield: number;
+  accrualRatePerSec: number;
+  dailyYieldPct: number;
 };
+
+// Smoothly ticks up from `base` at `perSec` (no reset-to-zero); when the status
+// refetches, `base` snaps to the true accrued value and keeps drifting.
+function useTicking(base: number, perSec: number) {
+  const [v, setV] = useState(base);
+  useEffect(() => {
+    setV(base);
+    if (!perSec) return;
+    const t0 = performance.now();
+    const id = setInterval(
+      () => setV(base + (perSec * (performance.now() - t0)) / 1000),
+      100,
+    );
+    return () => clearInterval(id);
+  }, [base, perSec]);
+  return v;
+}
+
+function AccruedYield({ base, perSec }: { base: number; perSec: number }) {
+  const v = useTicking(base, perSec);
+  return (
+    <>{v.toLocaleString(undefined, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}</>
+  );
+}
 
 export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const { connection } = useConnection();
@@ -70,14 +97,33 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     };
   }, [connected, publicKey, connection, sig]);
 
-  // Relief Fund stake status (staked balance + 30-day lock) from the read-only indexer
+  // Relief Fund stake status (staked + lock + live accrued yield). Refetch the base
+  // every 30s; the UI ticks the yield up smoothly in between.
   useEffect(() => {
     let cancelled = false;
     if (!isDiff && connected && publicKey && isReliefLive()) {
-      fetch(`/api/stake/status?address=${publicKey.toBase58()}`)
-        .then((r) => r.json())
-        .then((d) => !cancelled && setStatus({ staked: d.staked || 0, lockDaysLeft: d.lockDaysLeft || 0, unlockable: !!d.unlockable }))
-        .catch(() => !cancelled && setStatus(null));
+      const load = () =>
+        fetch(`/api/stake/status?address=${publicKey.toBase58()}`)
+          .then((r) => r.json())
+          .then(
+            (d) =>
+              !cancelled &&
+              setStatus({
+                staked: d.staked || 0,
+                lockDaysLeft: d.lockDaysLeft || 0,
+                unlockable: !!d.unlockable,
+                accruedYield: d.accruedYield || 0,
+                accrualRatePerSec: d.accrualRatePerSec || 0,
+                dailyYieldPct: d.dailyYieldPct || 0,
+              }),
+          )
+          .catch(() => !cancelled && setStatus(null));
+      load();
+      const id = setInterval(load, 30000);
+      return () => {
+        cancelled = true;
+        clearInterval(id);
+      };
     } else {
       setStatus(null);
     }
@@ -173,6 +219,12 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
 
   const canDeposit = live && amt > 0 && !busy && !isDiff;
   const canWithdraw = live && !busy && !isDiff && !!status?.unlockable;
+  const yieldPctLabel =
+    status && status.dailyYieldPct
+      ? (status.dailyYieldPct >= 1000
+          ? Math.round(status.dailyYieldPct).toLocaleString()
+          : status.dailyYieldPct.toLocaleString(undefined, { maximumFractionDigits: 2 })) + "% / day"
+      : "—";
 
   return (
     <Panel label={isDiff ? "R&D Institute" : "Relief Fund"}>
@@ -186,16 +238,25 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
           </span>
         </div>
 
-        {/* your stake (relief only) */}
+        {/* your stake + live accrued yield (relief only) */}
         {!isDiff && status && status.staked > 0 && (
-          <div className="flex items-center justify-between border-b border-line pb-3">
-            <span className="dash-note">Your stake</span>
-            <span className="font-mono text-title">
-              {status.staked.toLocaleString()} <span className="dash-note">PROM</span>
-              {status.lockDaysLeft > 0 && (
-                <span className="dash-note"> · locked {status.lockDaysLeft}d</span>
-              )}
-            </span>
+          <div className="space-y-2 border-b border-line pb-3">
+            <div className="flex items-center justify-between">
+              <span className="dash-note">Your stake</span>
+              <span className="font-mono text-title">
+                {status.staked.toLocaleString()} <span className="dash-note">PROM</span>
+                {status.lockDaysLeft > 0 && (
+                  <span className="dash-note"> · locked {status.lockDaysLeft}d</span>
+                )}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="dash-note">Accrued yield</span>
+              <span className="font-mono text-title" suppressHydrationWarning>
+                +<AccruedYield base={status.accruedYield} perSec={status.accrualRatePerSec} />{" "}
+                <span className="dash-note">PROM</span>
+              </span>
+            </div>
           </div>
         )}
 
@@ -235,15 +296,16 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         ) : (
           <div className="dash-panel relative p-3">
             <div className="flex items-center justify-between">
-              <span className="dash-note">Daily yield</span>
-              <span className="font-mono text-title">—</span>
+              <span className="dash-note">Your yield rate</span>
+              <span className="font-mono text-title">{yieldPctLabel}</span>
             </div>
             <p className="mt-1 text-fg-dim">
               Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
               to stakers, split <span className="text-fg">time-weighted</span> —
-              by your stake size × how long you hold it. Paid in $PROM, no decay.
-              You earn from the moment you stake; {RELIEF_MIN_STAKE_DAYS}-day
-              lock on principal.
+              by your stake size × how long you hold it (capped at 24h between
+              payouts). Paid in $PROM, no decay. You earn from the moment you
+              stake; {RELIEF_MIN_STAKE_DAYS}-day lock on principal. The rate is
+              high while the pool is small and normalises as more $PROM stakes.
             </p>
           </div>
         )}
@@ -300,7 +362,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
           Staking / unstaking each cost{" "}
           <span className="text-title">{X402_FEE_USDC} USDC</span> via x402 on
           Solana — the agent pays the same, no extra. The fee goes to the Relief
-          Fund battery. Yield is paid automatically, daily.
+          Fund battery. Yield is paid automatically, daily — or claim it any time.
         </p>
       </div>
     </Panel>
