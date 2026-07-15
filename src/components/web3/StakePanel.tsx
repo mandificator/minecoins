@@ -30,6 +30,7 @@ const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 const MEMO_PROGRAM = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
 type StakeStatus = {
+  address: string;
   staked: number;
   lockDaysLeft: number;
   unlockable: boolean;
@@ -138,6 +139,12 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const discount = useMemo(() => estimateDiscount(amt), [amt]);
   const pct = ((discount - 1) / (MAX_DISCOUNT - 1)) * 100;
 
+  // Clear stale stake data the instant the connected address changes (switching
+  // accounts in the wallet) so the old address's stake/yield never lingers.
+  useEffect(() => {
+    setStatus(null);
+  }, [publicKey?.toBase58()]);
+
   // $PROM + USDC balances (USDC = the 1-per-action fee)
   useEffect(() => {
     let cancelled = false;
@@ -155,30 +162,32 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     return () => {
       cancelled = true;
     };
-  }, [connected, publicKey, connection, sig, refreshKey]);
+  }, [connected, publicKey?.toBase58(), connection, sig, refreshKey]);
 
   // Relief Fund stake status (staked + lock + live accrued yield). Refetch the base
   // every 30s; the UI ticks the yield up smoothly in between.
   useEffect(() => {
     let cancelled = false;
-    if (!isDiff && connected && publicKey && isReliefLive()) {
+    const addr = publicKey?.toBase58();
+    if (!isDiff && connected && addr && isReliefLive()) {
       const load = () =>
-        fetch(`/api/stake/status?address=${publicKey.toBase58()}`)
+        fetch(`/api/stake/status?address=${addr}`, { cache: "no-store" })
           .then((r) => r.json())
-          .then(
-            (d) =>
-              !cancelled &&
-              setStatus({
-                staked: d.staked || 0,
-                lockDaysLeft: d.lockDaysLeft || 0,
-                unlockable: !!d.unlockable,
-                unlockAt: d.unlockAt ?? null,
-                nextAutopayAt: d.nextAutopayAt || 0,
-                accruedYield: d.accruedYield || 0,
-                accrualRatePerSec: d.accrualRatePerSec || 0,
-                dailyYieldPct: d.dailyYieldPct || 0,
-              }),
-          )
+          .then((d) => {
+            // ignore a response for a different address than the one now connected
+            if (cancelled || d.address !== addr) return;
+            setStatus({
+              address: d.address,
+              staked: d.staked || 0,
+              lockDaysLeft: d.lockDaysLeft || 0,
+              unlockable: !!d.unlockable,
+              unlockAt: d.unlockAt ?? null,
+              nextAutopayAt: d.nextAutopayAt || 0,
+              accruedYield: d.accruedYield || 0,
+              accrualRatePerSec: d.accrualRatePerSec || 0,
+              dailyYieldPct: d.dailyYieldPct || 0,
+            });
+          })
           .catch(() => !cancelled && setStatus(null));
       load();
       const id = setInterval(load, 30000);
@@ -192,7 +201,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     return () => {
       cancelled = true;
     };
-  }, [isDiff, connected, publicKey, sig, refreshKey]);
+  }, [isDiff, connected, publicKey?.toBase58(), sig, refreshKey]);
 
   // DEPOSIT: one atomic tx — $PROM to the stake account + the 1-USDC fee to the
   // battery (Concorde: fee → battery, not dev). The read-only stake indexer watches
@@ -340,7 +349,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const canClaim = live && !busy && !isDiff && !!status && status.staked > 0 && !lacksFee;
   const feeNote = "Each action costs 1 USDC — add USDC (Solana) to your wallet to continue.";
   const yieldPctLabel =
-    status && status.dailyYieldPct
+    status && status.address === publicKey?.toBase58() && status.dailyYieldPct
       ? (status.dailyYieldPct >= 1000
           ? Math.round(status.dailyYieldPct).toLocaleString()
           : status.dailyYieldPct.toLocaleString(undefined, { maximumFractionDigits: 2 })) + "% / day"
@@ -372,7 +381,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         </div>
 
         {/* your stake + live accrued yield (relief only) */}
-        {!isDiff && status && status.staked > 0 && (
+        {!isDiff && status && status.address === publicKey?.toBase58() && status.staked > 0 && (
           <div className="space-y-2 border-b border-line pb-3">
             <div className="flex items-center justify-between">
               <span className="dash-note">Your stake</span>

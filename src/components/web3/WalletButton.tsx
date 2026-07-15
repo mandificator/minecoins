@@ -44,12 +44,13 @@ export default function WalletButton({
         }`}
       />
       {connected ? (
-        label
-      ) : (
+        // connected: show the address; on hover reveal DISCONNECT so it's obvious
         <>
           <span className="group-hover:hidden">{label}</span>
-          <span className="hidden group-hover:inline">COMING SOON</span>
+          <span className="hidden group-hover:inline">DISCONNECT ✕</span>
         </>
+      ) : (
+        label
       )}
       <span className="text-bg/50">]</span>
     </button>
