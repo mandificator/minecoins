@@ -35,6 +35,8 @@ type StakeStatus = {
   lockDaysLeft: number;
   unlockable: boolean;
   unlockAt: number | null;
+  startAt: number;
+  started: boolean;
   nextAutopayAt: number;
   accruedYield: number;
   accrualRatePerSec: number;
@@ -182,6 +184,8 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               lockDaysLeft: d.lockDaysLeft || 0,
               unlockable: !!d.unlockable,
               unlockAt: d.unlockAt ?? null,
+              startAt: d.startAt || 0,
+              started: !!d.started,
               nextAutopayAt: d.nextAutopayAt || 0,
               accruedYield: d.accruedYield || 0,
               accrualRatePerSec: d.accrualRatePerSec || 0,
@@ -346,7 +350,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const lacksFee = usdcBalance !== null && usdcBalance < 1; // no USDC for the 1-per-action fee
   const canDeposit = live && amt > 0 && !busy && !isDiff && !lacksFee;
   const canWithdraw = live && !busy && !isDiff && !!status?.unlockable && !lacksFee;
-  const canClaim = live && !busy && !isDiff && !!status && status.staked > 0 && !lacksFee;
+  const canClaim = live && !busy && !isDiff && !!status && status.staked > 0 && !lacksFee && status.started;
   const feeNote = "Each action costs 1 USDC — add USDC (Solana) to your wallet to continue.";
   const yieldPctLabel =
     status && status.address === publicKey?.toBase58() && status.dailyYieldPct
@@ -358,6 +362,16 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   return (
     <Panel label={isDiff ? "R&D Institute" : "Relief Fund"}>
       <div className="space-y-5">
+        {/* buffer banner — staking open, yield starts for everyone at 08:30 UTC */}
+        {!isDiff && status && !status.started && status.startAt > 0 && (
+          <div className="border border-title/60 bg-title/10 p-3 text-xs text-title">
+            ⏳ Staking is <span className="text-fg">open</span> — deposit now. Yield starts
+            for everyone at <span className="text-fg">08:30 UTC</span> (in{" "}
+            <Countdown target={status.startAt} />), so nobody front-runs it. Your 30-day
+            unlock clock starts when you stake.
+          </div>
+        )}
+
         {/* balances */}
         <div className="space-y-2 border-b border-line pb-3">
           <div className="flex items-center justify-between">
@@ -392,10 +406,25 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
             <div className="flex items-center justify-between">
               <span className="dash-note">Accrued yield</span>
               <span className="font-mono text-title" suppressHydrationWarning>
-                +<AccruedYield base={status.accruedYield} perSec={status.accrualRatePerSec} />{" "}
-                <span className="dash-note">PROM</span>
+                {status.started ? (
+                  <>
+                    +
+                    <AccruedYield base={status.accruedYield} perSec={status.accrualRatePerSec} />{" "}
+                    <span className="dash-note">PROM</span>
+                  </>
+                ) : (
+                  <span className="dash-note">paused · starts soon</span>
+                )}
               </span>
             </div>
+            {!status.started && status.startAt > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="dash-note">Yield starts in</span>
+                <span className="font-mono text-title">
+                  <Countdown target={status.startAt} />
+                </span>
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <span className="dash-note">Unstake unlocks in</span>
               <span className="font-mono text-title">
@@ -503,8 +532,8 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
                 className="w-full"
                 disabled={!canClaim}
                 title={
-                  status.unlockable
-                    ? "Claim your accrued yield (1 USDC fee)"
+                  !status.started
+                    ? "Yield starts at 08:30 UTC — nothing to claim yet"
                     : "Claim your accrued yield any time — no lock (1 USDC fee)"
                 }
                 onClick={claimYield}

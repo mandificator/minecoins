@@ -11,14 +11,17 @@ const MON = process.env.SOLANA_MONITOR_STATE || "/home/clawd/clawd/prom-solana-m
 const LOCK_DAYS = 30;
 const DAILY_RATE = 0.02;
 const SECONDS_PER_DAY = 86400;
+// Global YIELD start (buffer): time-weight only accrues after this instant, so
+// everyone who staked in the buffer begins earning together. 2026-07-16 08:30 UTC.
+// (Unlock is separate + individual per address — NOT gated by this.)
+const START_TS = 1784190600;
 
-// Next daily-distributor run. Cron is `30 8 * * *` in the VPS local TZ; Node runs
-// in the same system TZ, so computing 08:30 local matches the cron and is DST-safe.
+// Next daily-distributor run = 08:30 UTC (the distributor cron runs CRON_TZ=UTC 30 8).
 function nextAutopayAt(): number {
-  const t = new Date();
-  t.setHours(8, 30, 0, 0);
-  if (t.getTime() <= Date.now()) t.setDate(t.getDate() + 1);
-  return Math.floor(t.getTime() / 1000);
+  const now = Date.now();
+  const d = new Date(now);
+  const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 8, 30, 0);
+  return Math.floor((now < t ? t : t + 86400000) / 1000);
 }
 
 export async function GET(req: Request) {
@@ -46,16 +49,17 @@ export async function GET(req: Request) {
   const firstTs = rec?.first_ts || 0;
   const daysStaked = firstTs ? (now - firstTs) / 86400 : 0;
   const lockDaysLeft = firstTs ? Math.max(0, LOCK_DAYS - daysStaked) : 0;
+  const started = now >= START_TS;
 
-  // accrue time-weight to now, capped at 24h of the current stake (matches the backend)
+  // accrue time-weight to now, but only for time AFTER the global start; cap at 24h.
   const twStored = rec?.tw_accum || 0;
   const lastTs = rec?.last_ts || now;
-  const twNow = Math.min(twStored + staked * Math.max(0, now - lastTs), staked * SECONDS_PER_DAY);
+  const effLast = Math.max(lastTs, START_TS);
+  const twNow = Math.min(twStored + staked * Math.max(0, now - effLast), staked * SECONDS_PER_DAY);
   const perTw = battery > 0 && totalStake > 0 ? (DAILY_RATE * battery) / (SECONDS_PER_DAY * totalStake) : 0;
-  const accruedYield = twNow * perTw; // $PROM claimable right now
+  const accruedYield = twNow * perTw; // $PROM claimable right now (0 during the buffer)
   const atCap = staked > 0 && twNow >= staked * SECONDS_PER_DAY - 1;
-  const accrualRatePerSec = atCap ? 0 : staked * perTw; // $PROM/sec the number ticks up
-  // yield over a full day as a % of the stake (asymptotic — normalises as more $PROM stakes)
+  const accrualRatePerSec = !started || atCap ? 0 : staked * perTw; // 0 while paused
   const dailyYieldPct = staked > 0 && battery > 0 && totalStake > 0 ? (DAILY_RATE * battery / totalStake) * 100 : 0;
 
   return NextResponse.json({
@@ -64,8 +68,10 @@ export async function GET(req: Request) {
     firstTs,
     lockDaysLeft: Math.ceil(lockDaysLeft),
     unlockable: staked > 0 && lockDaysLeft <= 0,
-    unlockAt: firstTs ? firstTs + LOCK_DAYS * SECONDS_PER_DAY : null, // unix s — unstake countdown
-    nextAutopayAt: nextAutopayAt(), // unix s — next battery autopayment countdown
+    unlockAt: firstTs ? firstTs + LOCK_DAYS * SECONDS_PER_DAY : null,
+    startAt: START_TS, // global yield-start (buffer); yield paused until then
+    started,
+    nextAutopayAt: nextAutopayAt(),
     accruedYield,
     accrualRatePerSec,
     dailyYieldPct,

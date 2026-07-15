@@ -6,7 +6,6 @@ import CRTEffect from "@/components/effects/CRTEffect";
 import { GlitchProvider } from "@/components/effects/GlitchProvider";
 import AppChrome from "@/components/layout/AppChrome";
 import SolanaProvider from "@/components/web3/WalletProvider";
-import { Analytics } from "@vercel/analytics/next";
 import { listDocs } from "@/lib/docs";
 
 const mono = JetBrains_Mono({
@@ -84,7 +83,6 @@ export default function RootLayout({
           </SolanaProvider>
           <CRTEffect />
         </GlitchProvider>
-        <Analytics />
       </body>
     </html>
   );
