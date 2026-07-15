@@ -36,7 +36,7 @@ The PROMETHIUM you feed into the Plant is never stockpiled or re-spent. Once you
 
 - **1 USDC** service fee, paid on Solana to the **dev address** `AFAGicmTvYxtuEsUBwet2EYtbB1r7C6TZCWkm9gbGexa` — via x402 (agents) or a direct wallet transfer you then verify (browsers).
 - **2%** of the stabilized (healthy) amount, taken in **$PROM**, sent to the **bridge fee address** `EPRPcLNMH65nxfSjWi6bdMkcifeym3DMbt5JTJ23HvHH`.
-- The **decayed** slice (in $PROM) drains to the **Relief Fund battery** `2Cd8YiSbw6G5S1VgUGFdd3E6oeKYoQqt2Aemoey1GoZT`.
+- The **decayed** slice (in $PROM) drains to the **Relief Fund** `2Cd8YiSbw6G5S1VgUGFdd3E6oeKYoQqt2Aemoey1GoZT`.
 
 Per transaction you can stabilize up to the current block subsidy (50 PROMETHIUM now; 25 after the next halving) — stabilize larger holdings by repeating.
 

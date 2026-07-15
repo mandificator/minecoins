@@ -316,7 +316,7 @@ function DecayChart({ aPct, bPct }: { aPct: number; bPct: number }) {
               b · bridger retention {bPct.toFixed(1)}%
             </span>{" "}
             — share of <em>bridged</em> PROM still healthy at bridge time; the decayed remainder went
-            to the relief battery.
+            to the Relief Fund.
           </span>
         </div>
       </div>
@@ -393,7 +393,7 @@ export default function DashboardClient() {
             />
             <Hero
               label="RELIEF FUND · DECAYED-ENTANGLED"
-              note="decayed PROM in the battery on Solana"
+              note="decayed PROM in the Relief Fund on Solana"
               value={data.reliefProm}
               perSec={0}
             />

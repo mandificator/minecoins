@@ -81,7 +81,7 @@ export default function TreasuryClient() {
       </div>
       <p className="mb-8 text-sm text-fg-dim">
         Live balances of every protocol-controlled address — the PROM-chain bridge deposit and the
-        Solana-side dev, bridge-fee, relief-battery, and battery-stake accounts. Internal, read-only.
+        Solana-side dev, bridge-fee, Relief Fund, and Relief-Fund-stake accounts. Internal, read-only.
       </p>
 
       {!data && <p className="dash-note">SYNCING…</p>}

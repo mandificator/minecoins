@@ -208,7 +208,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   }, [isDiff, connected, publicKey?.toBase58(), sig, refreshKey]);
 
   // DEPOSIT: one atomic tx — $PROM to the stake account + the 1-USDC fee to the
-  // battery (Concorde: fee → battery, not dev). The read-only stake indexer watches
+  // battery (Concorde: fee → Relief Fund, not dev). The read-only stake indexer watches
   // the stake account and credits the sender; yield accrues + distributes daily.
   async function deposit() {
     if (!publicKey || amt <= 0 || isDiff) return;
@@ -230,7 +230,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
       const promBase = BigInt(Math.round(amt * 1e8)); // $PROM = 8 decimals
       const tx = new Transaction().add(
         createTransferInstruction(userProm, stakeProm, publicKey, promBase),
-        createTransferInstruction(userUsdc, batteryUsdc, publicKey, 1_000_000), // 1 USDC → battery
+        createTransferInstruction(userUsdc, batteryUsdc, publicKey, 1_000_000), // 1 USDC → Relief Fund
         new TransactionInstruction({
           keys: [],
           programId: MEMO_PROGRAM,
@@ -254,7 +254,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     }
   }
 
-  // WITHDRAW (unstake): pay the 1-USDC fee to the battery + record the request.
+  // WITHDRAW (unstake): pay the 1-USDC fee to the Relief Fund + record the request.
   // No $PROM moves here — the (held) sender returns the stake after release. Gated
   // on the 30-day lock via the status endpoint.
   async function withdraw() {
@@ -301,7 +301,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     }
   }
 
-  // CLAIM: pay the 1-USDC fee to the battery (same as stake/unstake) + record a
+  // CLAIM: pay the 1-USDC fee to the Relief Fund (same as stake/unstake) + record a
   // claim request. No lock — yield is claimable any time. No $PROM moves here; the
   // claim processor computes the accrued yield and the (held) sender pays it.
   async function claimYield() {
@@ -486,7 +486,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               </div>
             )}
             <p className="mt-1 text-fg-dim">
-              Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
+              Each day the Relief Fund releases {RELIEF_RELEASE_PCT}% of its balance
               to stakers, split <span className="text-fg">time-weighted</span> —
               by your stake size × how long you hold it (capped at 24h between
               payouts). Paid in $PROM, no decay. You earn from the moment you
@@ -571,7 +571,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         <p className="text-fg-dim">
           Staking, unstaking, and claiming each cost{" "}
           <span className="text-title">{X402_FEE_USDC} USDC</span> (paid to the
-          Relief Fund battery) — agents pay the same via x402, no extra. Yield is
+          Relief Fund) — agents pay the same via x402, no extra. Yield is
           paid automatically every day, or you can CLAIM it any time — no lock on
           yield (the 30-day lock is only on your staked principal).
         </p>

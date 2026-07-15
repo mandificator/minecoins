@@ -69,7 +69,7 @@ export default function HomeClient() {
               />
               <Hero
                 label="RELIEF FUND"
-                note="decayed PROM in the battery on Solana"
+                note="decayed PROM in the Relief Fund on Solana"
                 value={data.reliefProm}
                 perSec={0}
                 size="lg-half"
