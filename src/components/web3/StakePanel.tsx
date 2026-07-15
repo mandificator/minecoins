@@ -96,6 +96,38 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const [sig, setSig] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [err, setErr] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Wait until a tx is confirmed on Solana (poll, no confirmTransaction — that hung).
+  async function waitConfirmed(s: string, tries = 24): Promise<boolean> {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const st = await connection.getSignatureStatus(s, { searchTransactionHistory: true });
+        if (st?.value?.err) return false;
+        const c = st?.value?.confirmationStatus;
+        if (c === "confirmed" || c === "finalized") return true;
+      } catch {
+        /* transient — keep polling */
+      }
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+    return false;
+  }
+
+  // On a confirmed stake, kick the indexer so the staked balance shows immediately,
+  // then bump refreshKey to refetch wallet balances + status.
+  async function refreshAfterConfirm(s: string, triggerSync: boolean) {
+    const ok = await waitConfirmed(s);
+    if (ok && triggerSync) {
+      try {
+        await fetch("/api/stake/sync", { method: "POST" });
+      } catch {
+        /* the cron will catch it */
+      }
+    }
+    setRefreshKey((k) => k + 1);
+    return ok;
+  }
 
   const isDiff = pool === "difficulty";
   const live = isDiff ? isStakingLive() : isReliefLive();
@@ -123,7 +155,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     return () => {
       cancelled = true;
     };
-  }, [connected, publicKey, connection, sig]);
+  }, [connected, publicKey, connection, sig, refreshKey]);
 
   // Relief Fund stake status (staked + lock + live accrued yield). Refetch the base
   // every 30s; the UI ticks the yield up smoothly in between.
@@ -160,7 +192,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     return () => {
       cancelled = true;
     };
-  }, [isDiff, connected, publicKey, sig]);
+  }, [isDiff, connected, publicKey, sig, refreshKey]);
 
   // DEPOSIT: one atomic tx — $PROM to the stake account + the 1-USDC fee to the
   // battery (Concorde: fee → battery, not dev). The read-only stake indexer watches
@@ -194,8 +226,14 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
       );
       const s = await sendTransaction(tx, connection);
       setSig(s);
-      setNote("✓ Staked — your $PROM is in the Relief Fund; yield accrues daily.");
       setAmount("");
+      setNote("✓ Sent — confirming on Solana…");
+      const ok = await refreshAfterConfirm(s, true);
+      setNote(
+        ok
+          ? "✓ Staked — your $PROM is in the Relief Fund; balances updated, yield accruing."
+          : "Sent — confirming; your balances will update shortly.",
+      );
     } catch (e: any) {
       setErr(String(e?.message || e));
     } finally {
@@ -242,6 +280,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         } catch { /* transient — keep polling */ }
       }
       if (!ok && !err) setNote("Fee sent — request registering shortly; your tx is above.");
+      setRefreshKey((k) => k + 1);
     } catch (e: any) {
       setErr(String(e?.message || e));
     } finally {
