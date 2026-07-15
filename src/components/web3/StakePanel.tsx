@@ -242,8 +242,54 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     }
   }
 
+  // CLAIM: pay the 1-USDC fee to the battery (same as stake/unstake) + record a
+  // claim request. No lock — yield is claimable any time. No $PROM moves here; the
+  // claim processor computes the accrued yield and the (held) sender pays it.
+  async function claimYield() {
+    if (!publicKey || isDiff) return;
+    setErr("");
+    setNote("");
+    setBusy(true);
+    setSig(null);
+    try {
+      const batteryOwner = new PublicKey(solanaConfig.batteryAddress);
+      const userUsdc = await getAssociatedTokenAddress(USDC_MINT, publicKey);
+      const batteryUsdc = await getAssociatedTokenAddress(USDC_MINT, batteryOwner, true);
+      const tx = new Transaction().add(
+        createTransferInstruction(userUsdc, batteryUsdc, publicKey, 1_000_000),
+        new TransactionInstruction({
+          keys: [],
+          programId: MEMO_PROGRAM,
+          data: new TextEncoder().encode("prom-claim") as any,
+        }),
+      );
+      const s = await sendTransaction(tx, connection);
+      setSig(s);
+      let ok = false;
+      for (let i = 0; i < 15 && !ok; i++) {
+        await new Promise((r) => setTimeout(r, 2500));
+        try {
+          const r = await fetch("/api/stake/request", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ staker: publicKey.toBase58(), signature: s, type: "claim" }),
+          });
+          const d = await r.json();
+          if (d.ok) { ok = true; setNote("✓ Claim requested — your accrued yield will be sent shortly."); }
+          else if (r.status !== 400) { setErr(d.error || "Could not record the claim."); break; }
+        } catch { /* transient — keep polling */ }
+      }
+      if (!ok && !err) setNote("Fee sent — claim registering shortly; your tx is above.");
+    } catch (e: any) {
+      setErr(String(e?.message || e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const canDeposit = live && amt > 0 && !busy && !isDiff;
   const canWithdraw = live && !busy && !isDiff && !!status?.unlockable;
+  const canClaim = live && !busy && !isDiff && !!status && status.staked > 0;
   const yieldPctLabel =
     status && status.dailyYieldPct
       ? (status.dailyYieldPct >= 1000
@@ -354,31 +400,47 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         {!connected ? (
           <WalletButton className="w-full justify-center" />
         ) : (
-          <div className="flex gap-3">
-            <NeonButton
-              className="flex-1"
-              disabled={isDiff ? true : !canDeposit}
-              title={!live ? coming : undefined}
-              onClick={isDiff ? undefined : deposit}
-            >
-              {busy ? "…" : isDiff ? "STAKE" : "DEPOSIT"}
-            </NeonButton>
-            <NeonButton
-              className="flex-1"
-              disabled={isDiff ? true : !canWithdraw}
-              title={
-                isDiff
-                  ? coming
-                  : status?.unlockable
-                    ? undefined
-                    : status && status.lockDaysLeft > 0
-                      ? `Unstaking opens in ${status.lockDaysLeft}d (${RELIEF_MIN_STAKE_DAYS}-day lock).`
-                      : `Stake first — ${RELIEF_MIN_STAKE_DAYS}-day minimum lock.`
-              }
-              onClick={isDiff ? undefined : withdraw}
-            >
-              {isDiff ? "UNSTAKE" : "WITHDRAW"}
-            </NeonButton>
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <NeonButton
+                className="flex-1"
+                disabled={isDiff ? true : !canDeposit}
+                title={!live ? coming : undefined}
+                onClick={isDiff ? undefined : deposit}
+              >
+                {busy ? "…" : isDiff ? "STAKE" : "DEPOSIT"}
+              </NeonButton>
+              <NeonButton
+                className="flex-1"
+                disabled={isDiff ? true : !canWithdraw}
+                title={
+                  isDiff
+                    ? coming
+                    : status?.unlockable
+                      ? undefined
+                      : status && status.lockDaysLeft > 0
+                        ? `Unstaking opens in ${status.lockDaysLeft}d (${RELIEF_MIN_STAKE_DAYS}-day lock).`
+                        : `Stake first — ${RELIEF_MIN_STAKE_DAYS}-day minimum lock.`
+                }
+                onClick={isDiff ? undefined : withdraw}
+              >
+                {isDiff ? "UNSTAKE" : "WITHDRAW"}
+              </NeonButton>
+            </div>
+            {!isDiff && status && status.staked > 0 && (
+              <NeonButton
+                className="w-full"
+                disabled={!canClaim}
+                title={
+                  status.unlockable
+                    ? "Claim your accrued yield (1 USDC fee)"
+                    : "Claim your accrued yield any time — no lock (1 USDC fee)"
+                }
+                onClick={claimYield}
+              >
+                {busy ? "…" : "CLAIM YIELD (1 USDC)"}
+              </NeonButton>
+            )}
           </div>
         )}
 
@@ -399,10 +461,11 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         {err && <p className="text-xs text-red-400">{err}</p>}
 
         <p className="text-fg-dim">
-          Staking / unstaking each cost{" "}
-          <span className="text-title">{X402_FEE_USDC} USDC</span> via x402 on
-          Solana — the agent pays the same, no extra. The fee goes to the Relief
-          Fund battery. Yield is paid automatically, daily — or claim it any time.
+          Staking, unstaking, and claiming each cost{" "}
+          <span className="text-title">{X402_FEE_USDC} USDC</span> (paid to the
+          Relief Fund battery) — agents pay the same via x402, no extra. Yield is
+          paid automatically every day, or you can CLAIM it any time — no lock on
+          yield (the 30-day lock is only on your staked principal).
         </p>
       </div>
     </Panel>
