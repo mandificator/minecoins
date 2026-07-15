@@ -6,7 +6,7 @@
  * `unstake`/`getStakeAccount` against the real program ID once it exists.
  */
 
-import type { Connection, PublicKey } from "@solana/web3.js";
+import { type Connection, PublicKey } from "@solana/web3.js";
 import { MAX_DISCOUNT, isStakingLive } from "./config";
 
 export type StakeStatus = {
@@ -31,13 +31,25 @@ export function estimateDiscount(stakedMine: number): number {
 
 /** Token balance read — only meaningful once the mint is configured. */
 export async function getTokenBalance(
-  _connection: Connection,
-  _owner: PublicKey,
-  _mint: string
+  connection: Connection,
+  owner: PublicKey,
+  mint: string
 ): Promise<number | null> {
-  // TODO: read the associated token account balance for the $PROM mint.
-  // Returns null until the mint/program is live so the UI shows "—".
-  return null;
+  // Free (unstaked) $PROM in the connected wallet: sum the owner's token
+  // accounts for the mint. Returns 0 if none, null only on RPC failure ("—").
+  if (!mint) return null;
+  try {
+    const res = await connection.getParsedTokenAccountsByOwner(owner, {
+      mint: new PublicKey(mint),
+    });
+    if (!res.value.length) return 0;
+    return res.value.reduce(
+      (a, x: any) => a + (x.account.data.parsed.info.tokenAmount.uiAmount || 0),
+      0,
+    );
+  } catch {
+    return null;
+  }
 }
 
 export async function getStakeStatus(
