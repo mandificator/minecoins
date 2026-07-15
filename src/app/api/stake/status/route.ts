@@ -47,8 +47,12 @@ export async function GET(req: Request) {
   const now = Date.now() / 1000;
   const staked = rec?.balance || 0;
   const firstTs = rec?.first_ts || 0;
-  const daysStaked = firstTs ? (now - firstTs) / 86400 : 0;
-  const lockDaysLeft = firstTs ? Math.max(0, LOCK_DAYS - daysStaked) : 0;
+  // 30-day lock is anchored to the LATER of your stake time and the global START,
+  // so buffer stakers' unlock clock starts at 08:30 UTC (together with yield);
+  // anyone who stakes after launch gets their own 30 days from their stake time.
+  const lockAnchor = firstTs ? Math.max(firstTs, START_TS) : 0;
+  const daysStaked = lockAnchor ? (now - lockAnchor) / 86400 : 0;
+  const lockDaysLeft = lockAnchor ? Math.max(0, LOCK_DAYS - daysStaked) : 0;
   const started = now >= START_TS;
 
   // accrue time-weight to now, but only for time AFTER the global start; cap at 24h.
@@ -68,7 +72,7 @@ export async function GET(req: Request) {
     firstTs,
     lockDaysLeft: Math.ceil(lockDaysLeft),
     unlockable: staked > 0 && lockDaysLeft <= 0,
-    unlockAt: firstTs ? firstTs + LOCK_DAYS * SECONDS_PER_DAY : null,
+    unlockAt: lockAnchor ? lockAnchor + LOCK_DAYS * SECONDS_PER_DAY : null,
     startAt: START_TS, // global yield-start (buffer); yield paused until then
     started,
     nextAutopayAt: nextAutopayAt(),
