@@ -90,6 +90,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const { publicKey, connected, sendTransaction } = useWallet();
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
+  const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [status, setStatus] = useState<StakeStatus | null>(null);
   const [busy, setBusy] = useState(false);
   const [sig, setSig] = useState<string | null>(null);
@@ -105,15 +106,19 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const discount = useMemo(() => estimateDiscount(amt), [amt]);
   const pct = ((discount - 1) / (MAX_DISCOUNT - 1)) * 100;
 
-  // $PROM balance
+  // $PROM + USDC balances (USDC = the 1-per-action fee)
   useEffect(() => {
     let cancelled = false;
     if (connected && publicKey && isTokenLive()) {
       getTokenBalance(connection, publicKey, solanaConfig.promTokenMint)
         .then((b) => !cancelled && setBalance(b))
         .catch(() => !cancelled && setBalance(null));
+      getTokenBalance(connection, publicKey, USDC_MINT.toBase58())
+        .then((b) => !cancelled && setUsdcBalance(b))
+        .catch(() => !cancelled && setUsdcBalance(null));
     } else {
       setBalance(null);
+      setUsdcBalance(null);
     }
     return () => {
       cancelled = true;
@@ -162,6 +167,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   // the stake account and credits the sender; yield accrues + distributes daily.
   async function deposit() {
     if (!publicKey || amt <= 0 || isDiff) return;
+    if (lacksFee) { setErr(feeNote); return; }
     setErr("");
     setNote("");
     setBusy(true);
@@ -202,6 +208,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   // on the 30-day lock via the status endpoint.
   async function withdraw() {
     if (!publicKey || isDiff || !status?.unlockable) return;
+    if (lacksFee) { setErr(feeNote); return; }
     setErr("");
     setNote("");
     setBusy(true);
@@ -247,6 +254,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   // claim processor computes the accrued yield and the (held) sender pays it.
   async function claimYield() {
     if (!publicKey || isDiff) return;
+    if (lacksFee) { setErr(feeNote); return; }
     setErr("");
     setNote("");
     setBusy(true);
@@ -287,9 +295,11 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
     }
   }
 
-  const canDeposit = live && amt > 0 && !busy && !isDiff;
-  const canWithdraw = live && !busy && !isDiff && !!status?.unlockable;
-  const canClaim = live && !busy && !isDiff && !!status && status.staked > 0;
+  const lacksFee = usdcBalance !== null && usdcBalance < 1; // no USDC for the 1-per-action fee
+  const canDeposit = live && amt > 0 && !busy && !isDiff && !lacksFee;
+  const canWithdraw = live && !busy && !isDiff && !!status?.unlockable && !lacksFee;
+  const canClaim = live && !busy && !isDiff && !!status && status.staked > 0 && !lacksFee;
+  const feeNote = "Each action costs 1 USDC — add USDC (Solana) to your wallet to continue.";
   const yieldPctLabel =
     status && status.dailyYieldPct
       ? (status.dailyYieldPct >= 1000
@@ -300,13 +310,26 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   return (
     <Panel label={isDiff ? "R&D Institute" : "Relief Fund"}>
       <div className="space-y-5">
-        {/* balance */}
-        <div className="flex items-center justify-between border-b border-line pb-3">
-          <span className="dash-note">$PROM balance</span>
-          <span className="font-mono text-fg">
-            {balance === null ? "—" : balance.toLocaleString()}{" "}
-            <span className="dash-note">PROM</span>
-          </span>
+        {/* balances */}
+        <div className="space-y-2 border-b border-line pb-3">
+          <div className="flex items-center justify-between">
+            <span className="dash-note">$PROM balance</span>
+            <span className="font-mono text-fg">
+              {balance === null ? "—" : balance.toLocaleString()}{" "}
+              <span className="dash-note">PROM</span>
+            </span>
+          </div>
+          {!isDiff && (
+            <div className="flex items-center justify-between">
+              <span className="dash-note">USDC (for fees)</span>
+              <span className={`font-mono ${lacksFee ? "text-red-400" : "text-fg"}`}>
+                {usdcBalance === null
+                  ? "—"
+                  : usdcBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
+                <span className="dash-note">USDC</span>
+              </span>
+            </div>
+          )}
         </div>
 
         {/* your stake + live accrued yield (relief only) */}
@@ -438,10 +461,18 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
                 }
                 onClick={claimYield}
               >
-                {busy ? "…" : "CLAIM YIELD (1 USDC)"}
+                {busy ? "…" : "CLAIM"}
               </NeonButton>
             )}
           </div>
+        )}
+
+        {/* fee warning — no USDC to cover the 1-per-action fee */}
+        {!isDiff && connected && lacksFee && (
+          <p className="text-xs text-red-400">
+            ⚠ You need at least 1 USDC on Solana for the fee — staking, claiming, and
+            unstaking each cost 1 USDC. Add USDC to your wallet, then try again.
+          </p>
         )}
 
         {/* status */}
