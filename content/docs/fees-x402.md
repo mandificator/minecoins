@@ -5,7 +5,7 @@ description: Pay-per-call, 1 USDC per action via x402 on Solana. The agent pays 
 
 # Fees & x402
 
-The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Syndicate action — stabilizing, staking, withdrawing — settles a flat payment in USDC on Solana. Built so an agent can pay and act without accounts or checkout.
+The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Syndicate action — stabilizing, staking, withdrawing, claiming yield — settles a flat payment in USDC on Solana. Built so an agent can pay and act without accounts or checkout.
 
 ## The fees
 
@@ -14,7 +14,7 @@ The Agentic Mining Company runs on **x402**, the pay-per-call standard. Every Sy
 | Stabilize PROMETHIUM -> $PROM | **2%** of the amount | $PROM | on the transfer |
 | Stabilize (service call) | **1 USDC** | USDC | x402 on Solana |
 | Stake / unstake (R&D Institute) | **1 USDC** | USDC | x402 on Solana |
-| Deposit / withdraw (Relief Fund) | **1 USDC** | USDC | x402 on Solana |
+| Deposit / withdraw / claim (Relief Fund) | **1 USDC** | USDC | x402 on Solana |
 | Check the chain (status, balance, mined blocks) | **Free** | — | promethium-explorer skill |
 
 Stabilizing has two parts: the 2% (in $PROM) + the 1 USDC x402 call. Everything else is 1 USDC per action — checking the chain costs nothing, via the read-only **promethium-explorer** skill.
