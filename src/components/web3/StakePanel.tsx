@@ -95,11 +95,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const [balance, setBalance] = useState<number | null>(null);
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [status, setStatus] = useState<StakeStatus | null>(null);
-  const [fundStats, setFundStats] = useState<{
-    totalStaked: number;
-    reliefBalance: number;
-    stakerCount: number;
-  } | null>(null);
   const [busy, setBusy] = useState(false);
   const [sig, setSig] = useState<string | null>(null);
   const [note, setNote] = useState("");
@@ -170,34 +165,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
       cancelled = true;
     };
   }, [connected, publicKey?.toBase58(), connection, sig, refreshKey]);
-
-  // Relief Fund pool stats (total staked + fund balance) — global, powers the APR.
-  useEffect(() => {
-    if (isDiff || !isReliefLive()) {
-      setFundStats(null);
-      return;
-    }
-    let cancelled = false;
-    const load = () =>
-      fetch("/api/battery/stats", { cache: "no-store" })
-        .then((r) => r.json())
-        .then(
-          (d) =>
-            !cancelled &&
-            setFundStats({
-              totalStaked: d.totalStaked || 0,
-              reliefBalance: d.batteryBalance || 0,
-              stakerCount: d.stakerCount || 0,
-            }),
-        )
-        .catch(() => {});
-    load();
-    const id = setInterval(load, 30000);
-    return () => {
-      cancelled = true;
-      clearInterval(id);
-    };
-  }, [isDiff, sig, refreshKey]);
 
   // Relief Fund stake status (staked + lock + live accrued yield). Refetch the base
   // every 30s; the UI ticks the yield up smoothly in between.
@@ -385,12 +352,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
   const canWithdraw = live && !busy && !isDiff && !!status?.unlockable && !lacksFee;
   const canClaim = live && !busy && !isDiff && !!status && status.staked > 0 && !lacksFee && status.started;
   const feeNote = "Each action costs 1 USDC — add USDC (Solana) to your wallet to continue.";
-  // Accurate APR (Concorde: show it even if high). daily rate = 2% × Fund ÷ total staked.
-  const dailyRatePct =
-    fundStats && fundStats.totalStaked > 0 ? (2 * fundStats.reliefBalance) / fundStats.totalStaked : 0;
-  const aprPct = dailyRatePct * 365;
-  const fmtNum = (n: number) =>
-    n >= 1000 ? Math.round(n).toLocaleString() : n.toLocaleString(undefined, { maximumFractionDigits: 2 });
   const yieldPctLabel =
     status && status.address === publicKey?.toBase58() && status.dailyYieldPct
       ? (status.dailyYieldPct >= 1000
@@ -525,43 +486,12 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               </div>
             )}
             <p className="mt-1 text-fg-dim">
-              Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
-              to stakers, split <span className="text-fg">time-weighted</span> —
+              Each day the Relief Fund releases {RELIEF_RELEASE_PCT}% of its
+              balance to stakers, split <span className="text-fg">time-weighted</span> —
               by your stake size × how long you hold it (capped at 24h between
               payouts). Paid in $PROM, no decay. You earn from the moment you
               stake; {RELIEF_MIN_STAKE_DAYS}-day lock on principal. The rate is
               high while the pool is small and normalises as more $PROM stakes.
-            </p>
-          </div>
-        )}
-
-        {/* Relief Fund pool stats + accurate APR */}
-        {!isDiff && fundStats && (
-          <div className="dash-panel relative p-3">
-            <div className="dash-note mb-2">Relief Fund</div>
-            <div className="flex items-center justify-between">
-              <span className="dash-note">Total staked</span>
-              <span className="font-mono text-title">
-                {fmtNum(fundStats.totalStaked)} <span className="dash-note">PROM</span>
-                <span className="dash-note"> · {fundStats.stakerCount} staker{fundStats.stakerCount === 1 ? "" : "s"}</span>
-              </span>
-            </div>
-            <div className="mt-1 flex items-center justify-between">
-              <span className="dash-note">Fund balance</span>
-              <span className="font-mono text-title">
-                {fmtNum(fundStats.reliefBalance)} <span className="dash-note">PROM</span>
-              </span>
-            </div>
-            <div className="mt-1 flex items-center justify-between">
-              <span className="dash-note">Est. APR</span>
-              <span className="font-mono text-title">
-                {fundStats.totalStaked > 0 ? "~" + fmtNum(aprPct) + "%" : "—"}
-              </span>
-            </div>
-            <p className="mt-1 text-fg-dim">
-              APR = the daily {RELIEF_RELEASE_PCT}% of the Fund, annualised — real,
-              uncapped yield. It's high while little is staked and moves with the Fund
-              size and total staked.
             </p>
           </div>
         )}
@@ -641,7 +571,7 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
         <p className="text-fg-dim">
           Staking, unstaking, and claiming each cost{" "}
           <span className="text-title">{X402_FEE_USDC} USDC</span> (paid to the
-          Relief Fund battery) — agents pay the same via x402, no extra. Yield is
+          Relief Fund) — agents pay the same via x402, no extra. Yield is
           paid automatically every day, or you can CLAIM it any time — no lock on
           yield (the 30-day lock is only on your staked principal).
         </p>
