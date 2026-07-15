@@ -12,6 +12,15 @@ const LOCK_DAYS = 30;
 const DAILY_RATE = 0.02;
 const SECONDS_PER_DAY = 86400;
 
+// Next daily-distributor run. Cron is `30 8 * * *` in the VPS local TZ; Node runs
+// in the same system TZ, so computing 08:30 local matches the cron and is DST-safe.
+function nextAutopayAt(): number {
+  const t = new Date();
+  t.setHours(8, 30, 0, 0);
+  if (t.getTime() <= Date.now()) t.setDate(t.getDate() + 1);
+  return Math.floor(t.getTime() / 1000);
+}
+
 export async function GET(req: Request) {
   const addr = new URL(req.url).searchParams.get("address");
   if (!addr) return NextResponse.json({ error: "address required" }, { status: 400 });
@@ -55,6 +64,8 @@ export async function GET(req: Request) {
     firstTs,
     lockDaysLeft: Math.ceil(lockDaysLeft),
     unlockable: staked > 0 && lockDaysLeft <= 0,
+    unlockAt: firstTs ? firstTs + LOCK_DAYS * SECONDS_PER_DAY : null, // unix s — unstake countdown
+    nextAutopayAt: nextAutopayAt(), // unix s — next battery autopayment countdown
     accruedYield,
     accrualRatePerSec,
     dailyYieldPct,

@@ -33,6 +33,8 @@ type StakeStatus = {
   staked: number;
   lockDaysLeft: number;
   unlockable: boolean;
+  unlockAt: number | null;
+  nextAutopayAt: number;
   accruedYield: number;
   accrualRatePerSec: number;
   dailyYieldPct: number;
@@ -60,6 +62,27 @@ function AccruedYield({ base, perSec }: { base: number; perSec: number }) {
   return (
     <>{v.toLocaleString(undefined, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}</>
   );
+}
+
+function fmtDuration(secs: number): string {
+  if (secs <= 0) return "now";
+  const d = Math.floor(secs / 86400);
+  const h = Math.floor((secs % 86400) / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = Math.floor(secs % 60);
+  if (d > 0) return `${d}d ${h}h ${m}m ${s}s`;
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  return `${m}m ${s}s`;
+}
+
+// Live decreasing counter to a unix-second target.
+function Countdown({ target }: { target: number }) {
+  const [now, setNow] = useState(() => Date.now() / 1000);
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now() / 1000), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return <span suppressHydrationWarning>{fmtDuration(target - now)}</span>;
 }
 
 export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
@@ -112,6 +135,8 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
                 staked: d.staked || 0,
                 lockDaysLeft: d.lockDaysLeft || 0,
                 unlockable: !!d.unlockable,
+                unlockAt: d.unlockAt ?? null,
+                nextAutopayAt: d.nextAutopayAt || 0,
                 accruedYield: d.accruedYield || 0,
                 accrualRatePerSec: d.accrualRatePerSec || 0,
                 dailyYieldPct: d.dailyYieldPct || 0,
@@ -245,9 +270,6 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               <span className="dash-note">Your stake</span>
               <span className="font-mono text-title">
                 {status.staked.toLocaleString()} <span className="dash-note">PROM</span>
-                {status.lockDaysLeft > 0 && (
-                  <span className="dash-note"> · locked {status.lockDaysLeft}d</span>
-                )}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -255,6 +277,16 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               <span className="font-mono text-title" suppressHydrationWarning>
                 +<AccruedYield base={status.accruedYield} perSec={status.accrualRatePerSec} />{" "}
                 <span className="dash-note">PROM</span>
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="dash-note">Unstake unlocks in</span>
+              <span className="font-mono text-title">
+                {status.unlockable || !status.unlockAt ? (
+                  "unlocked ✓"
+                ) : (
+                  <Countdown target={status.unlockAt} />
+                )}
               </span>
             </div>
           </div>
@@ -299,6 +331,14 @@ export default function StakePanel({ pool = "difficulty" }: { pool?: Pool }) {
               <span className="dash-note">Your yield rate</span>
               <span className="font-mono text-title">{yieldPctLabel}</span>
             </div>
+            {status && status.nextAutopayAt > 0 && (
+              <div className="mt-1 flex items-center justify-between">
+                <span className="dash-note">Next autopayment in</span>
+                <span className="font-mono text-title">
+                  <Countdown target={status.nextAutopayAt} />
+                </span>
+              </div>
+            )}
             <p className="mt-1 text-fg-dim">
               Each day the battery releases {RELIEF_RELEASE_PCT}% of its balance
               to stakers, split <span className="text-fg">time-weighted</span> —
