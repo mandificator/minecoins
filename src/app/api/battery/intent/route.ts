@@ -12,6 +12,8 @@ const INTENTS_FILE = process.env.BATTERY_INTENTS_FILE || "/home/clawd/clawd/prom
 // USDC account). Same gate the pay route uses — a reliable server env (not a NEXT_PUBLIC var).
 const OPEN = (process.env.BATTERY_USDC_PAY_TO || "").trim().length > 0;
 const ACTIONS = new Set(["stake", "unstake", "claim"]);
+// Yield starts at the global START (buffer); claiming is rejected before then.
+const START_TS = 1784190600; // 2026-07-16 08:30 UTC
 
 // POST /api/battery/intent  { action: "stake"|"unstake"|"claim", address, amount? }
 // Creates a Relief Fund action intent and returns the details + the x402 pay
@@ -36,6 +38,9 @@ export async function POST(req: Request) {
 
   if (!ACTIONS.has(action)) {
     return NextResponse.json({ error: "action must be one of: stake, unstake, claim." }, { status: 400 });
+  }
+  if (action === "claim" && Date.now() / 1000 < START_TS) {
+    return NextResponse.json({ error: "Claiming opens when the Relief Fund starts (08:30 UTC) — yield begins accruing then." }, { status: 425 });
   }
   // A prom1… address can decode as a Solana pubkey — reject it so nobody targets an address they don't control.
   if (/^prom/i.test(address)) {
